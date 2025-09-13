@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <script
+            src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+</head>
+<body>
+
+ <!-- ===== Navbar with animated hamburger & internal close button ===== -->
+<nav class="bg-white fixed inset-x-0 top-0 z-20 border-b border-gray-200/70 shadow-xl/30">
+  <div class="mx-auto flex max-w-screen-xl items-center justify-between px-4 py-3 md:py-4">
+
+    <!-- Logo -->
+    <a href="#" class="flex items-center gap-2">
+      <img src="../images/pospay_logo.svg" alt="POSPAY" class="h-9 w-auto" />
+      <span class="text-xl font-semibold tracking-wide text-primary-700 dark:text-primary-400">POSPAY</span>
+    </a>
+
+    <!-- Desktop links (≥ lg) -->
+    <div class="hidden lg:flex items-center gap-8">
+      <a href="#"            class="nav-link">Home</a>
+      <a href="#aboutUs"     class="nav-link">About&nbsp;Us</a>
+      <a href="#product"     class="nav-link">Product</a>
+      <a href="#associates"  class="nav-link">Associates</a>
+      <a href="#testimonials" class="nav-link">Testimonials</a>
+      <a href="#career"      class="nav-link">Career</a>
+      <a href="#contactUs"   class="nav-link">Contact&nbsp;Us</a>
+    </div>
+
+    <!-- Hamburger — three lines, visible < lg -->
+    <button id="navToggle" aria-label="Toggle menu" class="relative lg:hidden h-9 w-9 flex flex-col justify-between ">
+      <span class="bar"></span>
+      <span class="bar"></span>
+      <span class="bar"></span>
+    </button>
+
+    <!-- Phone block (≥ lg) -->
+    <div class="hidden items-center gap-2 lg:flex">
+      <span class="grid place-items-center h-10 w-10 rounded-full border border-primary-700">
+        <!-- phone icon -->
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-primary-700" fill="none"
+             viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M3 5s1-2 2-2 4 2 4 4-1 3-1 4 1 3 3 5 5 3 5 3 2-1 2-2-1-3-1-4 2-4 4-4 2 2 2 2V3l-5 2-3-1-3 1L3 5z"/>
+        </svg>
+      </span>
+      <span class="font-medium tracking-wide">+99&nbsp;9999&nbsp;9999&nbsp;99</span>
+    </div>
+  </div>
+
+  <!-- ===== Off‑canvas menu ===== -->
+  <div id="navMenu"
+       class="fixed top-0 right-0 z-30 h-screen w-72 max-w-[80vw] bg-white shadow-lg
+              flex flex-col gap-6 px-6 pt-24
+              transform translate-x-full transition-transform duration-300 ease-in-out
+              lg:hidden">
+
+    <!-- Internal close (✕) -->
+    <button id="navClose" aria-label="Close menu"
+            class="absolute top-6 right-6 text-2xl text-gray-700 focus:outline-none">&times;</button>
+
+    <a href="#"            class="nav-link">Home</a>
+    <a href="#aboutUs"     class="nav-link">About&nbsp;Us</a>
+    <a href="#product"     class="nav-link">Product</a>
+    <a href="#associates"  class="nav-link">Associates</a>
+    <a href="#testimonials" class="nav-link">Testimonials</a>
+    <a href="#career"      class="nav-link">Career</a>
+    <a href="#contactUs"   class="nav-link">Contact&nbsp;Us</a>
+
+    <!-- Phone (mobile / tablet) -->
+    <div class="flex items-center gap-3 pt-2">
+      <span class="grid place-items-center h-10 w-10 shrink-0 rounded-full border border-primary-700">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-primary-700" fill="none"
+             viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M3 5s1-2 2-2 4 2 4 4-1 3-1 4 1 3 3 5 5 3 5 3 2-1 2-2-1-3-1-4 2-4 4-4 2 2 2 2V3l-5 2-3-1-3 1L3 5z"/>
+        </svg>
+      </span>
+      <span class="font-medium tracking-wide">+99&nbsp;9999&nbsp;9999&nbsp;99</span>
+    </div>
+  </div>
+</nav>
+
+<!-- ===== Utilities / overrides ===== -->
+<style>
+  /* Universal link style */
+
+  .bar{
+    display:block;
+    width:100%;
+    height:2px;                /* same as h‑0.5 */
+    background:#111827;        /* gray‑900 */
+    transition:transform .3s ease,opacity .3s ease;
+  }
+
+  .nav-link {
+    @apply block lg:inline-block rounded-md px-2 py-1.5 font-medium tracking-wide
+           text-gray-700 transition-colors hover:text-primary-700;
+  }
+
+  /* Hamburger bars */
+  .bar {
+    @apply block w-full h-0.5 bg-gray-900 transition-all duration-300 ease-in-out;
+  }
+
+  /* Hamburger → X animation */
+  [data-open='true'] #navToggle .bar:nth-child(1) { transform: translateY(8px)  rotate(45deg); }
+  [data-open='true'] #navToggle .bar:nth-child(2) { opacity: 0; }
+  [data-open='true'] #navToggle .bar:nth-child(3) { transform: translateY(-8px) rotate(-45deg); }
+</style>
+
+<script>
+  /* ===== slide‑in / slide‑out logic ===== */
+  const navToggle = document.getElementById('navToggle');
+  const navClose  = document.getElementById('navClose');
+  const navMenu   = document.getElementById('navMenu');
+  const navRoot   = navToggle.closest('nav');
+
+  function openMenu() {
+    navMenu.classList.replace('translate-x-full', 'translate-x-0');
+    navRoot.dataset.open = 'true';
+  }
+
+  function closeMenu() {
+    navMenu.classList.replace('translate-x-0', 'translate-x-full');
+    navRoot.dataset.open = 'false';
+  }
+
+  /* Toggle on hamburger click */
+  navToggle.addEventListener('click', () =>
+    navRoot.dataset.open === 'true' ? closeMenu() : openMenu()
+  );
+
+  /* Close on ✕ inside sidebar */
+  navClose.addEventListener('click', closeMenu);
+
+  /* Close when a sidebar link is selected */
+  navMenu.querySelectorAll('.nav-link').forEach(link =>
+    link.addEventListener('click', closeMenu)
+  );
+</script>
+
+
+
+</body>
+</html>
+
+
+<!-- === Navbar === -->
+
+
+
+
+

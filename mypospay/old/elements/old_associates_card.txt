@@ -1,0 +1,381 @@
+<cardcontainer class="flex flex-wrap gap-4 justify-center"
+                id="associates-card-container">
+                
+                <div class="cursor-pointer" id="associates-card">
+                    <!-- ── Hover‑reveal card ──────────────────────────────────────── -->
+                    <div
+                        class="relative my-6  overflow-hidden rounded-lg border border-slate-200
+           bg-white shadow-xl group">
+
+                        <!-- Background photo -->
+                        <img
+                            src="./images/associates/msme-1.jpeg"
+                            alt="Barceloneta Beach"
+                            class="h-56 w-full object-cover
+             transition-all duration-500 ease-in-out
+             group-hover:blur-md" />
+
+                        <!-- Dark veil for readability -->
+                        <div
+                            class="pointer-events-none absolute inset-0
+             bg-black/40 opacity-0
+             transition-opacity duration-500
+             group-hover:opacity-100"></div>
+
+                        <!-- Content that appears on hover (centered) -->
+                        <div
+                            class="absolute inset-0 flex flex-col items-center justify-center text-center p-6
+             opacity-0 translate-y-4
+             transition-all duration-500 ease-in-out
+             group-hover:opacity-100 group-hover:translate-y-0">
+                            <h6
+                                class="text-5xl font-semibold text-white">MSME</h6>
+                        </div>
+                    </div>
+                </div>
+
+               
+                <div class="cursor-pointer">
+                    
+                    <div
+                        class="relative my-6  overflow-hidden rounded-lg border border-slate-200
+           bg-white shadow-xl group">
+
+                       
+                        <img
+                            src="./images/associates/dpiit-removebg-preview.png"
+                            alt="Barceloneta Beach"
+                            class="h-56 w-full object-cover
+             transition-all duration-500 ease-in-out
+             group-hover:blur-md" />
+
+                       
+                        <div
+                            class="pointer-events-none absolute inset-0
+             bg-black/40 opacity-0
+             transition-opacity duration-500
+             group-hover:opacity-100"></div>
+
+                        <!-- Content that appears on hover (centered) -->
+                        <div
+                            class="absolute inset-0 flex flex-col items-center justify-center text-center p-6
+             opacity-0 translate-y-4
+             transition-all duration-500 ease-in-out
+             group-hover:opacity-100 group-hover:translate-y-0">
+                            <h6
+                                class="text-5xl font-semibold text-white">DPIIT</h6>
+                        </div>
+                    </div>
+                </div>
+
+                
+                <div class="cursor-pointer">
+                    <!-- ── Hover‑reveal card ──────────────────────────────────────── -->
+                    <div
+                        class="relative my-6 overflow-hidden rounded-lg border border-slate-200
+           bg-white shadow-xl group">
+
+                        <!-- Background photo -->
+                        <img
+                            src="./images/associates/Startup-India-removebg.png"
+                            alt="Barceloneta Beach"
+                            class="h-56 w-full object-cover
+             transition-all duration-500 ease-in-out
+             group-hover:blur-md" />
+
+                        <!-- Dark veil for readability -->
+                        <div
+                            class="pointer-events-none absolute inset-0
+             bg-black/40 opacity-0
+             transition-opacity duration-500
+             group-hover:opacity-100"></div>
+
+                        <!-- Content that appears on hover (centered) -->
+                        <div
+                            class="absolute inset-0 flex flex-col items-center justify-center text-center p-6
+             opacity-0 translate-y-4
+             transition-all duration-500 ease-in-out
+             group-hover:opacity-100 group-hover:translate-y-0">
+                            <h6
+                                class="text-5xl font-semibold text-white">START-UP
+                                INDIA</h6>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Card 4 -->
+                <div class="cursor-pointer">
+                    <!-- ── Hover‑reveal card ──────────────────────────────────────── -->
+                    <div
+                        class="relative my-6  overflow-hidden rounded-lg border border-slate-200
+           bg-white shadow-xl group">
+
+                        <!-- Background photo -->
+                        <img
+                            src="./images/associates/digtal-india-removebg.png"
+                            alt="Barceloneta Beach"
+                            class="h-56 w-full object-cover
+             transition-all duration-500 ease-in-out
+             group-hover:blur-md" />
+
+                        <!-- Dark veil for readability -->
+                        <div
+                            class="pointer-events-none absolute inset-0
+             bg-black/40 opacity-0
+             transition-opacity duration-500
+             group-hover:opacity-100"></div>
+
+                        <!-- Content that appears on hover (centered) -->
+                        <div
+                            class="absolute inset-0 flex flex-col items-center justify-center text-center p-6
+             opacity-0 translate-y-4
+             transition-all duration-500 ease-in-out
+             group-hover:opacity-100 group-hover:translate-y-0">
+                            <h6
+                                class="text-5xl font-semibold text-white">DIGITAL
+                                INDIA</h6>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Card 5 -->
+                <div class="cursor-pointer">
+                    <!-- ── Hover‑reveal card ──────────────────────────────────────── -->
+                    <div
+                        class="relative my-6  overflow-hidden rounded-lg border border-slate-200
+           bg-white shadow-xl group">
+
+                        <!-- Background photo -->
+                        <img
+                            src="./images/associates/iso.png"
+                            alt="Barceloneta Beach"
+                            class="h-56 w-full object-cover
+             transition-all duration-500 ease-in-out
+             group-hover:blur-md" />
+
+                        <!-- Dark veil for readability -->
+                        <div
+                            class="pointer-events-none absolute inset-0
+             bg-black/40 opacity-0
+             transition-opacity duration-500
+             group-hover:opacity-100"></div>
+
+                        <!-- Content that appears on hover (centered) -->
+                        <div
+                            class="absolute inset-0 flex flex-col items-center justify-center text-center p-6
+             opacity-0 translate-y-4
+             transition-all duration-500 ease-in-out
+             group-hover:opacity-100 group-hover:translate-y-0">
+                            <h6
+                                class="text-5xl font-semibold text-white">ISO</h6>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Card 6 -->
+                <div class="cursor-pointer">
+                    <!-- ── Hover‑reveal card ──────────────────────────────────────── -->
+                    <div
+                        class="relative my-6  overflow-hidden rounded-lg border border-slate-200
+           bg-white shadow-xl group">
+
+                        <!-- Background photo -->
+                        <img
+                            src="./images/associates/ondc.png"
+                            alt="Barceloneta Beach"
+                            class="h-56 w-full object-cover
+             transition-all duration-500 ease-in-out
+             group-hover:blur-md" />
+
+                        <!-- Dark veil for readability -->
+                        <div
+                            class="pointer-events-none absolute inset-0
+             bg-black/40 opacity-0
+             transition-opacity duration-500
+             group-hover:opacity-100"></div>
+
+                        <!-- Content that appears on hover (centered) -->
+                        <div
+                            class="absolute inset-0 flex flex-col items-center justify-center text-center p-6
+             opacity-0 translate-y-4
+             transition-all duration-500 ease-in-out
+             group-hover:opacity-100 group-hover:translate-y-0">
+                            <h6
+                                class="text-5xl font-semibold text-white">ONDC
+                            </h6>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Card 7 -->
+                <div class="cursor-pointer">
+                    <!-- ── Hover‑reveal card ──────────────────────────────────────── -->
+                    <div
+                        class="relative my-6 overflow-hidden rounded-lg border border-slate-200
+           bg-white shadow-xl group">
+
+                        <!-- Background photo -->
+                        <img
+                            src="./images/associates/gem.png"
+                            alt="Barceloneta Beach"
+                            class="h-56 w-auto mx-auto object-cover
+             transition-all duration-500 ease-in-out
+             group-hover:blur-md" />
+
+                        <!-- Dark veil for readability -->
+                        <div
+                            class="pointer-events-none absolute inset-0
+             bg-black/40 opacity-0
+             transition-opacity duration-500
+             group-hover:opacity-100"></div>
+
+                        <!-- Content that appears on hover (centered) -->
+                        <div
+                            class="absolute inset-0 flex flex-col items-center justify-center text-center p-6
+             opacity-0 translate-y-4
+             transition-all duration-500 ease-in-out
+             group-hover:opacity-100 group-hover:translate-y-0">
+                            <h6
+                                class="text-5xl font-semibold text-white">GEM</h6>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Card 8 -->
+                <div class="cursor-pointer">
+                    <!-- ── Hover‑reveal card ──────────────────────────────────────── -->
+                    <div
+                        class="relative my-6 overflow-hidden rounded-lg border border-slate-200
+           bg-white shadow-xl group">
+
+                        <!-- Background photo -->
+                        <img
+                            src="./images/associates/icc.png"
+                            alt="Barceloneta Beach"
+                            class="h-56 w-auto mx-auto object-cover
+             transition-all duration-500 ease-in-out
+             group-hover:blur-md" />
+
+                        <!-- Dark veil for readability -->
+                        <div
+                            class="pointer-events-none absolute inset-0
+             bg-black/40 opacity-0
+             transition-opacity duration-500
+             group-hover:opacity-100"></div>
+
+                        <!-- Content that appears on hover (centered) -->
+                        <div
+                            class="absolute inset-0 flex flex-col items-center justify-center text-center p-6
+             opacity-0 translate-y-4
+             transition-all duration-500 ease-in-out
+             group-hover:opacity-100 group-hover:translate-y-0">
+                            <h6
+                                class="text-5xl font-semibold text-white">ICC</h6>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Card 9 -->
+                <div class="cursor-pointer">
+                    <!-- ── Hover‑reveal card ──────────────────────────────────────── -->
+                    <div
+                        class="relative my-6 overflow-hidden rounded-lg border border-slate-200
+           bg-white shadow-xl group">
+
+                        <!-- Background photo -->
+                        <img
+                            src="./images/associates/hdfc_bank.jpg"
+                            alt="Barceloneta Beach"
+                            class="h-56 w-auto mx-auto object-cover
+             transition-all duration-500 ease-in-out
+             group-hover:blur-md" />
+
+                        <!-- Dark veil for readability -->
+                        <div
+                            class="pointer-events-none absolute inset-0
+             bg-black/40 opacity-0
+             transition-opacity duration-500
+             group-hover:opacity-100"></div>
+
+                        <!-- Content that appears on hover (centered) -->
+                        <div
+                            class="absolute inset-0 flex flex-col items-center justify-center text-center p-6
+             opacity-0 translate-y-4
+             transition-all duration-500 ease-in-out
+             group-hover:opacity-100 group-hover:translate-y-0">
+                            <h6
+                                class="text-5xl font-semibold text-white">HDFC
+                                BANK</h6>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Card 10 -->
+                <div class="cursor-pointer">
+                    <!-- ── Hover‑reveal card ──────────────────────────────────────── -->
+                    <div
+                        class="relative my-6 overflow-hidden rounded-lg border border-slate-200
+           bg-white shadow-xl group">
+
+                        <!-- Background photo -->
+                        <img
+                            src="./images/associates/icici_bank.jpg"
+                            alt="Barceloneta Beach"
+                            class="h-56 w-full object-cover
+             transition-all duration-500 ease-in-out
+             group-hover:blur-md" />
+
+                        <!-- Dark veil for readability -->
+                        <div
+                            class="pointer-events-none absolute inset-0
+             bg-black/40 opacity-0
+             transition-opacity duration-500
+             group-hover:opacity-100"></div>
+
+                        <!-- Content that appears on hover (centered) -->
+                        <div
+                            class="absolute inset-0 flex flex-col items-center justify-center text-center p-6
+             opacity-0 translate-y-4
+             transition-all duration-500 ease-in-out
+             group-hover:opacity-100 group-hover:translate-y-0">
+                            <h6
+                                class="text-5xl font-semibold text-white">ICICI
+                                BANK</h6>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Card 11 -->
+                <div class="cursor-pointer">
+                    <!-- ── Hover‑reveal card ──────────────────────────────────────── -->
+                    <div
+                        class="relative my-6 overflow-hidden rounded-lg border border-slate-200
+           bg-white shadow-xl group">
+
+                        <!-- Background photo -->
+                        <img
+                            src="./images/associates/ezetap.jpg"
+                            alt="Barceloneta Beach"
+                            class="h-56 w-auto mx-auto object-cover
+             transition-all duration-500 ease-in-out
+             group-hover:blur-md" />
+
+                        <!-- Dark veil for readability -->
+                        <div
+                            class="pointer-events-none absolute inset-0
+             bg-black/40 opacity-0
+             transition-opacity duration-500
+             group-hover:opacity-100"></div>
+
+                        <!-- Content that appears on hover (centered) -->
+                        <div
+                            class="absolute inset-0 flex flex-col items-center justify-center text-center p-6
+             opacity-0 translate-y-4
+             transition-all duration-500 ease-in-out
+             group-hover:opacity-100 group-hover:translate-y-0">
+                            <h6
+                                class="text-5xl font-semibold text-white">EZETAP</h6>
+                        </div>
+                    </div>
+                </div>
+            </cardcontainer>

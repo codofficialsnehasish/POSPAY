@@ -1,0 +1,1724 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>MyPosPay</title>
+
+        <script
+            src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link
+            href="https://fonts.googleapis.com/css2?family=Roboto+Condensed:ital,wght@0,100..900;1,100..900&display=swap"
+            rel="stylesheet">
+        <link rel="stylesheet" href="./assets/style.css">
+        <link rel="stylesheet" href="./assets/responsive.css">
+        <script src="./assets/script.js"></script>
+
+        <!-- Flowbite navbar menu links -->
+        <script src="../path/to/flowbite/dist/flowbite.min.js"></script>
+        <link
+            href="https://cdn.jsdelivr.net/npm/flowbite@3.1.2/dist/flowbite.min.css"
+            rel="stylesheet" />
+        <script
+            src="https://cdn.jsdelivr.net/npm/flowbite@3.1.2/dist/flowbite.min.js"></script>
+
+        <!-- Testimonial CDN -->
+        <link rel="stylesheet"
+            href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+        <link rel="stylesheet"
+            href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    </head>
+    <body>
+
+        <!-- Main Container -->
+        <div class="">
+            <!-- Navbar -->
+            <nav
+                class="bg-white  p-4  fixed w-full z-20 top-0 start-0 border-b border-gray-200  shadow-xl/15">
+                <div
+                    class="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto p-4 nav-main relative">
+                    <a href="#"
+                        class="flex items-center space-x-3 rtl:space-x-reverse">
+                        <img src="../images/pospay_logo-removebg.png"
+                            class="lg:h-16 h-16 " alt="Flowbite Logo">
+                    </a>
+                    <div
+                        class="flex md:order-2 space-x-3 md:space-x-0 rtl:space-x-reverse">
+                        <!-- Phone line -->
+                        <div
+                            class=" items-center gap-3 2xl:flex lg:flex xl:flex md:flex hidden">
+                            <!-- icon circle -->
+                            <span
+                                class="inline-flex h-10 md:h-6 w-10 items-center justify-center rounded-full  border">
+                                <img src="../images/call.png" alt="Call icon"
+                                    class="h-5 w-5" />
+                            </span>
+
+                            <!-- number -->
+                            <p
+                                class="text-gray-800 font-medium text-xl md:text-lg nav-menu">+99
+                                9999 9999
+                                99</p>
+                        </div>
+
+                        <!-- toggle‑menu button -->
+                        <button id="hamburger-btn"
+                            type="button"
+                            aria-expanded="false"
+                            class="inline-flex items-center justify-center w-10 h-10 p-2 rounded-lg
+               text-gray-500 hover:bg-gray-100 focus:outline-none focus:ring-2
+               focus:ring-gray-200 dark:text-gray-400 dark:hover:bg-gray-700 dark:focus:ring-gray-600
+               md:hidden">
+
+                            <span class="sr-only">Toggle main menu</span>
+
+                            <!-- hamburger icon -->
+                            <svg id="icon-open"
+                                class="w-6 h-6 pointer-events-none" fill="none"
+                                viewBox="0 0 24 24" stroke="currentColor"
+                                stroke-width="2">
+                                <path stroke-linecap="round"
+                                    stroke-linejoin="round"
+                                    d="M4 6h16M4 12h16M4 18h16" />
+                            </svg>
+
+                            <!-- cross (close) icon – hidden by default -->
+                            <svg id="icon-close"
+                                class="w-6 h-6 hidden pointer-events-none"
+                                fill="none"
+                                viewBox="0 0 24 24" stroke="currentColor"
+                                stroke-width="2">
+                                <path stroke-linecap="round"
+                                    stroke-linejoin="round"
+                                    d="M6 18L18 6M6 6l12 12" />
+                            </svg>
+                        </button>
+
+                    </div>
+                    <div
+                        class=" items-center md:py-4 xl:text-xl 2xl:text-xl lg:text-xl  justify-between hidden w-full md:flex md:w-auto md:order-1"
+                        id>
+                        <ul
+                            class="nav-menu flex text-xl md:text-xl text-black flex-col p-4 md:p-0 mt-4 font-medium md:space-x-8 rtl:space-x-reverse md:flex-row md:mt-0"
+                            id="hamBurgerList">
+                            <li>
+                                <a href="#"
+                                    class="block py-2 px-3  md:p-0 text-black hover:text-blue-700">Home</a>
+                            </li>
+                            <li>
+                                <a href="#aboutUs"
+                                    class="block py-2 px-3  md:p-0 text-black hover:text-blue-700 ">About
+                                    Us</a>
+                            </li>
+                            <li>
+                                <a href="#products"
+                                    class="block py-2 px-3  md:p-0 text-black hover:text-blue-700">Product</a>
+                            </li>
+                            <li>
+                                <a href="#associates"
+                                    class="block py-2 px-3  md:p-0 text-black hover:text-blue-700 dark:border-gray-700">Associates</a>
+                            </li>
+                            <li>
+                                <a href="#testimonial"
+                                    class="block py-2 px-3  md:p-0 text-black hover:text-blue-700">Testimonials</a>
+                            </li>
+                            <li>
+                                <a href="#career"
+                                    class="block py-2 px-3  md:p-0 text-black hover:text-blue-700">Career</a>
+                            </li>
+                            <li>
+                                <a href="#contactUs"
+                                    class="block py-2 px-3  md:p-0 text-black hover:text-blue-700">Contact
+                                    Us</a>
+                            </li>
+
+                            <li
+                                class="2xl:hidden lg:hidden xl:hidden md:hidden block my-8">
+                                <div class="flex items-center gap-3 ">
+                                    <!-- icon circle -->
+                                    <span
+                                        class="inline-flex h-10 w-10 items-center justify-center rounded-full  border">
+                                        <img src="../images/call.png"
+                                            alt="Call icon"
+                                            class="h-5 w-5" />
+                                    </span>
+
+                                    <!-- number -->
+                                    <p
+                                        class="text-gray-800 font-medium text-xl ">+99
+                                        9999 9999
+                                        99</p>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+
+                </div>
+                <!-- Mobile menu -->
+                <div class="hidden" id="hamburger-menu">
+                    <div
+                        class="h-screen w-[80%] bg-white absolute p-10 right-[-20px] mt-4 z-[55555px] ">
+                        <div>
+                            <ul class="flex flex-col gap-6 text-lg font-medium">
+                                <li><a href="#home"
+                                        class="hover:text-blue-600 "
+                                        id="hamburger-list-item">Home</a></li>
+                                <li><a href="#aboutUs"
+                                        class="hover:text-blue-600">About</a></li>
+                                <li><a href="#products"
+                                        class="hover:text-blue-600">Product</a></li>
+                                <li><a href="#associates"
+                                        class="hover:text-blue-600">Associates</a></li>
+                                <li><a href="#testimonial"
+                                        class="hover:text-blue-600">Testimonials</a></li>
+                                <li><a href="#career"
+                                        class="hover:text-blue-600">Career</a></li>
+                                <li><a href="#contactUs"
+                                        class="hover:text-blue-600">Contact
+                                        Us</a></li>
+
+                                <!-- Phone section -->
+                                <li
+                                    class="flex items-center gap-3 pt-4 border-t border-gray-200 mt-4">
+                                    <span
+                                        class="inline-flex h-10 w-10 items-center justify-center rounded-full border">
+                                        <img src="../images/call.png"
+                                            alt="Call icon" class="h-5 w-5" />
+                                    </span>
+                                    <p
+                                        class="text-gray-800 font-medium text-lg">+99
+                                        9999 9999 99</p>
+                                </li>
+                            </ul>
+
+                        </ul>
+                    </div>
+                </div>
+
+            </div>
+        </nav>
+
+        <!-- Hero Section -->
+        <section
+            class="pt-20 bg-[var(--color-accent)] text-[var(--color-text)] px-10  hero-section-main-container z-0" id="hero-section-outer">
+            <div
+                class="container mx-auto flex flex-col-reverse lg:flex-row items-center justify-around gap-10 px-4 py-20" id="hero-section-main">
+
+                <!-- Text content -->
+                <div class="text-left lg:text-left max-w-xl">
+                    <p
+                        class="text-2xl 2xl:text-[555px] font-medium text-[var(--color-secondary)]"
+                        id="free-for-ever">
+                        Free Forever For All Users.
+                    </p>
+                    <h1
+                        class="text-xl sm:text-5xl md:text-6xl lg:text-7xl font-bold my-4 leading-tight"
+                        id="easy-to-use">
+                        Easy-to-use <br class="hidden sm:block"> Point of
+                        Sale
+                    </h1>
+                    <p class="mb-6 text-base sm:text-lg">
+                        You may start selling in a matter of minutes and
+                        it’s easy to use. Appropriate for all devices.
+                    </p>
+                    <button
+                        class="bg-blue-700 text-white px-6 py-3 rounded-lg hover:bg-blue-800 transition">
+                        Get started
+                    </button>
+                </div>
+
+                <!-- Image content -->
+                <div class="w-full max-w-lg">
+                    <img src="../images/hero_img.png" alt="Hero image"
+                        class="w-full h-auto">
+                </div>
+
+            </div>
+        </section>
+
+        <!-- About Us -->
+        <!-- About Us section -->
+        <section id="aboutUs" class="pt-12 ">
+            <div
+                class="container mx-auto flex flex-col lg:flex-row items-center gap-10 lg:gap-24 px-4">
+
+                <!-- image -->
+                <div class="w-full  lg:w-4/12 container" id="about-us-img">
+                    <img src="./images/about_img_1.png" alt="About PosPay"
+                        class="w-full h-auto" />
+                </div>
+
+                <!-- text -->
+                <div class="w-full p-8 lg:w-7/12 " id="about-us-text">
+                    <h4
+                        class="text-lg sm:text-xl font-semibold text-[var(--color-secondary)] mb-2">
+                        About Us
+                    </h4>
+
+                    <h2
+                        class="text-3xl sm:text-4xl md:text-5xl font-bold text-[var(--color-primary)] leading-tight" id="heading-text">
+                        Best solution for point&nbsp;of&nbsp;sale
+                    </h2>
+
+                    <p class="mt-6 text-[var(--color-text)]">
+                        Lorem Ipsum is simply dummy text of the printing and
+                        typesetting industry.
+                        It was popularised in the 1960s with the release of
+                        Letraset sheets containing
+                        Lorem Ipsum passages.
+                    </p>
+
+                    <!-- bullet blocks -->
+                    <div class="mt-8 space-y-8">
+                        <!-- item 1 -->
+                        <div>
+                            <div class="flex items-start gap-2">
+                                <img src="./images/check.png" alt
+                                    class="h-6 w-6 mt-1" />
+                                <h3
+                                    class="text-xl sm:text-2xl font-bold text-[var(--color-secondary)]">
+                                    Other point of sale information
+                                </h3>
+                            </div>
+                            <p class="mt-2 text-[var(--color-text)]">
+                                Lorem ipsum dolor sit amet consectetur
+                                adipisicing elit. Laborum ducimus beatae
+                                repellendus suscipit consequatur. Tenetur
+                                eos, ab veritatis nemo.
+                            </p>
+                        </div>
+
+                        <!-- item 2 -->
+                        <div>
+                            <div class="flex items-start gap-2">
+                                <img src="./images/check.png" alt
+                                    class="h-6 w-6 mt-1" />
+                                <h3
+                                    class="text-xl sm:text-2xl font-bold text-[var(--color-secondary)]">
+                                    Other point of sale information
+                                </h3>
+                            </div>
+                            <p class="mt-2 text-[var(--color-text)]">
+                                Lorem ipsum dolor sit amet consectetur
+                                adipisicing elit. Laborum ducimus beatae
+                                repellendus suscipit consequatur. Tenetur
+                                eos, ab veritatis nemo.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- About Us (More Info) -->
+        <aboutusmoreinfo class="mx-4 sm:mx-6 lg:mx-12 xl:mx-24 2xl:mx-56">
+            <section
+                class="bg-blue-500 text-white py-10 px-4 rounded-xl max-w-[90%] mx-auto md:mx-6  my-20 container"
+                style="background-color: var(--color-secondary)"
+                id="progress-bar">
+                <div
+                    class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-6 text-center items-center">
+                    <!-- 1 ▸ Retail Stores -->
+                    <div
+                        class="flex flex-col items-center gap-2 first:sm:border-none sm:border-l border-white/40">
+                        <div
+                            class="bg-white text-blue-500 rounded-full p-3 sm:p-4">
+                            <svg xmlns="http://www.w3.org/2000/svg"
+                                class="h-6 w-6 sm:h-8 sm:w-8" fill="none"
+                                viewBox="0 0 24 24" stroke="currentColor"
+                                stroke-width="2">
+                                <path stroke-linecap="round"
+                                    stroke-linejoin="round"
+                                    d="M3 10h18M4 6h16M4 14h16M5 18h14" />
+                            </svg>
+                        </div>
+                        <h2 class="text-2xl sm:text-3xl font-bold counter"
+                            data-target="320" data-suffix="+">0</h2>
+                        <p class="text-white/80">Retail stores</p>
+                    </div>
+
+                    <!-- 2 ▸ Customers -->
+                    <div
+                        class="flex flex-col items-center gap-2 sm:border-l border-white/40">
+                        <div
+                            class="bg-white text-blue-500 rounded-full p-3 sm:p-4">
+                            <svg xmlns="http://www.w3.org/2000/svg"
+                                class="h-6 w-6 sm:h-8 sm:w-8" fill="none"
+                                viewBox="0 0 24 24" stroke="currentColor"
+                                stroke-width="2">
+                                <path stroke-linecap="round"
+                                    stroke-linejoin="round"
+                                    d="M5.121 17.804A9.956 9.956 0 0112 15c2.137 0 4.105.668 5.879 1.804M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                            </svg>
+                        </div>
+                        <h2 class="text-2xl sm:text-3xl font-bold counter"
+                            data-target="92" data-suffix="k">0</h2>
+                        <p class="text-white/80">Customers</p>
+                    </div>
+
+                    <!-- 3 ▸ Positive Ratings -->
+                    <div
+                        class="flex flex-col items-center gap-2 sm:border-l border-white/40">
+                        <div
+                            class="bg-white text-blue-500 rounded-full p-3 sm:p-4">
+                            <svg xmlns="http://www.w3.org/2000/svg"
+                                class="h-6 w-6 sm:h-8 sm:w-8" fill="none"
+                                viewBox="0 0 24 24" stroke="currentColor"
+                                stroke-width="2">
+                                <path stroke-linecap="round"
+                                    stroke-linejoin="round"
+                                    d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.518 4.674a1 1 0 00.95.69h4.92c.969 0 1.371 1.24.588 1.81l-3.976 2.89a1 1 0 00-.364 1.118l1.518 4.674c.3.921-.755 1.688-1.538 1.118l-3.976-2.89a1 1 0 00-1.176 0l-3.976 2.89c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.364-1.118L2.93 10.1c-.783-.57-.38-1.81.588-1.81h4.92a1 1 0 00.95-.69l1.518-4.674z" />
+                            </svg>
+                        </div>
+                        <h2 class="text-2xl sm:text-3xl font-bold counter"
+                            data-target="5" data-suffix="k">0</h2>
+                        <p class="text-white/80">Positive Rating</p>
+                    </div>
+
+                    <!-- 4 ▸ Awards -->
+                    <div
+                        class="flex flex-col items-center gap-2 sm:border-l border-white/40">
+                        <div
+                            class="bg-white text-blue-500 rounded-full p-3 sm:p-4">
+                            <svg xmlns="http://www.w3.org/2000/svg"
+                                class="h-6 w-6 sm:h-8 sm:w-8" fill="none"
+                                viewBox="0 0 24 24" stroke="currentColor"
+                                stroke-width="2">
+                                <path stroke-linecap="round"
+                                    stroke-linejoin="round"
+                                    d="M15 10l4.553 2.276a1 1 0 01.447 1.341l-2.19 4.382a1 1 0 01-1.25.472L12 16.618l-4.56 1.853a1 1 0 01-1.25-.472l-2.19-4.382a1 1 0 01.447-1.341L9 10V5a3 3 0 116 0v5z" />
+                            </svg>
+                        </div>
+                        <h2 class="text-2xl sm:text-3xl font-bold counter"
+                            data-target="20" data-suffix="+">0</h2>
+                        <p class="text-white/80">Award Winning</p>
+                    </div>
+                </div>
+            </section>
+        </aboutusmoreinfo>
+
+        <!-- Our Products -->
+        <div class="container mx-auto" id="products">
+            <div>
+                <h4 class="text-center text-5xl font-bold pb-4"
+                    style="color: var(--color-primary);" id="heading-text">Our Products</h4>
+            </div>
+
+            <!-- Products card -->
+            <div class="flex flex-wrap justify-around gap-7 mx-auto"
+                id="product-section">
+                <!-- Card1 -->
+                <!-- ── Animated card ─────────────────────────────────────────── -->
+                <div
+                    class="relative my-6 flex w-96 flex-col overflow-hidden rounded-lg border border-slate-200
+         bg-white shadow-xl
+         transition-all duration-500 ease-[cubic-bezier(.22,1,.36,1)]
+         hover:-translate-y-2 hover:shadow-[0_25px_50px_-12px_rgba(0,0,0,0.25)]
+         group animate-card opacity-0" id="product-card">
+                    <!-- Top image / colour strip -->
+                    <div
+                        class="relative m-2.5 h-60 overflow-hidden rounded-md"
+                        style="background-color: var(--color-secondary)">
+                        <img
+                            src="../images/products/pos_machine-removebg-preview.png"
+                            alt="POS Machine"
+                            class="h-full w-full object-contain
+             transition-transform duration-500
+             group-hover:scale-105" />
+                    </div>
+
+                    <!-- Body -->
+                    <div class="p-4">
+                        <h6
+                            class="mb-2 text-xl font-semibold text-slate-800">
+                            POS Machines
+                        </h6>
+                        <p class="font-light leading-normal text-slate-600">
+                            Works for retail, restaurants, fitness centres,
+                            medium businesses etc.
+                        </p>
+                    </div>
+
+                    <!-- CTA -->
+                    <div class="mt-2 px-4 pb-4 pt-0">
+                        <button
+                            type="button"
+                            class="rounded-md border border-transparent bg-slate-800 px-4 py-2 text-sm text-white
+             shadow-md transition-all
+             hover:bg-slate-700 hover:shadow-lg
+             focus:bg-slate-700 focus:shadow-none
+             active:bg-slate-700 active:shadow-none
+             disabled:pointer-events-none disabled:opacity-50">
+                            Read more
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Card2 -->
+                <div
+                    class="relative my-6 flex w-96 flex-col overflow-hidden rounded-lg border border-slate-200
+         bg-white shadow-xl
+         transition-all duration-500 ease-[cubic-bezier(.22,1,.36,1)]
+         hover:-translate-y-2 hover:shadow-[0_25px_50px_-12px_rgba(0,0,0,0.25)]
+         group animate-card opacity-0" id="product-card">
+                    <!-- Top image / colour strip -->
+                    <div
+                        class="relative m-2.5 h-60 overflow-hidden rounded-md"
+                        style="background-color: var(--color-secondary)">
+                        <img
+                            src="../images/products/qr-img-2-removebg-preview.png"
+                            alt="POS Machine"
+                            class="h-full w-full object-contain
+             transition-transform duration-500
+             group-hover:scale-105" />
+                    </div>
+
+                    <!-- Body -->
+                    <div class="p-4">
+                        <h6
+                            class="mb-2 text-xl font-semibold text-slate-800">
+                            UPI-QR Code
+                        </h6>
+                        <p class="font-light leading-normal text-slate-600">
+                            Accept payments with a QR code Compatible with:
+                            GPAY, PAYTM etc.
+                        </p>
+                    </div>
+
+                    <!-- CTA -->
+                    <div class="mt-2 px-4 pb-4 pt-0">
+                        <button
+                            type="button"
+                            class="rounded-md border border-transparent bg-slate-800 px-4 py-2 text-sm text-white
+             shadow-md transition-all
+             hover:bg-slate-700 hover:shadow-lg
+             focus:bg-slate-700 focus:shadow-none
+             active:bg-slate-700 active:shadow-none
+             disabled:pointer-events-none disabled:opacity-50">
+                            Read more
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Card3 -->
+                <div
+                    class="relative my-6 flex w-96 flex-col overflow-hidden rounded-lg border border-slate-200
+         bg-white shadow-xl
+         transition-all duration-500 ease-[cubic-bezier(.22,1,.36,1)]
+         hover:-translate-y-2 hover:shadow-[0_25px_50px_-12px_rgba(0,0,0,0.25)]
+         group animate-card opacity-0" id="product-card">
+                    <!-- Top image / colour strip -->
+                    <div
+                        class="relative m-2.5 h-60 overflow-hidden rounded-md"
+                        style="background-color: var(--color-secondary)">
+                        <img
+                            src="../images/products/money-back-card-removebg.png"
+                            alt="POS Machine"
+                            class="h-full w-full object-contain
+             transition-transform duration-500
+             group-hover:scale-105" />
+                    </div>
+
+                    <!-- Body -->
+                    <div class="p-4">
+                        <h6
+                            class="mb-2 text-xl font-semibold text-slate-800">
+                            Money Back Card
+                        </h6>
+                        <p class="font-light leading-normal text-slate-600">
+                            Use your Mypospay MoneyBack Card for all your
+                            purchases and earn 1% Cash Back.
+                        </p>
+                    </div>
+
+                    <!-- CTA -->
+                    <div class="mt-2 px-4 pb-4 pt-0">
+                        <button
+                            type="button"
+                            class="rounded-md border border-transparent bg-slate-800 px-4 py-2 text-sm text-white
+             shadow-md transition-all
+             hover:bg-slate-700 hover:shadow-lg
+             focus:bg-slate-700 focus:shadow-none
+             active:bg-slate-700 active:shadow-none
+             disabled:pointer-events-none disabled:opacity-50">
+                            Read more
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Card4 -->
+                <div
+                    class="relative my-6 flex w-96 flex-col overflow-hidden rounded-lg border border-slate-200
+         bg-white shadow-xl
+         transition-all duration-500 ease-[cubic-bezier(.22,1,.36,1)]
+         hover:-translate-y-2 hover:shadow-[0_25px_50px_-12px_rgba(0,0,0,0.25)]
+         group animate-card opacity-0" id="product-card" >
+                    <!-- Top image / colour strip -->
+                    <div
+                        class="relative m-2.5 h-60 overflow-hidden rounded-md"
+                        style="background-color: var(--color-secondary)">
+                        <img
+                            src="../images/products/marchant.png"
+                            alt="POS Machine"
+                            class="h-full w-full object-contain
+             transition-transform duration-500
+             group-hover:scale-105" />
+                    </div>
+
+                    <!-- Body -->
+                    <div class="p-4">
+                        <h6
+                            class="mb-2 text-xl font-semibold text-slate-800">
+                            Merchant App
+                        </h6>
+                        <p class="font-light leading-normal text-slate-600">
+                            Explore a wide range of features on the Mypospay
+                            Merchant App
+                        </p>
+                    </div>
+
+                    <!-- CTA -->
+                    <div class="mt-2 px-4 pb-4 pt-0">
+                        <button
+                            type="button"
+                            class="rounded-md border border-transparent bg-slate-800 px-4 py-2 text-sm text-white
+             shadow-md transition-all
+             hover:bg-slate-700 hover:shadow-lg
+             focus:bg-slate-700 focus:shadow-none
+             active:bg-slate-700 active:shadow-none
+             disabled:pointer-events-none disabled:opacity-50">
+                            Read more
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Our Associates -->
+        <div id="associates" class="mt-30 container mx-auto">
+            <div>
+                <h4 class="text-center text-5xl font-bold pb-4"
+                    style="color: var(--color-primary);" id="heading-text">Our Associates</h4>
+            </div>
+
+            <!-- Associates logo carousel -->
+            <div class="slider">
+                <div class="slide-track">
+                    <img class="h-32 mx-6"
+                        src="../images/associates/digtal-india-removebg.png" alt
+                        srcset>
+                    <img class="h-32 mx-6"
+                        src="../images/associates/dpiit-removebg-preview.png"
+                        alt srcset>
+                    <img class="h-32 mx-6" src="../images/associates/ezetap.jpg"
+                        alt srcset>
+                    <img class="h-32 mx-6" src="../images/associates/gem.png"
+                        alt srcset>
+                    <img class="h-32 mx-6"
+                        src="../images/associates/hdfc_bank.jpg" alt srcset>
+                    <img class="h-32 mx-6" src="../images/associates/icc.png"
+                        alt srcset>
+                    <img class="h-32 mx-6"
+                        src="../images/associates/icici_bank.jpg" alt srcset>
+                    <img class="h-32 mx-6" src="../images/associates/iso.png"
+                        alt srcset>
+                    <!-- same 9 slides doubled (duplicate) -->
+                    <img class="h-32 mx-6"
+                        src="../images/associates/digtal-india-removebg.png" alt
+                        srcset>
+                    <img class="h-32 mx-6"
+                        src="../images/associates/dpiit-removebg-preview.png"
+                        alt srcset>
+                    <img class="h-32 mx-6" src="../images/associates/ezetap.jpg"
+                        alt srcset>
+                    <img class="h-32 mx-6" src="../images/associates/gem.png"
+                        alt srcset>
+                    <img class="h-32 mx-6"
+                        src="../images/associates/hdfc_bank.jpg" alt srcset>
+                    <img class="h-32 mx-6" src="../images/associates/icc.png"
+                        alt srcset>
+                    <img class="h-32 mx-6"
+                        src="../images/associates/icici_bank.jpg" alt srcset>
+                    <img class="h-32 mx-6" src="../images/associates/iso.png"
+                        alt srcset>
+                    <img class="h-32 mx-6"
+                        src="../images/associates/digtal-india-removebg.png" alt
+                        srcset>
+                    <img class="h-32 mx-6"
+                        src="../images/associates/dpiit-removebg-preview.png"
+                        alt srcset>
+                    <img class="h-32 mx-6" src="../images/associates/ezetap.jpg"
+                        alt srcset>
+                    <img class="h-32 mx-6" src="../images/associates/gem.png"
+                        alt srcset>
+                    <img class="h-32 mx-6"
+                        src="../images/associates/hdfc_bank.jpg" alt srcset>
+                    <img class="h-32 mx-6" src="../images/associates/icc.png"
+                        alt srcset>
+                    <img class="h-32 mx-6"
+                        src="../images/associates/icici_bank.jpg" alt srcset>
+                    <img class="h-32 mx-6" src="../images/associates/iso.png"
+                        alt srcset>
+                </div>
+            </div>
+        </div>
+
+        <!-- Testimonials -->
+        <section class="pt-28 container mx-auto" id="testimonial">
+            <div class="container mx-auto px-10 py-16">
+                <div class="text-center mb-12">
+                    <h4 class="text-center text-5xl font-bold pb-4"
+                        style="color: var(--color-primary);" id="heading-text">Our Client
+                        Say</h4>
+                    <p class="text-gray-600 max-w-7xl mx-auto pb-8">Trusted
+                        by
+                        thousands of businesses worldwide. Here's what some
+                        of our satisfied customers have to say about our
+                        services.</p>
+                </div>
+
+                <div class="relative max-w-8xl mx-auto">
+                    <!-- Slider container -->
+                    <div class="relative overflow-hidden">
+                        <!-- Slides wrapper -->
+                        <div id="testimonial-slider"
+                            class="flex transition-transform duration-500 ease-in-out">
+                            <!-- Slide 1 -->
+                            <div class="min-w-full md:min-w-[33.33%] px-4">
+                                <div
+                                    class="bg-gradient-to-br from-white to-gray-50 p-8 rounded-xl shadow-lg h-full border border-gray-500 relative overflow-hidden ">
+                                    <!-- Decorative element -->
+                                    <div
+                                        class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-indigo-500 to-purple-600"></div>
+
+                                    <!-- Quote icon -->
+                                    <div
+                                        class="text-indigo-100 absolute top-6 right-6 text-5xl opacity-20">
+                                        <i class="fas fa-quote-right"></i>
+                                    </div>
+
+                                    <div class="flex items-center mb-4">
+                                        <div class="text-yellow-400 mr-2">
+                                            <i class="fas fa-star"></i>
+                                            <i class="fas fa-star"></i>
+                                            <i class="fas fa-star"></i>
+                                            <i class="fas fa-star"></i>
+                                            <i class="fas fa-star"></i>
+                                        </div>
+                                        <span
+                                            class="text-gray-500 text-sm font-medium">5.0</span>
+                                    </div>
+
+                                    <p
+                                        class="text-gray-700 mb-6 text-lg leading-relaxed italic relative z-10">
+                                        "The service was exceptional from start to finish. Our productivity increased by 40% after implementing their solution. Highly recommended for any business looking to streamline operations."
+                                    </p>
+
+                                    <div class="flex items-center mt-8">
+                                        <div class="relative mr-4">
+                                            <img
+                                                src="https://randomuser.me/api/portraits/women/43.jpg"
+                                                alt="Sarah Johnson"
+                                                class="w-14 h-14 rounded-full object-cover border-2 border-white shadow-sm">
+                                            <div
+                                                class="absolute -bottom-1 -right-1 bg-indigo-500 rounded-full p-1">
+                                                <svg
+                                                    xmlns="http://www.w3.org/2000/svg"
+                                                    class="h-4 w-4 text-white"
+                                                    viewBox="0 0 20 20"
+                                                    fill="currentColor">
+                                                    <path
+                                                        fill-rule="evenodd"
+                                                        d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                                                        clip-rule="evenodd" />
+                                                </svg>
+                                            </div>
+                                        </div>
+                                        <div>
+                                            <h4
+                                                class="font-bold text-gray-900">Sarah
+                                                Johnson</h4>
+                                            <p
+                                                class="text-gray-600 text-sm">CEO,
+                                                TechSolutions Inc.</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Slide 2 -->
+                            <div class="min-w-full md:min-w-[33.33%] px-4 ">
+                                <div
+                                    class="bg-gradient-to-br from-white to-gray-50 p-8 rounded-xl shadow-lg h-full border border-gray-500 relative overflow-hidden ">
+                                    <!-- Decorative element -->
+                                    <div
+                                        class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-indigo-500 to-purple-600"></div>
+
+                                    <!-- Quote icon -->
+                                    <div
+                                        class="text-indigo-100 absolute top-6 right-6 text-5xl opacity-20">
+                                        <i class="fas fa-quote-right"></i>
+                                    </div>
+
+                                    <div class="flex items-center mb-4">
+                                        <div class="text-yellow-400 mr-2">
+                                            <i class="fas fa-star"></i>
+                                            <i class="fas fa-star"></i>
+                                            <i class="fas fa-star"></i>
+                                            <i class="fas fa-star"></i>
+                                            <i class="fas fa-star"></i>
+                                        </div>
+                                        <span
+                                            class="text-gray-500 text-sm font-medium">5.0</span>
+                                    </div>
+
+                                    <p
+                                        class="text-gray-700 mb-6 text-lg leading-relaxed italic relative z-10">
+                                        "The service was exceptional from start to finish. Our productivity increased by 40% after implementing their solution. Highly recommended for any business looking to streamline operations."
+                                    </p>
+
+                                    <div class="flex items-center mt-8">
+                                        <div class="relative mr-4">
+                                            <img
+                                                src="https://randomuser.me/api/portraits/women/43.jpg"
+                                                alt="Sarah Johnson"
+                                                class="w-14 h-14 rounded-full object-cover border-2 border-white shadow-sm">
+                                            <div
+                                                class="absolute -bottom-1 -right-1 bg-indigo-500 rounded-full p-1">
+                                                <svg
+                                                    xmlns="http://www.w3.org/2000/svg"
+                                                    class="h-4 w-4 text-white"
+                                                    viewBox="0 0 20 20"
+                                                    fill="currentColor">
+                                                    <path
+                                                        fill-rule="evenodd"
+                                                        d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                                                        clip-rule="evenodd" />
+                                                </svg>
+                                            </div>
+                                        </div>
+                                        <div>
+                                            <h4
+                                                class="font-bold text-gray-900">Sarah
+                                                Johnson</h4>
+                                            <p
+                                                class="text-gray-600 text-sm">CEO,
+                                                TechSolutions Inc.</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Slide 3 -->
+                            <div class="min-w-full md:min-w-[33.33%] px-4">
+                                <div
+                                    class="bg-gradient-to-br from-white to-gray-50 p-8 rounded-xl shadow-lg h-full border border-gray-500 relative overflow-hidden">
+                                    <!-- Decorative element -->
+                                    <div
+                                        class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-indigo-500 to-purple-600"></div>
+
+                                    <!-- Quote icon -->
+                                    <div
+                                        class="text-indigo-100 absolute top-6 right-6 text-5xl opacity-20">
+                                        <i class="fas fa-quote-right"></i>
+                                    </div>
+
+                                    <div class="flex items-center mb-4">
+                                        <div class="text-yellow-400 mr-2">
+                                            <i class="fas fa-star"></i>
+                                            <i class="fas fa-star"></i>
+                                            <i class="fas fa-star"></i>
+                                            <i class="fas fa-star"></i>
+                                            <i class="fas fa-star"></i>
+                                        </div>
+                                        <span
+                                            class="text-gray-500 text-sm font-medium">5.0</span>
+                                    </div>
+
+                                    <p
+                                        class="text-gray-700 mb-6 text-lg leading-relaxed italic relative z-10">
+                                        "The service was exceptional from start to finish. Our productivity increased by 40% after implementing their solution. Highly recommended for any business looking to streamline operations."
+                                    </p>
+
+                                    <div class="flex items-center mt-8">
+                                        <div class="relative mr-4">
+                                            <img
+                                                src="https://randomuser.me/api/portraits/women/43.jpg"
+                                                alt="Sarah Johnson"
+                                                class="w-14 h-14 rounded-full object-cover border-2 border-white shadow-sm">
+                                            <div
+                                                class="absolute -bottom-1 -right-1 bg-indigo-500 rounded-full p-1">
+                                                <svg
+                                                    xmlns="http://www.w3.org/2000/svg"
+                                                    class="h-4 w-4 text-white"
+                                                    viewBox="0 0 20 20"
+                                                    fill="currentColor">
+                                                    <path
+                                                        fill-rule="evenodd"
+                                                        d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                                                        clip-rule="evenodd" />
+                                                </svg>
+                                            </div>
+                                        </div>
+                                        <div>
+                                            <h4
+                                                class="font-bold text-gray-900">Sarah
+                                                Johnson</h4>
+                                            <p
+                                                class="text-gray-600 text-sm">CEO,
+                                                TechSolutions Inc.</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Slide 4 -->
+                            <div class="min-w-full md:min-w-[33.33%] px-4">
+                                <div
+                                    class="bg-gradient-to-br from-white to-gray-50 p-8 rounded-xl shadow-lg h-full border border-gray-500 relative overflow-hidden ">
+                                    <!-- Decorative element -->
+                                    <div
+                                        class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-indigo-500 to-purple-600"></div>
+
+                                    <!-- Quote icon -->
+                                    <div
+                                        class="text-indigo-100 absolute top-6 right-6 text-5xl opacity-20">
+                                        <i class="fas fa-quote-right"></i>
+                                    </div>
+
+                                    <div class="flex items-center mb-4">
+                                        <div class="text-yellow-400 mr-2">
+                                            <i class="fas fa-star"></i>
+                                            <i class="fas fa-star"></i>
+                                            <i class="fas fa-star"></i>
+                                            <i class="fas fa-star"></i>
+                                            <i class="fas fa-star"></i>
+                                        </div>
+                                        <span
+                                            class="text-gray-500 text-sm font-medium">5.0</span>
+                                    </div>
+
+                                    <p
+                                        class="text-gray-700 mb-6 text-lg leading-relaxed italic relative z-10">
+                                        "The service was exceptional from start to finish. Our productivity increased by 40% after implementing their solution. Highly recommended for any business looking to streamline operations."
+                                    </p>
+
+                                    <div class="flex items-center mt-8">
+                                        <div class="relative mr-4">
+                                            <img
+                                                src="https://randomuser.me/api/portraits/women/43.jpg"
+                                                alt="Sarah Johnson"
+                                                class="w-14 h-14 rounded-full object-cover border-2 border-white shadow-sm">
+                                            <div
+                                                class="absolute -bottom-1 -right-1 bg-indigo-500 rounded-full p-1">
+                                                <svg
+                                                    xmlns="http://www.w3.org/2000/svg"
+                                                    class="h-4 w-4 text-white"
+                                                    viewBox="0 0 20 20"
+                                                    fill="currentColor">
+                                                    <path
+                                                        fill-rule="evenodd"
+                                                        d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                                                        clip-rule="evenodd" />
+                                                </svg>
+                                            </div>
+                                        </div>
+                                        <div>
+                                            <h4
+                                                class="font-bold text-gray-900">Sarah
+                                                Johnson</h4>
+                                            <p
+                                                class="text-gray-600 text-sm">CEO,
+                                                TechSolutions Inc.</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Slide 5 -->
+                            <div class="min-w-full md:min-w-[33.33%] px-4">
+                                <div
+                                    class="bg-gradient-to-br from-white to-gray-50 p-8 rounded-xl shadow-lg h-full border border-gray-500 relative overflow-hidden ">
+                                    <!-- Decorative element -->
+                                    <div
+                                        class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-indigo-500 to-purple-600"></div>
+
+                                    <!-- Quote icon -->
+                                    <div
+                                        class="text-indigo-100 absolute top-6 right-6 text-5xl opacity-20">
+                                        <i class="fas fa-quote-right"></i>
+                                    </div>
+
+                                    <div class="flex items-center mb-4">
+                                        <div class="text-yellow-400 mr-2">
+                                            <i class="fas fa-star"></i>
+                                            <i class="fas fa-star"></i>
+                                            <i class="fas fa-star"></i>
+                                            <i class="fas fa-star"></i>
+                                            <i class="fas fa-star"></i>
+                                        </div>
+                                        <span
+                                            class="text-gray-500 text-sm font-medium">5.0</span>
+                                    </div>
+
+                                    <p
+                                        class="text-gray-700 mb-6 text-lg leading-relaxed italic relative z-10">
+                                        "The service was exceptional from start to finish. Our productivity increased by 40% after implementing their solution. Highly recommended for any business looking to streamline operations."
+                                    </p>
+
+                                    <div class="flex items-center mt-8">
+                                        <div class="relative mr-4">
+                                            <img
+                                                src="https://randomuser.me/api/portraits/women/43.jpg"
+                                                alt="Sarah Johnson"
+                                                class="w-14 h-14 rounded-full object-cover border-2 border-white shadow-sm">
+                                            <div
+                                                class="absolute -bottom-1 -right-1 bg-indigo-500 rounded-full p-1">
+                                                <svg
+                                                    xmlns="http://www.w3.org/2000/svg"
+                                                    class="h-4 w-4 text-white"
+                                                    viewBox="0 0 20 20"
+                                                    fill="currentColor">
+                                                    <path
+                                                        fill-rule="evenodd"
+                                                        d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                                                        clip-rule="evenodd" />
+                                                </svg>
+                                            </div>
+                                        </div>
+                                        <div>
+                                            <h4
+                                                class="font-bold text-gray-900">Sarah
+                                                Johnson</h4>
+                                            <p
+                                                class="text-gray-600 text-sm">CEO,
+                                                TechSolutions Inc.</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Navigation arrows -->
+                    <button id="prev-btn"
+                        class="absolute left-0 top-1/2 -translate-y-1/2 -ml-6 bg-white w-12 h-12 rounded-full shadow-md text-white   transition-colors duration-200 focus:outline-none flex items-center justify-center cursor-pointer"
+                        style="background-color: var(--color-primary);">
+                        <i class="fas fa-chevron-left text-lg"></i>
+                    </button>
+                    <button id="next-btn"
+                        class="absolute right-0 top-1/2 -translate-y-1/2 -mr-6 bg-white w-12 h-12 rounded-full shadow-md text-white  transition-colors duration-200 focus:outline-none flex items-center justify-center cursor-pointer"
+                        style="background-color: var(--color-primary);">
+                        <i class="fas fa-chevron-right text-lg"></i>
+                    </button>
+
+                    <!-- Dots indicator -->
+                    <div class="flex justify-center mt-8 space-x-2">
+                        <button
+                            class="dot-indicator w-3 h-3 rounded-full bg-gray-300 focus:outline-none cursor-pointer"
+                            data-index="0"></button>
+                        <button
+                            class="dot-indicator w-3 h-3 rounded-full bg-gray-300 focus:outline-none cursor-pointer"
+                            data-index="1"></button>
+                        <button
+                            class="dot-indicator w-3 h-3 rounded-full bg-gray-300 focus:outline-none cursor-pointer"
+                            data-index="2"></button>
+                    </div>
+                </div>
+            </div>
+
+        </section>
+
+        <!-- career -->
+        <section
+            class="py-20 px-4 lg:px-8 bg-gradient-to-b from-white to-gray-50"
+            id="career">
+            <div class="max-w-7xl mx-auto">
+                <!-- Header -->
+                <div class="text-center mb-16" data-aos="fade-up">
+                    <h2 class="text-5xl font-bold text-gray-900 mb-4"
+                        style="color: var(--color-primary);" id="heading-text">Join Our
+                        Team</h2>
+                    <p class="text-xl text-gray-600 max-w-3xl mx-auto" id="sub-text">We're
+                        looking for passionate individuals to join our
+                        growing team. Explore opportunities to grow your
+                        career in a dynamic environment.</p>
+                </div>
+
+                <!-- Career Benefits -->
+                <div class="grid md:grid-cols-3 gap-8 mb-20">
+                    <!-- Benefit 1 -->
+                    <div
+                        class="bg-white p-8 rounded-xl shadow-lg border border-gray-100 transform transition-all hover:-translate-y-2 duration-300"
+                        data-aos="fade-up" data-aos-delay="100">
+                        <div
+                            class="w-14 h-14 bg-indigo-50 rounded-lg flex items-center justify-center mb-6"
+                            style="color: var(--color-primary);">
+                            <i class="fas fa-chart-line text-2xl"></i>
+                        </div>
+                        <h3
+                            class="text-xl font-bold text-gray-900 mb-3">Career
+                            Growth</h3>
+                        <p class="text-gray-600">Structured career paths
+                            with mentorship programs and continuous learning
+                            opportunities to help you advance.</p>
+                    </div>
+
+                    <!-- Benefit 2 -->
+                    <div
+                        class="bg-white p-8 rounded-xl shadow-lg border border-gray-100 transform transition-all hover:-translate-y-2 duration-300"
+                        data-aos="fade-up" data-aos-delay="200">
+                        <div
+                            class="w-14 h-14 bg-indigo-50 rounded-lg flex items-center justify-center mb-6"
+                            style="color: var(--color-primary);">
+                            <i class="fas fa-users text-2xl"></i>
+                        </div>
+                        <h3
+                            class="text-xl font-bold text-gray-900 mb-3">Collaborative
+                            Culture</h3>
+                        <p class="text-gray-600">Work with talented,
+                            supportive colleagues in an inclusive
+                            environment that values diverse
+                            perspectives.</p>
+                    </div>
+
+                    <!-- Benefit 3 -->
+                    <div
+                        class="bg-white p-8 rounded-xl shadow-lg border border-gray-100 transform transition-all hover:-translate-y-2 duration-300"
+                        data-aos="fade-up" data-aos-delay="300">
+                        <div
+                            class="w-14 h-14 bg-indigo-50 rounded-lg flex items-center justify-center mb-6"
+                            style="color: var(--color-primary);">
+                            <i class="fas fa-heartbeat text-2xl"></i>
+                        </div>
+                        <h3
+                            class="text-xl font-bold text-gray-900 mb-3">Work-Life
+                            Balance</h3>
+                        <p class="text-gray-600">Flexible work arrangements
+                            and generous time-off policies to support your
+                            wellbeing.</p>
+                    </div>
+                </div>
+
+                <!-- Open Positions -->
+
+            </div>
+            <div class="text-center mt-12" data-aos="fade-up">
+                <p class="text-gray-600 mb-6">Don't see your perfect
+                    role? We're always looking for great talent.</p>
+                <a href="#"
+                    class="inline-flex items-center px-6 py-3 bg-indigo-600 text-white font-medium rounded-lg hover:bg-indigo-700 transition-colors duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-1"
+                    style="background-color: var(--color-text);">
+                    Send Us Your Resume
+                    <i class="fas fa-paper-plane ml-2"></i>
+                </a>
+            </div>
+        </section>
+
+        <!-- Contact Us -->
+        <container class="bg-gray-50" id="contactUs">
+            <section class="py-16 px-4 sm:px-6 lg:px-8">
+                <div class="max-w-7xl mx-auto">
+                    <!-- Header -->
+                    <div class="text-center mb-12">
+                        <h2
+                            class="text-5xl font-bold text-gray-800 mb-4" style="color: var(--color-primary);" id="heading-text">Get
+                            in Touch</h2>
+                        <p
+                            class="text-lg text-gray-600 max-w-7xl mx-auto" id="sub-text">Have
+                            questions or want to discuss a project? Fill out
+                            the form below and we'll get back to you within
+                            24 hours.</p>
+                    </div>
+
+                    <!-- Contact Form -->
+                    <div
+                        class="bg-white rounded-xl shadow-lg overflow-hidden">
+                        <div class="grid md:grid-cols-2">
+                            <!-- Left Side - Contact Info -->
+                            <div
+                                class="bg-indigo-600 p-8 md:p-10 text-white"
+                                id="form-bg">
+                                <h3 class="text-2xl font-bold mb-6">Contact
+                                    Information</h3>
+
+                                <div class="space-y-6">
+                                    <div class="flex items-start">
+                                        <div
+                                            class="flex-shrink-0 bg-white bg-opacity-10 rounded-lg p-2">
+                                            <i
+                                                class="fas fa-envelope text-lg"
+                                                style="color: var(--color-secondary);"></i>
+                                        </div>
+                                        <div class="ml-4">
+                                            <h4 class="font-medium">Email
+                                                Us</h4>
+                                            <p
+                                                class="text-indigo-100">contact@example.com</p>
+                                        </div>
+                                    </div>
+
+                                    <div class="flex items-start">
+                                        <div
+                                            class="flex-shrink-0 bg-white bg-opacity-10 rounded-lg p-2">
+                                            <i
+                                                class="fas fa-phone-alt text-lg"
+                                                style="color: var(--color-secondary);"></i>
+                                        </div>
+                                        <div class="ml-4">
+                                            <h4 class="font-medium">Call
+                                                Us</h4>
+                                            <p class="text-indigo-100">+1
+                                                (555) 123-4567</p>
+                                        </div>
+                                    </div>
+
+                                    <div class="flex items-start">
+                                        <div
+                                            class="flex-shrink-0 bg-white bg-opacity-10 rounded-lg p-2">
+                                            <i
+                                                class="fas fa-map-marker-alt text-lg"
+                                                style="color: var(--color-secondary);"></i>
+                                        </div>
+                                        <div class="ml-4">
+                                            <h4 class="font-medium">Visit
+                                                Us</h4>
+                                            <p class="text-indigo-100">123
+                                                Business Ave, Suite
+                                                400<br>San Francisco, CA
+                                                94107</p>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="mt-10">
+                                    <h4 class="font-medium mb-4">Follow
+                                        Us</h4>
+                                    <div class="flex space-x-4">
+                                        <a href="#"
+                                            class="bg-white bg-opacity-10 hover:bg-opacity-20 rounded-full w-10 h-10 flex items-center justify-center transition-all duration-300">
+                                            <i class="fab fa-twitter"
+                                                style="color: var(--color-secondary);"></i>
+                                        </a>
+                                        <a href="#"
+                                            class="bg-white bg-opacity-10 hover:bg-opacity-20 rounded-full w-10 h-10 flex items-center justify-center transition-all duration-300">
+                                            <i
+                                                class="fab fa-linkedin-in"
+                                                style="color: var(--color-secondary);"></i>
+                                        </a>
+                                        <a href="#"
+                                            class="bg-white bg-opacity-10 hover:bg-opacity-20 rounded-full w-10 h-10 flex items-center justify-center transition-all duration-300">
+                                            <i
+                                                class="fab fa-facebook-f"
+                                                style="color: var(--color-secondary);"></i>
+                                        </a>
+                                        <a href="#"
+                                            class="bg-white bg-opacity-10 hover:bg-opacity-20 rounded-full w-10 h-10 flex items-center justify-center transition-all duration-300">
+                                            <i class="fab fa-instagram"
+                                                style="color: var(--color-secondary);"></i>
+                                        </a>
+                                    </div>
+                                </div>
+
+                                <div>
+                                    <div>
+                                        <img class="h-96 mx-auto"
+                                            src="./images/form_img.png" alt
+                                            srcset>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Right Side - Form -->
+                            <div class="p-8 md:p-10 my-auto">
+                                <form>
+                                    <div class="grid grid-cols-1 gap-6">
+                                        <div
+                                            class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                            <div>
+                                                <label for="first-name"
+                                                    class="block text-sm font-medium text-gray-700 mb-1">First
+                                                    Name</label>
+                                                <input type="text"
+                                                    id="first-name"
+                                                    name="first-name"
+                                                    class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all duration-300"
+                                                    placeholder="John"
+                                                    required>
+                                            </div>
+                                            <div>
+                                                <label for="last-name"
+                                                    class="block text-sm font-medium text-gray-700 mb-1">Last
+                                                    Name</label>
+                                                <input type="text"
+                                                    id="last-name"
+                                                    name="last-name"
+                                                    class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all duration-300"
+                                                    placeholder="Doe"
+                                                    required>
+                                            </div>
+                                        </div>
+
+                                        <div>
+                                            <label for="email"
+                                                class="block text-sm font-medium text-gray-700 mb-1">Email
+                                                Address</label>
+                                            <input type="email" id="email"
+                                                name="email"
+                                                class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all duration-300"
+                                                placeholder="john@example.com"
+                                                required>
+                                        </div>
+
+                                        <div>
+                                            <label for="phone"
+                                                class="block text-sm font-medium text-gray-700 mb-1">Phone
+                                                Number (Optional)</label>
+                                            <input type="tel" id="phone"
+                                                name="phone"
+                                                class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all duration-300"
+                                                placeholder="+1 (555) 000-0000">
+                                        </div>
+
+                                        <div>
+                                            <label for="subject"
+                                                class="block text-sm font-medium text-gray-700 mb-1">Subject</label>
+                                            <select id="subject"
+                                                name="subject"
+                                                class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all duration-300">
+                                                <option value disabled
+                                                    selected>Select a
+                                                    subject</option>
+                                                <option
+                                                    value="general">General
+                                                    Inquiry</option>
+                                                <option
+                                                    value="support">Technical
+                                                    Support</option>
+                                                <option value="sales">Sales
+                                                    Question</option>
+                                                <option
+                                                    value="feedback">Feedback</option>
+                                                <option
+                                                    value="other">Other</option>
+                                            </select>
+                                        </div>
+
+                                        <div>
+                                            <label for="message"
+                                                class="block text-sm font-medium text-gray-700 mb-1">Your
+                                                Message</label>
+                                            <textarea id="message"
+                                                name="message" rows="4"
+                                                class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all duration-300"
+                                                placeholder="How can we help you?"
+                                                required></textarea>
+                                        </div>
+
+                                        <div class="flex items-center">
+                                            <input id="privacy-policy"
+                                                name="privacy-policy"
+                                                type="checkbox"
+                                                class="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded">
+                                            <label for="privacy-policy"
+                                                class="ml-2 block text-sm text-gray-700">
+                                                I agree to the <a href="#"
+                                                    class="text-indigo-600 hover:underline">Privacy
+                                                    Policy</a>
+                                            </label>
+                                        </div>
+
+                                        <div>
+                                            <button type="submit"
+                                                class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-medium py-3 px-6 rounded-lg transition-all duration-300 transform hover:-translate-y-1 shadow-md hover:shadow-lg">
+                                                Send Message
+                                                <i
+                                                    class="fas fa-paper-plane ml-2"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </container>
+
+        <!-- Footer -->
+
+        <footer class="bg-gray-200" style>
+            <div class="mx-auto w-full p-4 py-6 lg:py-8 container" id="footer">
+                <!-- <hr
+                    class="w-[99%] mx-auto  border-gray-300 sm:mx-auto dark:border-gray-700 lg:my-8"> -->
+                <div class="md:flex md:justify-between">
+                    <div class="mb-6 md:mb-0">
+                        <a href="../images/pospay_logo-removebg.png"
+                            class="flex items-center">
+                            <img src="../images/pospay_logo-removebg.png"
+                                class="h-20 me-3" alt="FlowBite Logo" />
+                        </a>
+                    </div>
+                    <div
+                        class="grid grid-cols-2 gap-8 sm:gap-6 sm:grid-cols-3">
+                        <div>
+                            <h2
+                                class="mb-6 text-sm font-semibold text-gray-900 uppercase dark:text-white">Resources</h2>
+                            <ul
+                                class="text-gray-500 dark:text-gray-400 font-medium">
+                                <li class="mb-4">
+                                    <a href="https://flowbite.com/"
+                                        class="hover:underline">Flowbite</a>
+                                </li>
+                                <li>
+                                    <a href="https://tailwindcss.com/"
+                                        class="hover:underline">Tailwind
+                                        CSS</a>
+                                </li>
+                            </ul>
+                        </div>
+                        <div>
+                            <h2
+                                class="mb-6 text-sm font-semibold text-gray-900 uppercase dark:text-white">Follow
+                                us</h2>
+                            <ul
+                                class="text-gray-500 dark:text-gray-400 font-medium">
+                                <li class="mb-4">
+                                    <a
+                                        href="https://github.com/themesberg/flowbite"
+                                        class="hover:underline ">Github</a>
+                                </li>
+                                <li>
+                                    <a href="https://discord.gg/4eeurUVvTy"
+                                        class="hover:underline">Discord</a>
+                                </li>
+                            </ul>
+                        </div>
+                        <div>
+                            <h2
+                                class="mb-6 text-sm font-semibold text-gray-900 uppercase dark:text-white">Legal</h2>
+                            <ul
+                                class="text-gray-500 dark:text-gray-400 font-medium">
+                                <li class="mb-4">
+                                    <a href="#"
+                                        class="hover:underline">Privacy
+                                        Policy</a>
+                                </li>
+                                <li>
+                                    <a href="#"
+                                        class="hover:underline">Terms &amp;
+                                        Conditions</a>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                <hr
+                    class="my-6 border-gray-300 sm:mx-auto dark:border-gray-700 lg:my-8" />
+                <div class="sm:flex sm:items-center sm:justify-between">
+                    <span
+                        class="text-sm text-gray-500 sm:text-center dark:text-gray-400">©
+                        2023 <a href="https://flowbite.com/"
+                            class="hover:underline">Flowbite™</a>. All
+                        Rights Reserved.
+                    </span>
+                    <div class="flex mt-4 sm:justify-center sm:mt-0">
+                        <a href="#"
+                            class="text-gray-500 hover:text-gray-900 dark:hover:text-white">
+                            <svg class="w-4 h-4" aria-hidden="true"
+                                xmlns="http://www.w3.org/2000/svg"
+                                fill="currentColor" viewBox="0 0 8 19">
+                                <path fill-rule="evenodd"
+                                    d="M6.135 3H8V0H6.135a4.147 4.147 0 0 0-4.142 4.142V6H0v3h2v9.938h3V9h2.021l.592-3H5V3.591A.6.6 0 0 1 5.592 3h.543Z"
+                                    clip-rule="evenodd" />
+                            </svg>
+                            <span class="sr-only">Facebook page</span>
+                        </a>
+                        <a href="#"
+                            class="text-gray-500 hover:text-gray-900 dark:hover:text-white ms-5">
+                            <svg class="w-4 h-4" aria-hidden="true"
+                                xmlns="http://www.w3.org/2000/svg"
+                                fill="currentColor" viewBox="0 0 21 16">
+                                <path
+                                    d="M16.942 1.556a16.3 16.3 0 0 0-4.126-1.3 12.04 12.04 0 0 0-.529 1.1 15.175 15.175 0 0 0-4.573 0 11.585 11.585 0 0 0-.535-1.1 16.274 16.274 0 0 0-4.129 1.3A17.392 17.392 0 0 0 .182 13.218a15.785 15.785 0 0 0 4.963 2.521c.41-.564.773-1.16 1.084-1.785a10.63 10.63 0 0 1-1.706-.83c.143-.106.283-.217.418-.33a11.664 11.664 0 0 0 10.118 0c.137.113.277.224.418.33-.544.328-1.116.606-1.71.832a12.52 12.52 0 0 0 1.084 1.785 16.46 16.46 0 0 0 5.064-2.595 17.286 17.286 0 0 0-2.973-11.59ZM6.678 10.813a1.941 1.941 0 0 1-1.8-2.045 1.93 1.93 0 0 1 1.8-2.047 1.919 1.919 0 0 1 1.8 2.047 1.93 1.93 0 0 1-1.8 2.045Zm6.644 0a1.94 1.94 0 0 1-1.8-2.045 1.93 1.93 0 0 1 1.8-2.047 1.918 1.918 0 0 1 1.8 2.047 1.93 1.93 0 0 1-1.8 2.045Z" />
+                            </svg>
+                            <span class="sr-only">Discord community</span>
+                        </a>
+                        <a href="#"
+                            class="text-gray-500 hover:text-gray-900 dark:hover:text-white ms-5">
+                            <svg class="w-4 h-4" aria-hidden="true"
+                                xmlns="http://www.w3.org/2000/svg"
+                                fill="currentColor" viewBox="0 0 20 17">
+                                <path fill-rule="evenodd"
+                                    d="M20 1.892a8.178 8.178 0 0 1-2.355.635 4.074 4.074 0 0 0 1.8-2.235 8.344 8.344 0 0 1-2.605.98A4.13 4.13 0 0 0 13.85 0a4.068 4.068 0 0 0-4.1 4.038 4 4 0 0 0 .105.919A11.705 11.705 0 0 1 1.4.734a4.006 4.006 0 0 0 1.268 5.392 4.165 4.165 0 0 1-1.859-.5v.05A4.057 4.057 0 0 0 4.1 9.635a4.19 4.19 0 0 1-1.856.07 4.108 4.108 0 0 0 3.831 2.807A8.36 8.36 0 0 1 0 14.184 11.732 11.732 0 0 0 6.291 16 11.502 11.502 0 0 0 17.964 4.5c0-.177 0-.35-.012-.523A8.143 8.143 0 0 0 20 1.892Z"
+                                    clip-rule="evenodd" />
+                            </svg>
+                            <span class="sr-only">Twitter page</span>
+                        </a>
+                        <a href="#"
+                            class="text-gray-500 hover:text-gray-900 dark:hover:text-white ms-5">
+                            <svg class="w-4 h-4" aria-hidden="true"
+                                xmlns="http://www.w3.org/2000/svg"
+                                fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd"
+                                    d="M10 .333A9.911 9.911 0 0 0 6.866 19.65c.5.092.678-.215.678-.477 0-.237-.01-1.017-.014-1.845-2.757.6-3.338-1.169-3.338-1.169a2.627 2.627 0 0 0-1.1-1.451c-.9-.615.07-.6.07-.6a2.084 2.084 0 0 1 1.518 1.021 2.11 2.11 0 0 0 2.884.823c.044-.503.268-.973.63-1.325-2.2-.25-4.516-1.1-4.516-4.9A3.832 3.832 0 0 1 4.7 7.068a3.56 3.56 0 0 1 .095-2.623s.832-.266 2.726 1.016a9.409 9.409 0 0 1 4.962 0c1.89-1.282 2.717-1.016 2.717-1.016.366.83.402 1.768.1 2.623a3.827 3.827 0 0 1 1.02 2.659c0 3.807-2.319 4.644-4.525 4.889a2.366 2.366 0 0 1 .673 1.834c0 1.326-.012 2.394-.012 2.72 0 .263.18.572.681.475A9.911 9.911 0 0 0 10 .333Z"
+                                    clip-rule="evenodd" />
+                            </svg>
+                            <span class="sr-only">GitHub account</span>
+                        </a>
+                        <a href="#"
+                            class="text-gray-500 hover:text-gray-900 dark:hover:text-white ms-5">
+                            <svg class="w-4 h-4" aria-hidden="true"
+                                xmlns="http://www.w3.org/2000/svg"
+                                fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd"
+                                    d="M10 0a10 10 0 1 0 10 10A10.009 10.009 0 0 0 10 0Zm6.613 4.614a8.523 8.523 0 0 1 1.93 5.32 20.094 20.094 0 0 0-5.949-.274c-.059-.149-.122-.292-.184-.441a23.879 23.879 0 0 0-.566-1.239 11.41 11.41 0 0 0 4.769-3.366ZM8 1.707a8.821 8.821 0 0 1 2-.238 8.5 8.5 0 0 1 5.664 2.152 9.608 9.608 0 0 1-4.476 3.087A45.758 45.758 0 0 0 8 1.707ZM1.642 8.262a8.57 8.57 0 0 1 4.73-5.981A53.998 53.998 0 0 1 9.54 7.222a32.078 32.078 0 0 1-7.9 1.04h.002Zm2.01 7.46a8.51 8.51 0 0 1-2.2-5.707v-.262a31.64 31.64 0 0 0 8.777-1.219c.243.477.477.964.692 1.449-.114.032-.227.067-.336.1a13.569 13.569 0 0 0-6.942 5.636l.009.003ZM10 18.556a8.508 8.508 0 0 1-5.243-1.8 11.717 11.717 0 0 1 6.7-5.332.509.509 0 0 1 .055-.02 35.65 35.65 0 0 1 1.819 6.476 8.476 8.476 0 0 1-3.331.676Zm4.772-1.462A37.232 37.232 0 0 0 13.113 11a12.513 12.513 0 0 1 5.321.364 8.56 8.56 0 0 1-3.66 5.73h-.002Z"
+                                    clip-rule="evenodd" />
+                            </svg>
+                            <span class="sr-only">Dribbble account</span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </footer>
+
+        <!-- ─── Count‑up script (only needs to run once) ────────────────── -->
+        <script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const counters = document.querySelectorAll('.counter');
+    const observer = new IntersectionObserver(
+      (entries, obs) => {
+        entries.forEach(entry => {
+          if (!entry.isIntersecting) return;
+
+          const el = entry.target;
+          const target = +el.dataset.target;      // number to reach
+          const suffix = el.dataset.suffix || ''; // e.g. '+', 'k'
+          const duration = 1500;                  // ms
+          const frameRate = 60;                   // frames per sec
+          const totalFrames = Math.round((duration / 1000) * frameRate);
+          let frame = 0;
+
+          const counterAnim = () => {
+            frame++;
+            const progress = frame / totalFrames;
+            const current = Math.round(target * progress);
+            el.textContent = current + suffix;
+
+            if (frame < totalFrames) {
+              requestAnimationFrame(counterAnim);
+            } else {
+              el.textContent = target + suffix;   // ensure it ends cleanly
+            }
+          };
+
+          requestAnimationFrame(counterAnim);
+          obs.unobserve(el); // animate only once
+        });
+      },
+      { threshold: 0.4 } // fire when 40 % visible
+    );
+
+    counters.forEach(c => observer.observe(c));
+  });
+        </script>
+
+        <!-- Testimonial carousel slider -->
+        <script>
+        document.addEventListener('DOMContentLoaded', function() {
+        const slider = document.getElementById('testimonial-slider');
+        const prevBtn = document.getElementById('prev-btn');
+        const nextBtn = document.getElementById('next-btn');
+        const dots = document.querySelectorAll('.dot-indicator');
+        
+        let currentIndex = 0;
+        const slides = document.querySelectorAll('#testimonial-slider > div');
+        const slideCount = slides.length;
+        let visibleSlides = getVisibleSlides();
+        let maxIndex = slideCount - visibleSlides;
+        
+        // Calculate visible slides based on screen width
+        function getVisibleSlides() {
+            if (window.innerWidth < 640 ) return 1;
+            if (window.innerWidth < 1024) return 1;
+            return 3;
+        }
+        
+        // Update slider position
+        function updateSlider() {
+            const slideWidth = 100 / visibleSlides;
+            slider.style.transform = `translateX(-${currentIndex * slideWidth}%)`;
+            
+            // Update dots
+            dots.forEach((dot, index) => {
+                dot.classList.toggle('bg-indigo-600', index === currentIndex);
+                dot.classList.toggle('bg-gray-300', index !== currentIndex);
+            });
+        }
+        
+        // Next slide
+        function nextSlide() {
+            if (currentIndex >= maxIndex) {
+                currentIndex = 0;
+            } else {
+                currentIndex++;
+            }
+            updateSlider();
+        }
+        
+        // Previous slide
+        function prevSlide() {
+            if (currentIndex <= 0) {
+                currentIndex = maxIndex;
+            } else {
+                currentIndex--;
+            }
+            updateSlider();
+        }
+        
+        // Click handlers
+        nextBtn.addEventListener('click', nextSlide);
+        prevBtn.addEventListener('click', prevSlide);
+        
+        // Dot navigation
+        dots.forEach((dot, index) => {
+            dot.addEventListener('click', function() {
+                currentIndex = index;
+                updateSlider();
+            });
+        });
+        
+        // Auto slide
+        let autoSlideInterval = setInterval(nextSlide, 5000);
+        
+        // Pause auto slide on hover
+        slider.parentElement.addEventListener('mouseenter', () => {
+            clearInterval(autoSlideInterval);
+        });
+        
+        slider.parentElement.addEventListener('mouseleave', () => {
+            autoSlideInterval = setInterval(nextSlide, 5000);
+        });
+        
+        // Responsive adjustments
+        function handleResize() {
+            const newVisibleSlides = getVisibleSlides();
+            if (newVisibleSlides !== visibleSlides) {
+                visibleSlides = newVisibleSlides;
+                maxIndex = Math.max(slideCount - visibleSlides, 0);
+                currentIndex = Math.min(currentIndex, maxIndex);
+                updateSlider();
+            }
+        }
+        
+        window.addEventListener('resize', handleResize);
+        
+        // Initialize
+        updateSlider();
+    });
+</script>
+
+        <!-- hamburger menu sliding functionality -->
+        <script>
+  const burgerBtn  = document.getElementById('hamburger-btn');
+  const burgerMenu = document.getElementById('hamburger-menu');
+  const burgerListItem = document.getElementById('hamburger-list-item');
+  
+  const closeButton = document.getElementById('icon-close');
+
+  let isOpen = false; // Start with menu closed (hidden)
+
+  if (burgerBtn && burgerMenu) {
+    burgerBtn.addEventListener('click', () => {
+      if (!isOpen) {
+        // OPEN the menu
+        burgerMenu.classList.replace('hidden', 'block');
+        burgerMenu.classList.remove('slide-out-right');
+        burgerMenu.classList.add('slide-in-right');
+        isOpen = true;
+      } else {
+        // CLOSE the menu
+        burgerMenu.classList.remove('slide-in-right');
+        burgerMenu.classList.add('slide-out-right');
+
+        // Wait until animation ends, then hide
+        burgerMenu.addEventListener('animationend', () => {
+          burgerMenu.classList.replace('block', 'hidden');
+        }, { once: true });
+
+        isOpen = false;
+      }
+    });
+  }
+  
+  burgerListItem.addEventListener("click",()=>{
+    console.log("all ok")
+      burgerMenu.classList.add('slide-out-right');
+      isOpen = false;
+  })
+        
+        </script>
+
+        <!-- logo carousel for associats -->
+        <script>
+  document.addEventListener('DOMContentLoaded', () => {
+    /* ---------- DOM refs ---------- */
+    const track  = document.getElementById('associates-track');
+    const cards  = Array.from(track.children);
+
+    /* ---------- clone once for seamless wrap ---------- */
+    const originalTotal = cards.length;
+    cards.forEach(card => track.appendChild(card.cloneNode(true)));  // duplicate all
+
+    /* ---------- break‑points ---------- */
+    const BP_SM = 640, BP_LG = 1024;
+    const getVisible = () => innerWidth < BP_SM ? 2 : innerWidth < BP_LG ? 4 : 6;
+
+    /* ---------- state ---------- */
+    let visible     = getVisible();
+    let offsetPx    = 0;          // how far we've slid (in px)
+    const pxPerStep = 0.5;        // speed: 0.5 px per frame ≈ 30 px/s
+    let trackWidth;               // width of ONE complete set
+    let paused      = false;
+
+    /* ---------- helpers ---------- */
+    function setWidths() {
+      visible = getVisible();
+      const pct = 100 / visible;                        // card width %
+      Array.from(track.children).forEach(c => c.style.flex = `0 0 ${pct}%`);
+      trackWidth = track.scrollWidth / 2;               // width of original set
+    }
+
+    /* ---------- animation loop ---------- */
+    function step() {
+      if (!paused) {
+        offsetPx += pxPerStep;
+        if (offsetPx >= trackWidth) offsetPx -= trackWidth;  // seamless wrap
+        track.style.transform = `translateX(-${offsetPx}px)`;
+      }
+      requestAnimationFrame(step);
+    }
+
+    /* ---------- listeners ---------- */
+    addEventListener('resize', () => {
+      setWidths();
+      /* keep offset in range after resize */
+      offsetPx = offsetPx % trackWidth;
+    });
+
+    track.parentElement.addEventListener('mouseenter', () => paused = true);
+    track.parentElement.addEventListener('mouseleave', () => paused = false);
+
+    /* ---------- init ---------- */
+    setWidths();
+    requestAnimationFrame(step);
+  });
+</script>
+
+    </body>
+</html>

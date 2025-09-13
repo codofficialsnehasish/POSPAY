@@ -1,0 +1,341 @@
+            <!-- Navbar Container -->
+            <!-- 🟦 Navbar ---------------------------------------------------- -->
+            <nav
+                class="flex items-center justify-between 2xl:px-28 xl:px-28 md:px-10 px-10 py-6
+            bg-[var(--color-secondary)] fixed w-full">
+
+                <!-- Logo -->
+                <a href="#" class="flex-shrink-0">
+                    <img src="../images/pospay_logo.png" `
+                        alt="PosPay logo"
+                        class="2xl:h-12 lg:h-12 h-8 md:h-16 ">
+                </a>
+
+                <!-- Hamburger (mobile + large) -->
+                <button id="menu-toggle"
+                    aria-label="Toggle navigation"
+                    class="relative z-20 flex               <!-- 👈 now visible by default -->
+               md:flex                        <!-- hide on 768–1023 px -->
+               lg:flex                          <!-- show again ≥1024 px -->
+               h-10 w-10 flex-col items-center justify-center gap-[6px]
+               focus:outline-none focus:ring-2 focus:ring-blue-300">
+                    <span
+                        class="block h-[2px] w-6 bg-[var(--nav-text)] transition-all"></span>
+                    <span
+                        class="block h-[2px] w-6 bg-[var(--nav-text)] transition-all"></span>
+                    <span
+                        class="block h-[2px] w-6 bg-[var(--nav-text)] transition-all"></span>
+                </button>
+
+                <!-- Desktop links -->
+                <ul id="desktop-links"
+                    class="hidden lg:hidden   md:hidden gap-11 font-roboto text-lg text-[var(--nav-text)]">
+
+                    <!-- Re‑usable list item -->
+                    <li
+                        class="group relative cursor-pointer hover:text-blue-800">
+                        Home
+                        <span
+                            class="absolute left-0 -bottom-1 h-[2px] w-0 bg-current
+                   transition-all duration-300 group-hover:w-full"></span>
+                    </li>
+                    <li
+                        class="group relative cursor-pointer hover:text-blue-800">
+                        About&nbsp;Us
+                        <span
+                            class="absolute left-0 -bottom-1 h-[2px] w-0 bg-current
+                   transition-all duration-300 group-hover:w-full"></span>
+                    </li>
+                    <li
+                        class="group relative cursor-pointer hover:text-blue-800">
+                        Product
+                        <span
+                            class="absolute left-0 -bottom-1 h-[2px] w-0 bg-current
+                   transition-all duration-300 group-hover:w-full"></span>
+                    </li>
+                    <li
+                        class="group relative cursor-pointer hover:text-blue-800">
+                        Associates
+                        <span
+                            class="absolute left-0 -bottom-1 h-[2px] w-0 bg-current
+                   transition-all duration-300 group-hover:w-full"></span>
+                    </li>
+                    <li
+                        class="group relative cursor-pointer hover:text-blue-800">
+                        Testimonials
+                        <span
+                            class="absolute left-0 -bottom-1 h-[2px] w-0 bg-current
+                   transition-all duration-300 group-hover:w-full"></span>
+                    </li>
+                    <li
+                        class="group relative cursor-pointer hover:text-blue-800">
+                        Career
+                        <span
+                            class="absolute left-0 -bottom-1 h-[2px] w-0 bg-current
+                   transition-all duration-300 group-hover:w-full"></span>
+                    </li>
+                    <li
+                        class="group relative cursor-pointer hover:text-blue-800">
+                        Contact&nbsp;Us
+                        <span
+                            class="absolute left-0 -bottom-1 h-[2px] w-0 bg-current
+                   transition-all duration-300 group-hover:w-full"></span>
+                    </li>
+                </ul>
+
+                <!-- CTA (desktop only) -->
+                <button type="button"
+                    class="hidden lg:hidden md:hidden text-white bg-blue-700 hover:bg-blue-800
+                 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-lg
+                 px-5 py-2.5 dark:bg-blue-600 dark:hover:bg-blue-700
+                 dark:focus:ring-blue-800">
+                    Get&nbsp;Started
+                </button>
+            </nav>
+
+            <!-- 🟦 Mobile slide‑down panel for navbar ---------------------------------- -->
+            <div id="mobile-menu"
+                class="fixed inset-0 z-10 flex flex-col items-center gap-8 pt-24
+            bg-[var(--color-secondary)] font-roboto text-lg
+            text-[var(--nav-text)] transition-transform duration-300
+            translate-y-full md:block lg:block my-auto">
+
+                <ul class="flex flex-col items-center gap-8 my-20">
+                    <!-- Same nav items; duplicate keeps markup simple -->
+                    <li
+                        class="group relative cursor-pointer hover:text-blue-800">
+                        Home
+                        <span
+                            class="absolute left-0 -bottom-1 h-[2px] w-0 bg-current
+                   transition-all duration-300 group-hover:w-full"></span>
+                    </li>
+                    <li
+                        class="group relative cursor-pointer hover:text-blue-800">
+                        About&nbsp;Us
+                        <span
+                            class="absolute left-0 -bottom-1 h-[2px] w-0 bg-current
+                   transition-all duration-300 group-hover:w-full"></span>
+                    </li>
+                    <li
+                        class="group relative cursor-pointer hover:text-blue-800">
+                        Product
+                        <span
+                            class="absolute left-0 -bottom-1 h-[2px] w-0 bg-current
+                   transition-all duration-300 group-hover:w-full"></span>
+                    </li>
+                    <li
+                        class="group relative cursor-pointer hover:text-blue-800">
+                        Associates
+                        <span
+                            class="absolute left-0 -bottom-1 h-[2px] w-0 bg-current
+                   transition-all duration-300 group-hover:w-full"></span>
+                    </li>
+                    <li
+                        class="group relative cursor-pointer hover:text-blue-800">
+                        Testimonials
+                        <span
+                            class="absolute left-0 -bottom-1 h-[2px] w-0 bg-current
+                   transition-all duration-300 group-hover:w-full"></span>
+                    </li>
+                    <li
+                        class="group relative cursor-pointer hover:text-blue-800">
+                        Career
+                        <span
+                            class="absolute left-0 -bottom-1 h-[2px] w-0 bg-current
+                   transition-all duration-300 group-hover:w-full"></span>
+                    </li>
+                    <li
+                        class="group relative cursor-pointer hover:text-blue-800">
+                        Contact&nbsp;Us
+                        <span
+                            class="absolute left-0 -bottom-1 h-[2px] w-0 bg-current
+                   transition-all duration-300 group-hover:w-full"></span>
+                    </li>
+                </ul>
+
+                <!-- Wrapper to center the button -->
+                <div class="flex justify-center my-10">
+                    <button type="button"
+                        class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4
+                 focus:ring-blue-300 font-medium rounded-lg text-lg px-6 py-2.5
+                 dark:bg-blue-600 dark:hover:bg-blue-700
+                 dark:focus:ring-blue-800">
+                        Get&nbsp;Started
+                    </button>
+                </div>
+
+            </div>
+
+
+
+
+
+             <herosection>
+                <div style="background-color: var(--color-accent);"
+                    class="pt-20 hro-section-main-container">
+                    <div
+                        class="flex justify-center items-center gap-10 py-10 flex-wrap ">
+
+                        <!-- Text content -->
+                        <div class="my-auto max-w-xl"
+                            style="color: var(--color-text);">
+                            <p class="text-lg font-medium"
+                                style="color: var(--color-secondary);">Free
+                                Forever For All
+                                Users.</p>
+                            <h1 class="text-8xl font-bold my-4">Easy-to-use <br>
+                                Point of Sale</h1>
+                            <p class="mb-6">
+                                You may start selling in a matter of minutes and
+                                easy to use.
+                                Appropriate for all devices.
+                            </p>
+                            <button
+                                class="bg-blue-700 text-white px-6 py-2 rounded-lg hover:bg-blue-800 transition">Get
+                                started</button>
+                        </div>
+
+                        <!-- Image content -->
+                        <div>
+                            <img src="../images/hero_img.png" alt="Hero image"
+                                class="max-w-full h-auto">
+                        </div>
+
+                    </div>
+                </div>
+            </herosection>
+
+
+
+
+
+
+id="navbar-sticky"
+
+
+
+
+            <nav
+                class="bg-white p-4 dark:bg-gray-900 fixed w-full z-20 top-0 start-0 border-b border-gray-200 dark:border-gray-600 shadow-xl/15">
+                <div
+                    class="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto p-4 nav-main">
+                    <a href="#"
+                        class="flex items-center space-x-3 rtl:space-x-reverse">
+                        <img src="../images/pospay_logo-removebg.png"
+                            class="lg:h-16 h-16 " alt="Flowbite Logo">
+                    </a>
+                    <div
+                        class="flex md:order-2 space-x-3 md:space-x-0 rtl:space-x-reverse">
+                        <!-- Phone line -->
+                        <div
+                            class=" items-center gap-3 2xl:flex lg:flex xl:flex md:flex hidden">
+                            <!-- icon circle -->
+                            <span
+                                class="inline-flex h-10 md:h-6 w-10 items-center justify-center rounded-full  border">
+                                <img src="../images/call.png" alt="Call icon"
+                                    class="h-5 w-5" />
+                            </span>
+
+                            <!-- number -->
+                            <p
+                                class="text-gray-800 font-medium text-xl md:text-lg nav-menu">+99
+                                9999 9999
+                                99</p>
+                        </div>
+
+                        <button id="hamburger-btn"
+                            data-collapse-toggle="navbar-sticky"
+                            type="button"
+                            class="inline-flex items-center p-2 w-10 h-10 justify-center text-sm text-gray-500 rounded-lg md:hidden lg:hidd hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-200 dark:text-gray-400 dark:hover:bg-gray-700 dark:focus:ring-gray-600"
+                            aria-controls="navbar-sticky" aria-expanded="false">
+                            <span class="sr-only">Open main menu</span>
+                            <svg class="w-5 h-5" aria-hidden="true"
+                                xmlns="http://www.w3.org/2000/svg" fill="none"
+                                viewBox="0 0 17 14">
+                                <path stroke="currentColor"
+                                    stroke-linecap="round"
+                                    stroke-linejoin="round" stroke-width="2"
+                                    d="M1 1h15M1 7h15M1 13h15" />
+                            </svg>
+                        </button>
+                    </div>
+                    <div
+                        class=" items-center md:py-4 xl:text-xl 2xl:text-xl lg:text-xl  justify-between hidden w-full md:flex md:w-auto md:order-1"
+                        id="navbar-sticky">
+                        <ul
+                            class="nav-menu flex text-xl md:text-xl flex-col p-4 md:p-0 mt-4 font-medium  border border-gray-100 rounded-lg bg-gray-50 md:space-x-8 rtl:space-x-reverse md:flex-row md:mt-0 md:border-0 md:bg-white dark:bg-gray-800 md:dark:bg-gray-900 dark:border-gray-700"
+                            id="hamBurgerList">
+                            <li>
+                                <a href="#"
+                                    class="block py-2 px-3 text-white bg-blue-700 rounded-sm md:bg-transparent md:text-blue-700 md:p-0 md:dark:text-blue-500"
+                                    aria-current="page">Home</a>
+                            </li>
+                            <li>
+                                <a href="#aboutUs"
+                                    class="block py-2 px-3 text-gray-900 rounded-sm hover:bg-gray-100 md:hover:bg-transparent md:hover:text-blue-700 md:p-0 md:dark:hover:text-blue-500 dark:text-white dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent dark:border-gray-700">About
+                                    Us</a>
+                            </li>
+                            <li>
+                                <a href="#products"
+                                    class="block py-2 px-3 text-gray-900 rounded-sm hover:bg-gray-100 md:hover:bg-transparent md:hover:text-blue-700 md:p-0 md:dark:hover:text-blue-500 dark:text-white dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent dark:border-gray-700">Product</a>
+                            </li>
+                            <li>
+                                <a href="#associates"
+                                    class="block py-2 px-3 text-gray-900 rounded-sm hover:bg-gray-100 md:hover:bg-transparent md:hover:text-blue-700 md:p-0 md:dark:hover:text-blue-500 dark:text-white dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent dark:border-gray-700">Associates</a>
+                            </li>
+                            <li>
+                                <a href="#testimonial"
+                                    class="block py-2 px-3 text-gray-900 rounded-sm hover:bg-gray-100 md:hover:bg-transparent md:hover:text-blue-700 md:p-0 md:dark:hover:text-blue-500 dark:text-white dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent dark:border-gray-700">Testimonials</a>
+                            </li>
+                            <li>
+                                <a href="#career"
+                                    class="block py-2 px-3 text-gray-900 rounded-sm hover:bg-gray-100 md:hover:bg-transparent md:hover:text-blue-700 md:p-0 md:dark:hover:text-blue-500 dark:text-white dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent dark:border-gray-700">Career</a>
+                            </li>
+                            <li>
+                                <a href="#contactUs"
+                                    class="block py-2 px-3 text-gray-900 rounded-sm hover:bg-gray-100 md:hover:bg-transparent md:hover:text-blue-700 md:p-0 md:dark:hover:text-blue-500 dark:text-white dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent dark:border-gray-700">Contact
+                                    Us</a>
+                            </li>
+
+                            <li
+                                class="2xl:hidden lg:hidden xl:hidden md:hidden block my-8">
+                                <div class="flex items-center gap-3 ">
+                                    <!-- icon circle -->
+                                    <span
+                                        class="inline-flex h-10 w-10 items-center justify-center rounded-full  border">
+                                        <img src="../images/call.png"
+                                            alt="Call icon"
+                                            class="h-5 w-5" />
+                                    </span>
+
+                                    <!-- number -->
+                                    <p
+                                        class="text-gray-800 font-medium text-xl ">+99
+                                        9999 9999
+                                        99</p>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </nav>
+
+
+
+            <ul class="flex flex-col gap-6 text-lg font-medium">
+                            <li><a href="#" class="hover:text-blue-600">Home</a></li>
+                            <li><a href="#about" class="hover:text-blue-600">About</a></li>
+                            <li><a href="#product" class="hover:text-blue-600">Product</a></li>
+                            <li><a href="#associates" class="hover:text-blue-600">Associates</a></li>
+                            <li><a href="#testimonials" class="hover:text-blue-600">Testimonials</a></li>
+                            <li><a href="#career" class="hover:text-blue-600">Career</a></li>
+                            <li><a href="#contact" class="hover:text-blue-600">Contact Us</a></li>
+
+                            <!-- Phone section -->
+                            <li class="flex items-center gap-3 pt-4 border-t border-gray-200 mt-4">
+                            <span class="inline-flex h-10 w-10 items-center justify-center rounded-full border">
+                                <img src="../images/call.png" alt="Call icon" class="h-5 w-5" />
+                            </span>
+                            <p class="text-gray-800 font-medium text-lg">+99 9999 9999 99</p>
+                            </li>
+                        </ul>

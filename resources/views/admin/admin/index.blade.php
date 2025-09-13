@@ -1,0 +1,126 @@
+@extends('layouts.app')
+
+@section('title', 'Admin')
+
+@section('contents')
+
+
+    <div class="dashboard-main-body">
+        <div class="d-flex flex-wrap align-items-center justify-content-between gap-3 mb-24">
+            <h6 class="fw-semibold mb-0">Admins</h6>
+            <ul class="d-flex align-items-center gap-2">
+                <li class="fw-medium">
+                    <a href="index.php" class="d-flex align-items-center gap-1 hover-text-primary">
+                        <iconify-icon icon="solar:home-smile-angle-outline" class="icon text-lg"></iconify-icon>
+                        Dashboard
+                    </a>
+                </li>
+                <li>-</li>
+                <li class="fw-medium">Admins</li>
+            </ul>
+        </div>
+
+        <div class="card h-100 p-0 radius-12">
+            <div
+                class="card-header border-bottom bg-base py-16 px-24 d-flex align-items-center flex-wrap gap-3 justify-content-between">
+                @can('Admin Create')
+           
+
+                    <a href="{{ route('admin.create') }}" class="btn btn-primary text-sm btn-sm px-12 py-12 radius-8 d-flex align-items-center gap-2">
+                        <iconify-icon icon="ic:baseline-plus" class="icon text-xl line-height-1"></iconify-icon>
+                        Add New
+                    </a>
+                @endcan
+
+            </div>
+
+            <div class="card-body p-24">
+                <div class="table-responsive scroll-sm">
+                    <table class="table bordered-table mb-0" id="dataTable" data-page-length='10'>
+                        <thead>
+                            <tr>
+                                <th>Sl No.</th>
+                                <th>Image</th>
+                                <th>Name</th>
+                                <th>Email</th>
+                                <th>Phone</th>
+                                <th>Role</th>
+                                <th>Registred Date</th>
+                                <th>Status</th>
+                                @canany(['Admin Edit', 'Admin Delete'])
+                                    <th>Action</th>
+                                @endcanany
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach ($users as $user)
+                                <tr>
+                                    <td>{{ $loop->iteration }}</td>
+                                    <td class="w60">
+                                        <img class="avatar" width="50" src="{{ $user->getFirstMediaUrl('vendor-image') }}"
+                                            alt="">
+                                    </td>
+                                    <td><span class="font-16">{{ $user->name }}</span></td>
+                                    <td>{{ $user->email }}</td>
+                                    <td>{{ $user->phone }}</td>
+                                    <td>{{ $user->getRoleNames()->first() }}</td>
+                                    <td>{{ format_datetime($user->created_at) }}</td>
+                                    <td>{!! check_status($user->status) !!}</td>
+                                    <td>
+
+                                        @can('Admin Edit')
+                                            <a href="{{ route('admin.edit', $user->id) }}"
+                                                class="bg-success-focus text-success-600 bg-hover-success-200 fw-medium w-40-px h-40-px d-flex justify-content-center align-items-center rounded-circle"
+                                                title="Edit"><iconify-icon icon="lucide:edit"
+                                                    class="menu-icon"></iconify-icon></a>
+                                        @endcan
+                                        @can('Admin Delete')
+                                            <a class="remove-item-btn bg-danger-focus bg-hover-danger-200 text-danger-600 fw-medium w-40-px h-40-px d-flex justify-content-center align-items-center rounded-circle"
+                                                href="javascript:void(0);" onclick="deleteItem(this)"
+                                                data-url="{{ route('admin.destroy', $user->id) }}" data-item="Route"
+                                                alt="delete"> <iconify-icon icon="fluent:delete-24-regular"
+                                                    class="menu-icon"></iconify-icon></a>
+                                        @endcan
+                                    </td>
+                                </tr>
+                            @endforeach
+                        </tbody>
+                    </table>
+                </div>
+
+
+            </div>
+        </div>
+    </div>
+
+
+
+@endsection
+
+@section('script')
+    <script>
+        let table = new DataTable("#dataTable");
+    </script>
+
+    <script>
+        (() => {
+            "use strict"
+
+            // Fetch all the forms we want to apply custom Bootstrap validation styles to
+            const forms = document.querySelectorAll(".needs-validation")
+
+            // Loop over them and prevent submission
+            Array.from(forms).forEach(form => {
+                form.addEventListener("submit", event => {
+                    if (!form.checkValidity()) {
+                        event.preventDefault()
+                        event.stopPropagation()
+                    }
+
+                    form.classList.add("was-validated")
+                }, false)
+            })
+        })()
+    </script>
+
+@endsection
