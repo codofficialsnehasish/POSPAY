@@ -22,6 +22,19 @@
         }
     }
 
+    if (!function_exists('generateTransactionNumber')) {
+        function generateTransactionNumber()
+        {
+            // Format: TXN + YYYYMMDD + random 6 digits
+            $prefix = 'TXN';
+            $date   = now()->format('Ymd');
+            $random = mt_rand(100000, 999999);
+
+            return $prefix . $date . $random;
+        }
+    }
+
+
     if (!function_exists('update_order_number')) {
         function update_order_number($order_id, $order_number)
         {

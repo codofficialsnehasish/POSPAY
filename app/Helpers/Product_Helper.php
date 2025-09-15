@@ -7,6 +7,7 @@
     use App\Models\Brand;
     use App\Models\Category;
     use App\Models\ProductVariationOption;
+    use App\Models\Hsncode;
     
       use App\Models\OrderItems;
     
@@ -65,6 +66,67 @@
             return $total;
         }
     }
+
+    if (!function_exists('calculate_cart_gst_by_userId')) {
+        function calculate_cart_gst_by_userId(int $userId)
+        {
+            $cgst = 0;
+            $sgst = 0;
+
+            $cartItems = Cart::where('user_id', $userId)->get();
+
+            foreach ($cartItems as $cartItem) {
+                // Get base price
+                if ($cartItem->option_id) {
+                    $price = get_product_price($cartItem->product_id, $cartItem->option_id);
+                } else {
+                    $price = get_product_price($cartItem->product_id);
+                }
+
+                $product = Product::find($cartItem->product_id);
+
+                if (!$product) {
+                    continue;
+                }
+
+                // ✅ Safely get gstRate
+                $gstRate = 0;
+                if ($product->hsncode_id) {
+                    $hsncode = Hsncode::find($product->hsncode_id);
+                    if ($hsncode) {
+                        $gstRate = $hsncode->gst_rate;
+                    }
+                }
+
+                $isGstIncluded = $product->is_gst_included; // 1 or 0
+                $qty = $cartItem->quantity;
+
+                $lineTotal = $price * $qty;
+
+                if ($gstRate > 0) {
+                    if ($isGstIncluded) {
+                        // Extract GST from inclusive price
+                        $taxAmount = ($lineTotal * $gstRate) / (100 + $gstRate);
+                    } else {
+                        // GST extra
+                        $taxAmount = ($lineTotal * $gstRate) / 100;
+                    }
+
+                    // Divide equally into CGST and SGST
+                    $cgst += $taxAmount / 2;
+                    $sgst += $taxAmount / 2;
+                }
+            }
+
+            return [
+                'cgst' => round($cgst, 2),
+                'sgst' => round($sgst, 2),
+                'total_gst' => round($cgst + $sgst, 2),
+            ];
+        }
+    }
+
+
     
     if(!function_exists('calculate_orderItems_total_by_orderId')){
         function calculate_orderItems_total_by_orderId(int $orderId)

@@ -19,6 +19,7 @@ class Order extends Model
         'discounted_price',
         'total_amount',
         'payment_method',
+        'payment_status',
         'formatted_address',
         'latitude',
         'longitude',
@@ -51,5 +52,10 @@ class Order extends Model
      public function seats()
     {
         return $this->hasMany(OrderSeat::class,'order_id', 'id');
+    }
+
+    public function transactions()
+    {
+        return $this->hasMany(Transaction::class);
     }
 }

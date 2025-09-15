@@ -108,10 +108,10 @@ table.dataTable thead>tr>th.dt-orderable-asc span.dt-column-order, table.dataTab
                                 </div>
                             </th>
                             <th class="text-wrap">Title</th>
-                            <th class="text-wrap">Description</th>
+                            {{-- <th class="text-wrap">Description</th> --}}
                             <th class="text-wrap">Image</th>
                             <th class="text-wrap">Status</th>
-                            <th class="text-wrap">Barcode</th>
+                            {{-- <th class="text-wrap">Barcode</th> --}}
                             <th class="text-wrap" style="width: 150px;">Created At</th>
                             <th class="text-wrap">Action</th>
                         </tr>
@@ -129,12 +129,18 @@ table.dataTable thead>tr>th.dt-orderable-asc span.dt-column-order, table.dataTab
                                         </div>
                                     </td>
                                     <td class="text-wrap">{{ $prouct->name }}</td>
-                                    <td class="text-wrap">{!! $prouct->sort_description !!}</td>
-                                    <td><img class="img-thumbnail rounded me-2"
-                                            src="{{ getProductMainImage($prouct->id) }}" width="100" alt="">
+                                    {{-- <td class="text-wrap">{!! $prouct->sort_description !!}</td> --}}
+                                    <td style="max-height: 100px;">
+                                        @if(getProductMainImage($prouct->id))
+                                            <img class="img-thumbnail rounded me-2"
+                                                style="object-fit: contain;height: 100px;"
+                                                src="{{ getProductMainImage($prouct->id) }}"
+                                                width="100"
+                                                alt="">
+                                        @endif
                                     </td>
                                     <td>{!! check_visibility($prouct->is_visible) !!}</td>
-                                    <td class="text-wrap">{{ $prouct->barcode }}</td>
+                                    {{-- <td class="text-wrap">{{ $prouct->barcode }}</td> --}}
                                     <td class="text-wrap" style="width: 150px;">{{ format_datetime($prouct->created_at) }}</td>
                                     <td>
                                         <a href="{{ route('products.basic-info-edit', $prouct->id) }}"

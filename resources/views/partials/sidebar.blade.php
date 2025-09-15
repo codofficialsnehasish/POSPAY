@@ -110,12 +110,14 @@
                 </li>
             @endcanany
 
+            @canany(['Unit Master Create', 'Unit Master View','Unit Master Edit','Unit Master Delete'])
             <li>
                 <a href="{{ route('units.index') }}">
                     <iconify-icon icon="mdi:scale-balance" class="menu-icon"></iconify-icon>
                     <span>Units Master</span>
                 </a>
             </li>
+            @endcanany
 
             @canany(['Product Create', 'Product View','Product Edit','Product Delete'])
                 <li>

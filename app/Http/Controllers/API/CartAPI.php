@@ -184,29 +184,36 @@ class CartAPI extends Controller
     
     
     public function cart_items(Request $request)
-{
-    $cart_items = Cart::with(['product', 'variationOption'])->where('user_id', $request->user()->id)->get();
+    {
+        $cart_items = Cart::with(['product', 'variationOption'])->where('user_id', $request->user()->id)->get();
 
-    $cart_items->each(function ($cartItem) {
-        // Load product image
-        $cartItem->product->image_url = getProductMainImage($cartItem->product_id);
+        $cart_items->each(function ($cartItem) {
+            // Load product image
+            $cartItem->product->image_url = getProductMainImage($cartItem->product_id);
 
-        // Calculate correct price based on option_id
-        if ($cartItem->option_id) {
-            $cartItem->price = get_product_price($cartItem->product_id, $cartItem->option_id);
-        } else {
-            $cartItem->price = get_product_price($cartItem->product_id);
-        }
+            // Calculate correct price based on option_id
+            if ($cartItem->option_id) {
+                $cartItem->price = get_product_price($cartItem->product_id, $cartItem->option_id);
+            } else {
+                $cartItem->price = get_product_price($cartItem->product_id);
+            }
 
-        $cartItem->subtotal = $cartItem->price * $cartItem->quantity;
-    });
+            $cartItem->subtotal = $cartItem->price * $cartItem->quantity;
+        });
 
-    return response()->json([
-        'status' => true,
-        'cart_total' => calculate_cart_total_by_userId($request->user()->id),
-        'data' => $cart_items,
-    ], 200);
-}
+        $gst = calculate_cart_gst_by_userId($request->user()->id);
+
+        return response()->json([
+            'status' => true,
+            'item_total' => calculate_cart_total_by_userId($request->user()->id),
+            'discount' => 0.00,
+            'compelementary' => 0.00,
+            'sgst' => $gst['sgst'] ?? 0.00,
+            'cgst' => $gst['cgst'] ?? 0.00,
+            'grand_total' => calculate_cart_total_by_userId($request->user()->id) + ($gst['total_gst'] ?? 0.00),
+            'data' => $cart_items,
+        ], 200);
+    }
 
 
     public function increment_decrement_cart_quantity(Request $request){
@@ -227,10 +234,10 @@ class CartAPI extends Controller
 
 
         $existingCartItem = Cart::where('user_id', $request->user()->id)
-        ->where('product_id', $request->product_id)
-        ->where('variation_id', $request->variation_id)
-        ->where('option_id', $request->option_id)
-        ->first();
+            ->where('product_id', $request->product_id)
+            ->where('variation_id', $request->variation_id)
+            ->where('option_id', $request->option_id)
+            ->first();
 
 
         
@@ -266,8 +273,10 @@ class CartAPI extends Controller
         }
 
         $existingCartItem = Cart::where('user_id', $request->user()->id)
-        ->where('product_id', $request->product_id)
-        ->first();
+            ->where('product_id', $request->product_id)
+            ->where('variation_id', $request->variation_id)
+            ->where('option_id', $request->option_id)
+            ->first();
 
         if ($existingCartItem) {
             $existingCartItem->delete();

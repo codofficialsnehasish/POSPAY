@@ -12,7 +12,8 @@ use App\Http\Controllers\API\{
     CouponsAPI,
     OrderAPI,
     AddressAPI,
-    DashboardController
+    DashboardController,
+    TransactionApi,
 };
 
 
@@ -68,6 +69,8 @@ Route::middleware('auth:sanctum')->group( function () {
     Route::get('get-coupons', [CouponsAPI::class, 'index']);
 
     Route::controller(OrderAPI::class)->group( function() {
+        
+        Route::post('create-razorpay-order','createRazorpayOrder');
         Route::post('place-order','place_order');
 
         Route::get('order-history','order_history');
@@ -91,5 +94,11 @@ Route::middleware('auth:sanctum')->group( function () {
         Route::post('save-address','save_address');
         Route::post('save-as-default-address','save_as_default_address');
         Route::get('get-saved-address','get_saved_address');
+    });
+
+    Route::controller(TransactionApi::class)->group( function() {
+        Route::get('get-date-wise-total-payment','get_date_wise_total_payment');
+        Route::get('get-transaction-details','get_transaction_details');
+        Route::get('get-order-by-order-id/{id?}','get_order_by_id');
     });
 });

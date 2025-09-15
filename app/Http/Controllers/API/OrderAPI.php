@@ -14,17 +14,60 @@ use App\Models\Product;
 use App\Models\Coach;
 use App\Models\User;
 use App\Models\SeatNumber;
+use App\Models\Transaction;
+use Razorpay\Api\Api;
 
 class OrderAPI extends Controller
 {
-    
-    
+    public function createRazorpayOrder(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'amount' => 'required|numeric|min:1', // amount in INR
+            'currency' => 'nullable|string|in:INR'
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json(['error' => $validator->errors()], 422);
+        }
+
+        $api = new Api(env('RAZORPAY_KEY'), env('RAZORPAY_SECRET'));
+
+        $orderData = [
+            'receipt'         => 'rcptid_' . uniqid(),
+            'amount'          => $request->amount * 100, // Razorpay works in paise
+            'currency'        => $request->currency ?? 'INR',
+            'payment_capture' => 1 // auto capture
+        ];
+
+        try {
+            $razorpayOrder = $api->order->create($orderData);
+
+            return response()->json([
+                'success' => true,
+                'order_id' => $razorpayOrder['id'],
+                'amount' => $razorpayOrder['amount'],
+                'currency' => $razorpayOrder['currency'],
+                'receipt' => $razorpayOrder['receipt'],
+                'key' => env('RAZORPAY_KEY') // frontend will need this
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => $e->getMessage()
+            ], 500);
+        }
+    }
+
     public function place_order(Request $request){
+        
         $validator = Validator::make($request->all(), [
             'contact_number' => 'nullable',
             'contact_purson' => 'nullable',
             'delevery_note' => 'nullable',
-            'payment_method' => 'nullable'
+            'payment_method' => 'nullable',
+            'gateway_transaction_id'=> 'nullable|string',
+            'razorpay_order_id'     => 'nullable|string',
+            'razorpay_signature'    => 'nullable|string',
         ]);
 
         if ($validator->fails()) {
@@ -39,8 +82,42 @@ class OrderAPI extends Controller
             $cart_total = calculate_cart_total_by_userId($request->user()->id);
             // $coupone_discount = !empty($request->coupone_code) ? get_coupone_discount($request->coupone_code,$cart_total) : 0.00;
 
+            // 🔹 If UPI → Verify Razorpay payment
+            if ($request->payment_method === "UPI") {
+                if (!$request->razorpay_order_id || !$request->gateway_transaction_id || !$request->razorpay_signature) {
+                    return response()->json([
+                        'status'  => false,
+                        'message' => 'Missing Razorpay payment details'
+                    ], 422);
+                }
+
+                try {
+                    $api = new Api(env('RAZORPAY_KEY'), env('RAZORPAY_SECRET'));
+
+                    $attributes = [
+                        'razorpay_order_id'   => $request->razorpay_order_id,
+                        'razorpay_payment_id' => $request->gateway_transaction_id,
+                        'razorpay_signature'  => $request->razorpay_signature,
+                    ];
+
+                    $api->utility->verifyPaymentSignature($attributes);
+                    $payment_status = "Payment Received"; // ✅ verified
+                } catch (\Exception $e) {
+                    return response()->json([
+                        'status'  => false,
+                        'message' => 'Payment verification failed: '.$e->getMessage()
+                    ], 400);
+                }
+            } else {
+                // COD / Online(Card without Razorpay integration here)
+                $payment_status = ($request->payment_method == 'Cash')
+                    ? 'Awaiting Payment'
+                    : 'Payment Received';
+            }
+
+            // return $payment_status;
     
-           $order= Order::create([
+            $order= Order::create([
                 'order_number'=>generateOrderNumber(),
                 'user_id'=>$request->user()->id,
                 'vendor_id'=>$request->user()->vendor_id,
@@ -51,7 +128,8 @@ class OrderAPI extends Controller
                 'total_amount'=>calculate_cart_total_by_userId($request->user()->id),
                 'discounted_price'=>calculate_cart_total_by_userId($request->user()->id),
                 'payment_method'=>$request->payment_method,
-                'payment_status'=>$request->payment_method == 'Online' || $request->payment_method == 'UPI'|| $request->payment_method == 'Card' ? 'Payment Received':'Awaiting Payment',
+                // 'payment_status'=>$request->payment_method == 'Online' || $request->payment_method == 'UPI'|| $request->payment_method == 'Card' ? 'Payment Received':'Awaiting Payment',
+                'payment_status'=>$payment_status,
                 'contact_number'=>$request->contact_number,
                 'discount_amount'=>$request->discount_amount,
                 'complimentary_amount'=>$request->complimentary_amount,
@@ -123,6 +201,20 @@ class OrderAPI extends Controller
                 }
             }
 
+
+            // 🔑 Save Transaction
+            Transaction::create([
+                'order_id'                => $order->id,
+                'user_id'                 => $request->user()->id,
+                'vendor_id'               => $request->user()->vendor_id,
+                'transaction_number'      => generateTransactionNumber(), // you can write a helper
+                'amount'                  => $order->discounted_price,
+                'payment_method'          => $request->payment_method,
+                'payment_status'          => $payment_status ?? 'Awaiting Payment',
+                'gateway_transaction_id'  => $request->gateway_transaction_id ?? null,
+                'currency'                => 'INR',
+                'paid_at'                 => $payment_status == 'Payment Received' ? now() : null,
+            ]);
 
             $cart_items = Cart::where('user_id', $request->user()->id)->delete(); 
             $seats = OrderSeat::where('order_id', $order->id)->pluck('seat_number');
