@@ -112,7 +112,7 @@ class ProductAPI extends Controller
     
     
     
-     public function get_products_by_category(Request $request, string $id)
+    public function get_products_by_category(Request $request, string $id)
     {
         $category = Category::with('subcategory')->find($id);
 

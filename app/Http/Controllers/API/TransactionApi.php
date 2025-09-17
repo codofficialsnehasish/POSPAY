@@ -71,7 +71,7 @@ class TransactionApi extends Controller
 
         $vendorIds = $request->user()->vendors->pluck('id');
         // Fetch orders created on that date
-        $orders = Order::whereDate('created_at', $date)->whereIn('vendor_id', $vendorIds)->get();
+        $orders = Order::whereDate('created_at', $date)->whereIn('vendor_id', $vendorIds)->orderBy('id','desc')->get();
 
         // Map to desired format
         $data = $orders->map(function ($order) {
@@ -102,6 +102,10 @@ class TransactionApi extends Controller
             ->where('id', $id)
             ->whereIn('vendor_id', $vendorIds)
             ->firstOrFail();
+        
+        $order->items->each(function ($item) {
+            $item->image_url = getProductMainImage($item->product_id);
+        });
 
         return response()->json([
             'success' => true,

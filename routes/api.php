@@ -14,6 +14,7 @@ use App\Http\Controllers\API\{
     AddressAPI,
     DashboardController,
     TransactionApi,
+    PurchaseController,
 };
 
 
@@ -100,5 +101,13 @@ Route::middleware('auth:sanctum')->group( function () {
         Route::get('get-date-wise-total-payment','get_date_wise_total_payment');
         Route::get('get-transaction-details','get_transaction_details');
         Route::get('get-order-by-order-id/{id?}','get_order_by_id');
+    });
+
+    Route::controller(PurchaseController::class)->group( function() {
+        Route::get('get-all-purchase','index');
+        Route::get('search-products','search_products');
+        Route::get('get-purchasing-products','get_products');
+        Route::get('get-sellers','get_seller');
+        Route::get('purchase-store','storePurchase');
     });
 });

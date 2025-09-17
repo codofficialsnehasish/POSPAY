@@ -65,6 +65,12 @@ class PermissionSeeder extends Seeder
             array('name' => 'Unit Master Edit','group_name' => 'Unit Master'),
             array('name' => 'Unit Master Delete','group_name' => 'Unit Master'),
 
+
+            array('name' => 'Seller Master Create','group_name' => 'Seller Master'),
+            array('name' => 'Seller Master View','group_name' => 'Seller Master'),
+            array('name' => 'Seller Master Edit','group_name' => 'Seller Master'),
+            array('name' => 'Seller Master Delete','group_name' => 'Seller Master'),
+
             array('name' => 'Vendor Create','group_name' => 'Vendor'),
             array('name' => 'Vendor View','group_name' => 'Vendor'),
             array('name' => 'Vendor Edit','group_name' => 'Vendor'),

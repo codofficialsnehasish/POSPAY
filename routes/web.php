@@ -20,6 +20,7 @@ use App\Http\Controllers\Admin\{
     AdminController,
     SeatNumberController,
     UnitController,
+    SellerMasterController,
 };
 
 Route::get('/', function () {
@@ -149,6 +150,7 @@ Route::middleware(['auth', 'verified'])->group(function(){
         Route::resource('slider', Sliders::class);
         Route::resource('category', CategoryController::class);
         Route::resource('units', UnitController::class);
+        Route::resource('sellers', SellerMasterController::class);
 
         Route::controller(ProductController::class)->group( function () {
             Route::prefix('product')->group( function () {

@@ -119,6 +119,15 @@
             </li>
             @endcanany
 
+            @canany(['Seller Master Create', 'Seller Master View','Seller Master Edit','Seller Master Delete'])
+            <li>
+                <a href="{{ route('sellers.index') }}">
+                    <iconify-icon icon="mdi:handshake-outline" class="menu-icon"></iconify-icon>
+                    <span>Sellers Master</span>
+                </a>
+            </li>
+            @endcanany
+
             @canany(['Product Create', 'Product View','Product Edit','Product Delete'])
                 <li>
                     <a href="{{ route('product.index') }}">
