@@ -10,6 +10,7 @@ use App\Models\ProductVariationOption;
 use App\Models\StockTransaction;
 use App\Models\SellerMaster;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
 
 class PurchaseController extends Controller
 {
@@ -127,75 +128,91 @@ class PurchaseController extends Controller
         ]);
     }
 
-
-
-
-
     // 🟢 Create new purchase with items
+
     public function storePurchase(Request $request)
     {
-        $validated = $request->validate([
-            'seller_name' => 'required|string',
-            'vendor_id' => 'required|integer',
-            'purchase_number' => 'required|string',
-            'purchase_date' => 'required|date',
-            'total_amount' => 'required|numeric',
-            'notes' => 'nullable|string',
-            'items' => 'required|array',
-            'items.*.product_id' => 'required|integer',
-            'items.*.quantity' => 'required|integer|min:1',
-            'items.*.price' => 'required|numeric|min:0',
-            'items.*.batch_number' => 'nullable|string',
-            'items.*.expiry_date' => 'nullable|date'
+        // 1️⃣ Validate incoming request
+        $validator = Validator::make($request->all(), [
+            'seller_id' => 'required|integer',
+            'invoice_no' => 'required|string',
+            'products' => 'required|array|min:1',
+            'products.*.product_id' => 'required|integer',
+            'products.*.veriation_option_id' => 'required|integer',
+            'products.*.batch_no' => 'nullable',
+            'products.*.expriay_date' => 'nullable',
+            'products.*.quantity' => 'required|integer|min:1',
+            'products.*.mrp' => 'required|numeric|min:0',
+            'products.*.discount_rate' => 'nullable|numeric|min:0',
         ]);
 
-        // Create the purchase header
+        if ($validator->fails()) {
+            return response()->json(['error' => $validator->errors()], 422);
+        }
+
+        $validated = $validator->validated();
+
+        $vendorId = $request->user()->vendor->id;
+
+        // 2️⃣ Create purchase header
         $purchase = Purchase::create([
-            'seller_name' => $validated['seller_name'],
-            'vendor_id' => $validated['vendor_id'],
-            'purchase_number' => $validated['purchase_number'],
-            'purchase_date' => $validated['purchase_date'],
-            'total_amount' => $validated['total_amount'],
-            'notes' => $validated['notes'] ?? null,
+            'seller_name' => $validated['seller_id'], // map seller_id to seller_name or your table column
+            'vendor_id' => $vendorId, // you can pass vendor_id from request if needed
+            'invoice_number' => $validated['invoice_no'],
+            'purchase_date' => now(), // or pass from request
+            'total_amount' => 0, // will calculate below
+            'notes' => $request->notes ?? null,
         ]);
 
-        foreach ($validated['items'] as $item) {
-            // Create purchase item
+        $totalAmount = 0;
+
+        // 3️⃣ Loop through products
+        foreach ($validated['products'] as $product) {
+            $lineTotal = $product['quantity'] * $product['mrp'];
+            $totalAmount += $lineTotal;
+
             $purchaseItem = PurchaseItem::create([
                 'purchase_id' => $purchase->id,
-                'product_id' => $item['product_id'],
-                'batch_number' => $item['batch_number'] ?? strtoupper('BATCH-' . uniqid()),
-                'expiry_date' => $item['expiry_date'] ?? null,
-                'quantity' => $item['quantity'],
-                'price' => $item['price'],
-                'total' => $item['quantity'] * $item['price'],
+                'product_id' => $product['product_id'],
+                'veriation_option_id' =>  $product['veriation_option_id'],
+                'batch_number' => $product['batch_no'],
+                'expiry_date' => date('Y-m-d', strtotime($product['expriay_date'])),
+                'quantity' => $product['quantity'],
+                'price' => $product['mrp'],
+                'total' => $lineTotal,
             ]);
 
-            // Update stock transaction for this batch
-            $lastStock = StockTransaction::where('product_id', $item['product_id'])
-                                        ->latest('id')->first();
+            // 4️⃣ Stock transaction logic
+            $lastStock = StockTransaction::where('product_id', $product['product_id'])->latest('id')->first();
             $openingBalance = $lastStock->closing_balance ?? 0;
-            $closingBalance = $openingBalance + $item['quantity'];
+            $closingBalance = $openingBalance + $product['quantity'];
 
             StockTransaction::create([
-                'product_id' => $item['product_id'],
+                'product_id' => $product['product_id'],
+                'veriation_option_id' =>  $product['veriation_option_id'],
                 'batch_number' => $purchaseItem->batch_number,
                 'transaction_type' => 'purchase',
-                'transaction_date' => $validated['purchase_date'],
-                'quantity_in' => $item['quantity'],
+                'transaction_date' => now(),
+                'quantity_in' => $product['quantity'],
                 'quantity_out' => 0,
                 'opening_balance' => $openingBalance,
                 'closing_balance' => $closingBalance,
-                'expiry_date' => $purchaseItem->expiry_date,
+                'expiry_date' => null,
             ]);
+
+            $ProductVariationOption = ProductVariationOption::find($product['veriation_option_id']);
+            $ProductVariationOption->quantity += $product['quantity'];
+            $ProductVariationOption->update();
         }
+
+        // update total amount in purchase header
+        $purchase->update(['total_amount' => $totalAmount]);
 
         return response()->json([
             'message' => 'Purchase created successfully',
             'purchase' => $purchase->load('items.product')
         ], 201);
     }
-
 
 
     // 🟡 Update purchase

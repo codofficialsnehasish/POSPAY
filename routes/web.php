@@ -21,6 +21,7 @@ use App\Http\Controllers\Admin\{
     SeatNumberController,
     UnitController,
     SellerMasterController,
+    TransactionController,
 };
 
 Route::get('/', function () {
@@ -239,6 +240,12 @@ Route::middleware(['auth', 'verified'])->group(function(){
                 Route::delete('{id}/destroy','destroy')->name('order.destroy');
                 Route::get('/filter','order_filter')->name('order.filter');
             });
+        });
+
+        Route::controller(TransactionController::class)->group( function() {
+            Route::get('get-date-wise-total-payment','get_date_wise_total_payment')->name('transaction.get-date-wise-total-payment');
+            Route::get('get-transaction-details','get_transaction_details')->name('transaction.get-transaction-details');
+            Route::get('get-order-by-id/{id}','get_order_by_id')->name('transaction.get-order-by-id');
         });
     });
 });

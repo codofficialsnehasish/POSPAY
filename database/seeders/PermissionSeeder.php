@@ -55,6 +55,8 @@ class PermissionSeeder extends Seeder
             array('name' => 'Order Edit','group_name' => 'Order'),
             array('name' => 'Order Delete','group_name' => 'Order'),
 
+            array('name' => 'Transaction View','group_name' => 'Transaction'),
+
             array('name' => 'Seat Number Create','group_name' => 'Seat Number'),
             array('name' => 'Seat Number View','group_name' => 'Seat Number'),
             array('name' => 'Seat Number Edit','group_name' => 'Seat Number'),

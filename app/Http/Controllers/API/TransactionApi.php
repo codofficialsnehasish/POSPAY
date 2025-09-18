@@ -15,39 +15,104 @@ use Illuminate\Support\Facades\DB;
 
 class TransactionApi extends Controller
 {
+    // public function get_date_wise_total_payment(Request $request){
+    //     $vendorIds = $request->user()->vendors->pluck('id');
+    //     if ($request->filled('date')) {
+    //         try {
+    //             $date = Carbon::createFromFormat('d-m-Y', $request->date)->format('Y-m-d');
+    //         } catch (\Exception $e) {
+    //             // If invalid date, you can set it to null or today's date
+    //             $date = null;
+    //         }
+    //     } else {
+    //         $date = null;
+    //     }
+    //     $ordersQuery = Order::select(
+    //         DB::raw("DATE_FORMAT(created_at, '%d-%m-%Y') as order_date"),
+    //         DB::raw('SUM(total_amount) as total_amount')
+    //     )
+    //     ->whereIn('vendor_id', $vendorIds);
+
+    //     // Apply date filter only if valid date exists
+    //     if ($date) {
+    //         $ordersQuery->whereDate('created_at', $date);
+    //     }
+
+    //     $orders = $ordersQuery
+    //         ->groupBy(DB::raw("DATE_FORMAT(created_at, '%d-%m-%Y')"))
+    //         ->orderBy(DB::raw("STR_TO_DATE(order_date, '%d-%m-%Y')"), 'desc')
+    //         ->get();
+
+    //     return response()->json([
+    //         'success' => true,
+    //         'transactions' => $orders
+    //     ]);
+    // }
+
     public function get_date_wise_total_payment(Request $request){
         $vendorIds = $request->user()->vendors->pluck('id');
+
         if ($request->filled('date')) {
             try {
                 $date = Carbon::createFromFormat('d-m-Y', $request->date)->format('Y-m-d');
             } catch (\Exception $e) {
-                // If invalid date, you can set it to null or today's date
                 $date = null;
             }
         } else {
             $date = null;
         }
+
+        // List of all payment methods you want to always show
+        $allPaymentMethods = ['Cash On Delivery', 'Online', 'UPI', 'Card', 'Cash'];
+
+        // Get flat data
         $ordersQuery = Order::select(
             DB::raw("DATE_FORMAT(created_at, '%d-%m-%Y') as order_date"),
+            'payment_method',
             DB::raw('SUM(total_amount) as total_amount')
         )
         ->whereIn('vendor_id', $vendorIds);
 
-        // Apply date filter only if valid date exists
         if ($date) {
             $ordersQuery->whereDate('created_at', $date);
         }
 
         $orders = $ordersQuery
-            ->groupBy(DB::raw("DATE_FORMAT(created_at, '%d-%m-%Y')"))
+            ->groupBy(DB::raw("DATE_FORMAT(created_at, '%d-%m-%Y')"), 'payment_method')
             ->orderBy(DB::raw("STR_TO_DATE(order_date, '%d-%m-%Y')"), 'desc')
             ->get();
 
+        // Convert to nested structure with fixed keys
+        $grouped = [];
+        foreach ($orders as $order) {
+            $dateKey = $order->order_date;
+
+            // initialize all payment methods with 0 for this date if not already
+            if (!isset($grouped[$dateKey])) {
+                $grouped[$dateKey] = [
+                    'order_date' => $dateKey,
+                    'payment_methods' => array_fill_keys($allPaymentMethods, 0),
+                    'total' => 0
+                ];
+            }
+
+            // fill actual payment amount
+            $grouped[$dateKey]['payment_methods'][$order->payment_method] = (float)$order->total_amount;
+
+            // update total
+            $grouped[$dateKey]['total'] += (float)$order->total_amount;
+        }
+
+        // reset keys to numeric for JSON
+        $result = array_values($grouped);
+
         return response()->json([
             'success' => true,
-            'transactions' => $orders
+            'transactions' => $result
         ]);
     }
+
+
 
     public function get_transaction_details(Request $request)
     {

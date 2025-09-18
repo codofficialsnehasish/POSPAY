@@ -74,6 +74,15 @@
                 </li>
             @endcanany
 
+            @canany(['Transaction View'])
+            <li>
+                <a href="{{ route('transaction.get-date-wise-total-payment') }}">
+                    <iconify-icon icon="mdi:cash-multiple" class="menu-icon"></iconify-icon>
+                    <span>Transaction</span>
+                </a>
+            </li>
+            @endcanany
+
             @canany(['SeatNumber Create', 'SeatNumber View', 'SeatNumber Edit', 'SeatNumber Delete'])
                 <li>
                     <a href="{{ route('seatnumber.index') }}">

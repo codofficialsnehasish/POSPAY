@@ -8,6 +8,7 @@ class StockTransaction extends Model
 {
     protected $fillable = [
         'product_id',
+        'veriation_option_id',
         'batch_number',
         'transaction_type',
         'transaction_date',

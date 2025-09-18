@@ -65,7 +65,7 @@
                             <td class="text-wrap">{{ $seller->email }}</td>
                             <td class="text-wrap">{{ $seller->phone }}</td>
                             {{-- <td class="text-wrap">{{ $seller->address }}, {{ $seller->city }}, {{ $seller->state }}, {{ $seller->country }}</td> --}}
-                            <td>{!! $seller->status ? '<span class="badge bg-success">Active</span>' : '<span class="badge bg-danger">Inactive</span>' !!}</td>
+                            <td>{!! check_visibility($seller->status) !!}</td>
                             <td class="text-wrap">{{ $seller->created_at->format('d-m-Y H:i A') }}</td>
                             <td>
                                 <a href="{{ route('sellers.edit', $seller->id) }}" class="w-32-px h-32-px bg-success-focus text-success-main rounded-circle d-inline-flex align-items-center justify-content-center">

@@ -108,6 +108,6 @@ Route::middleware('auth:sanctum')->group( function () {
         Route::get('search-products','search_products');
         Route::get('get-purchasing-products','get_products');
         Route::get('get-sellers','get_seller');
-        Route::get('purchase-store','storePurchase');
+        Route::post('purchase-store','storePurchase');
     });
 });

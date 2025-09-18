@@ -10,7 +10,8 @@
     if (!function_exists('generateOrderNumber')) {
         function generateOrderNumber() {
             $dateTime = date('Ymd');
-            $orderNumber = 'ORD' . $dateTime;
+            // $orderNumber = 'ORD' . $dateTime;
+            $orderNumber = 'O' . $dateTime;
             return $orderNumber;
         }
     }
