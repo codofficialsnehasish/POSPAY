@@ -22,7 +22,10 @@ use App\Http\Controllers\Admin\{
     UnitController,
     SellerMasterController,
     TransactionController,
+    StockTransactionController,
 };
+
+use App\Http\Controllers\API\TransactionApi;
 
 Route::get('/', function () {
     return redirect(route('login'));
@@ -247,7 +250,12 @@ Route::middleware(['auth', 'verified'])->group(function(){
             Route::get('get-transaction-details','get_transaction_details')->name('transaction.get-transaction-details');
             Route::get('get-order-by-id/{id}','get_order_by_id')->name('transaction.get-order-by-id');
         });
+
+        Route::get('/stock-transactions', [StockTransactionController::class, 'index'])->name('stock.transactions');
     });
 });
+
+Route::get('/transaction-details/excel', [TransactionApi::class, 'downloadTransactionExcel'])
+     ->name('transaction.details.excel');
 
 require __DIR__.'/auth.php';

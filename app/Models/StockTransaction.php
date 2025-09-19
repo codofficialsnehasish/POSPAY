@@ -23,4 +23,9 @@ class StockTransaction extends Model
     {
         return $this->belongsTo(Product::class);
     }
+
+    public function variationOption()
+    {
+        return $this->belongsTo(ProductVariationOption::class, 'veriation_option_id');
+    }
 }

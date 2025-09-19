@@ -101,7 +101,8 @@ class VendorController extends Controller  implements HasMiddleware
             'store_id'=>'required',
             'store_location'=>'required',
             'address'=>'required',
-            'status' => 'required|in:1,0'
+            'status' => 'required|in:1,0',
+            'image' => 'nullable|image|max:9',
         ]);
         if ($validator->fails()) {
             return redirect()->back()->withErrors($validator->errors())->withInput();
@@ -117,7 +118,7 @@ class VendorController extends Controller  implements HasMiddleware
                 'store_location'=>$request->store_location,
                 'gst_no'=>$request->gst_no,
                 'admin_id'=>$request->admin_id,
-
+                'is_purchase_enabled' => $request->is_purchase_enabled,
             ]);
             if ($user) {
         
@@ -181,7 +182,8 @@ class VendorController extends Controller  implements HasMiddleware
             'store_id'=>'required',
             'store_location'=>'required',
             'address'=>'required',
-            'status' => 'required|in:1,0'
+            'status' => 'required|in:1,0',
+            'image' => 'nullable|image|max:9',
         ]);
         if ($validator->fails()) {
             return redirect()->back()->withErrors($validator->errors())->withInput();
@@ -195,7 +197,8 @@ class VendorController extends Controller  implements HasMiddleware
             $vendor->store_location = $request->store_location;
             $vendor->gst_no = $request->gst_no;
             $vendor->status = $request->status;
-            $vendor->admin_id = $request->admin_id ;
+            $vendor->admin_id = $request->admin_id;
+            $vendor->is_purchase_enabled = $request->is_purchase_enabled;
 
             if(isset($request->password)){
                 $vendor->password = bcrypt($request->password);

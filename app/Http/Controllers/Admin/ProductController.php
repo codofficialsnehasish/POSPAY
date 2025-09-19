@@ -102,6 +102,7 @@ class ProductController extends Controller implements HasMiddleware
         $product = new Product();
         $product->name = $request->product_name;
         $product->vendor_id = $vendor_id;
+        $product->brand_owner = $request->brand_owner;
         // $product->product_type = $request->product_type ?? 'simple';
         $product->product_type = 'attribute';
         if($product->product_type == 'simple'){
@@ -193,6 +194,7 @@ class ProductController extends Controller implements HasMiddleware
             $product->name = $request->product_name;
             $product->slug = createSlug($request->product_name, Product::class);
         }
+        $product->brand_owner = $request->brand_owner;
         $product->product_type = $request->product_type;
         $product->product_type = 'attribute';
         if($product->product_type == 'simple'){

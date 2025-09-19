@@ -250,6 +250,20 @@
                                     <label class="form-check-label" for="customRadioInline2">Inactive</label>
                                 </div>
                             </div>
+
+                            <div class="mb-3">
+                                <label class="form-label mb-3 d-flex">Purchase Enabled</label>
+                                <div class="form-check form-check-inline">
+                                    <input type="radio" id="is_purchase_enabled1" name="is_purchase_enabled"
+                                        class="form-check-input" value="1" {{ check_uncheck($vendor->is_purchase_enabled, 1) }}>
+                                    <label class="form-check-label" for="is_purchase_enabled1">Yes</label>
+                                </div>
+                                <div class="form-check form-check-inline">
+                                    <input type="radio" id="is_purchase_enabled2" name="is_purchase_enabled"
+                                        class="form-check-input" value="0" {{ check_uncheck($vendor->is_purchase_enabled, 0) }}>
+                                    <label class="form-check-label" for="is_purchase_enabled2">No</label>
+                                </div>
+                            </div>
                             <div class="md-3">
                                 <button type="reset" class="btn btn-secondary">Reset</button>
                                 <button type="submit" class="btn btn-info">Save</button>

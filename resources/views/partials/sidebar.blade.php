@@ -83,6 +83,15 @@
             </li>
             @endcanany
 
+            @if(auth()->user()->is_purchase_enabled)
+            <li>
+                <a href="{{ route('stock.transactions') }}">
+                    <iconify-icon icon="mdi:scale-balance" class="menu-icon"></iconify-icon>
+                    <span>Stock Transaction</span>
+                </a>
+            </li>
+            @endif
+
             @canany(['SeatNumber Create', 'SeatNumber View', 'SeatNumber Edit', 'SeatNumber Delete'])
                 <li>
                     <a href="{{ route('seatnumber.index') }}">

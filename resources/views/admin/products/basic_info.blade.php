@@ -158,12 +158,20 @@
                         <div class="card-body">
                     
                             {{-- <label for="parent_id" class="form-label">Brand</label> --}}
-                            <select class="form-select select2" id="brand_id" name="brand_id">
+                            <select class="form-select select2 mb-3" id="brand_id" name="brand_id">
                                 <option selected disabled value="">Choose...</option>
                                 @foreach($brands as $brand)
                                     <option value="{{ $brand->id }}">{{ $brand->name }}</option>
                                 @endforeach
                             </select>
+
+                            <div class=" mb-3">
+                                <label class="form-label">Brand Owner</label>
+                                <div>
+                                    <input data-parsley-type="text" type="text" class="form-control"
+                                        placeholder="Enter Brand Owner" name="brand_owner">
+                                </div>
+                            </div>
                         </div>
                     </div>
                     <div class="card">

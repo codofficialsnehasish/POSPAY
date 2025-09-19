@@ -43,8 +43,6 @@ class User extends Authenticatable implements HasMedia
         'pos_password',
         'prod_app_key',
         'merchant_name',
-
-
     ];
 
     /**

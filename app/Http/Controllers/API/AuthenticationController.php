@@ -274,72 +274,103 @@ class AuthenticationController extends Controller
     // }
 
 
-public function update_profile(Request $request)
-{
-    $validator = Validator::make($request->all(), [
-        'first_name' => 'required|regex:/^[a-zA-Z\s]+$/|max:255',
-        'last_name' => 'required|regex:/^[a-zA-Z\s]+$/|max:255',
-        'email' => 'nullable|email|unique:users,email,' . $request->user()->id,
-        'phone' => 'nullable|digits:10|regex:/^[6789]/|unique:users,phone,'. $request->user()->id,
-        'profile_image' => ['nullable', function ($attribute, $value, $fail) {
-            if (!empty($value)) {
-                $size = (int)(strlen($value) * 3 / 4); // estimate size in bytes
-                if ($size > 2 * 1024 * 1024) {
-                    $fail('The Profile Image must not be larger than 2 MB.');
+    public function update_profile(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'first_name' => 'required|regex:/^[a-zA-Z\s]+$/|max:255',
+            'last_name' => 'required|regex:/^[a-zA-Z\s]+$/|max:255',
+            'email' => 'nullable|email|unique:users,email,' . $request->user()->id,
+            'phone' => 'nullable|digits:10|regex:/^[6789]/|unique:users,phone,'. $request->user()->id,
+            'profile_image' => ['nullable', function ($attribute, $value, $fail) {
+                if (!empty($value)) {
+                    $size = (int)(strlen($value) * 3 / 4); // estimate size in bytes
+                    if ($size > 2 * 1024 * 1024) {
+                        $fail('The Profile Image must not be larger than 2 MB.');
+                    }
                 }
-            }
-        }],
-    ]);
-
-    if ($validator->fails()) {
-        return response()->json(['error' => $validator->errors()], 422);
-    }
-
-    $user = User::find($request->user()->id);
-    $user->first_name = $request->first_name;
-    $user->last_name = $request->last_name;
-    $user->name = $request->first_name . ' ' . $request->last_name;
-    $user->email = $request->email;
-    $user->phone = $request->phone;
-    if ($request->has('profile_image') && !empty($request->input('profile_image'))) {
-        $base64Image = $request->input('profile_image');
-        $user->clearMediaCollection('user-image');
-        $user->addMediaFromBase64($base64Image)
-            ->usingFileName(now()->format('Y-m-d_H-i-s') . '.png')
-            ->toMediaCollection('user-image');
-    }
-
-    $res = $user->save();
-    $profileImage = $user->getFirstMediaUrl('user-image');
-
-    if ($res) {
-        return response()->json([
-            'status' => 'true',
-            'message' => 'Profile updated successfully.',
-            'data' => [
-                'data' => $user,
-                'profile_image' => $profileImage ?: null,
-            ],
+            }],
         ]);
-    } else {
-        return response()->json([
-            'status' => 'false',
-            'message' => 'Failed to update profile.',
-        ]);
+
+        if ($validator->fails()) {
+            return response()->json(['error' => $validator->errors()], 422);
+        }
+
+        $user = User::find($request->user()->id);
+        $user->first_name = $request->first_name;
+        $user->last_name = $request->last_name;
+        $user->name = $request->first_name . ' ' . $request->last_name;
+        $user->email = $request->email;
+        $user->phone = $request->phone;
+        if ($request->has('profile_image') && !empty($request->input('profile_image'))) {
+            $base64Image = $request->input('profile_image');
+            $user->clearMediaCollection('user-image');
+            $user->addMediaFromBase64($base64Image)
+                ->usingFileName(now()->format('Y-m-d_H-i-s') . '.png')
+                ->toMediaCollection('user-image');
+        }
+
+        $res = $user->save();
+        $profileImage = $user->getFirstMediaUrl('user-image');
+
+        if ($res) {
+            return response()->json([
+                'status' => 'true',
+                'message' => 'Profile updated successfully.',
+                'data' => [
+                    'data' => $user,
+                    'profile_image' => $profileImage ?: null,
+                ],
+            ]);
+        } else {
+            return response()->json([
+                'status' => 'false',
+                'message' => 'Failed to update profile.',
+            ]);
+        }
     }
-}
 
 
-    public function get_user_data(Request $request){
-        $user= $request->user();
-         $profileImage = $user->getFirstMediaUrl('user-image');
+    // public function get_user_data(Request $request){
+    //     $user= $request->user();
+    //      $profileImage = $user->getFirstMediaUrl('user-image');
         
+    //     return response()->json([
+    //         'status' => 'true',
+    //         'message' => 'get user details.',
+    //         'data' => [
+    //             'data' => $user,
+    //             'profile_image' => $profileImage ?: null,
+    //         ],
+    //     ]);
+    // }
+
+    public function get_user_data(Request $request)
+    {
+        $user = $request->user();
+    
+        // ✅ User profile image
+        $profileImage = $user->getFirstMediaUrl('user-image');
+    
+        // ✅ Get vendors linked to the user
+        $vendor = UserVendor::with('vendor')->where('user_id', $user->id)->first();
+        // return $vendor->vendor->getFirstMediaUrl('vendor-image');
+    
+        $vendor->image_url = $vendor->vendor->getFirstMediaUrl('vendor-image');
+        
+        // ✅ Add vendor image URL for each vendor
+        // $vendors->each(function ($userVendor) {
+        //     if ($userVendor->vendor) {
+        //         $userVendor->vendor->image_url = $userVendor->vendor->getFirstMediaUrl('vendor-image');
+        //     }
+        // });
+    
         return response()->json([
             'status' => 'true',
             'message' => 'get user details.',
             'data' => [
                 'data' => $user,
                 'profile_image' => $profileImage ?: null,
+                'vendor' => $vendor,
             ],
         ]);
     }
@@ -349,6 +380,13 @@ public function update_profile(Request $request)
     public function get_vendors(Request $request){
         $user= $request->user();
         $vendors = UserVendor::with('vendor')->where('user_id', $user->id)->get();
+
+        // append image url for each vendor
+        $vendors->each(function ($userVendor) {
+            if ($userVendor->vendor) {
+                $userVendor->vendor->image_url = $userVendor->vendor->getFirstMediaUrl('vendor-image');
+            }
+        });
         
         return response()->json([
             'status' => 'true',
