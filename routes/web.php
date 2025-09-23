@@ -23,6 +23,7 @@ use App\Http\Controllers\Admin\{
     SellerMasterController,
     TransactionController,
     StockTransactionController,
+    ReportController,
 };
 
 use App\Http\Controllers\API\TransactionApi;
@@ -252,6 +253,15 @@ Route::middleware(['auth', 'verified'])->group(function(){
         });
 
         Route::get('/stock-transactions', [StockTransactionController::class, 'index'])->name('stock.transactions');
+
+        Route::controller(ReportController::class)->group( function() {
+            Route::get('report/sale-list','sale_list')->name('report.sale-list');
+            Route::get('report/sale-item','sale_item')->name('report.sale-item');
+            Route::get('report/purchase-list','purchase_list')->name('report.purchase-list');
+            Route::get('report/stock-report','stock_report')->name('report.stock-report');
+            Route::get('report/payment-list','payment_list')->name('report.payment-list');
+            Route::get('report/expiry-list','expiry_list')->name('report.expiry-list');
+        });
     });
 });
 

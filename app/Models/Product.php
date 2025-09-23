@@ -57,4 +57,9 @@ class Product extends Model implements HasMedia
     {
         return $this->belongsTo(User::class, 'vendor_id', 'id');
     }
+
+    public function hsncode()
+    {
+        return $this->belongsTo(Hsncode::class, 'hsncode_id', 'id');
+    }
 }

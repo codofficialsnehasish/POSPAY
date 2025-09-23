@@ -67,7 +67,7 @@
         }
     }
 
-    if (!function_exists('calculate_cart_gst_by_userId')) {
+    /*if (!function_exists('calculate_cart_gst_by_userId')) {
         function calculate_cart_gst_by_userId(int $userId)
         {
             $cgst = 0;
@@ -124,7 +124,67 @@
                 'total_gst' => round($cgst + $sgst, 2),
             ];
         }
+    }*/
+
+    if (!function_exists('calculate_cart_gst_by_userId')) {
+        function calculate_cart_gst_by_userId(int $userId)
+        {
+            $cgst = 0;
+            $sgst = 0;
+
+            $cartItems = Cart::where('user_id', $userId)->get();
+
+            foreach ($cartItems as $cartItem) {
+                // Get base price
+                if ($cartItem->option_id) {
+                    $price = get_product_price($cartItem->product_id, $cartItem->option_id);
+                } else {
+                    $price = get_product_price($cartItem->product_id);
+                }
+
+                $product = Product::find($cartItem->product_id);
+
+                if (!$product) {
+                    continue;
+                }
+
+                // ✅ Safely get gstRate
+                $gstRate = 0;
+                if ($product->hsncode_id) {
+                    $hsncode = Hsncode::find($product->hsncode_id);
+                    if ($hsncode) {
+                        $gstRate = $hsncode->gst_rate;
+                    }
+                }
+
+                $isGstIncluded = $product->is_gst_included; // 1 or 0
+                $qty = $cartItem->quantity;
+
+                $lineTotal = $price * $qty;
+
+                // ✅ If GST is already included, skip GST calculation
+                if ($isGstIncluded == 1) {
+                    continue; // Do not add GST at all
+                }
+
+                // ✅ Calculate GST only if not included
+                if ($gstRate > 0) {
+                    $taxAmount = ($lineTotal * $gstRate) / 100;
+
+                    // Divide equally into CGST and SGST
+                    $cgst += $taxAmount / 2;
+                    $sgst += $taxAmount / 2;
+                }
+            }
+
+            return [
+                'cgst' => round($cgst, 2),
+                'sgst' => round($sgst, 2),
+                'total_gst' => round($cgst + $sgst, 2),
+            ];
+        }
     }
+
 
 
     

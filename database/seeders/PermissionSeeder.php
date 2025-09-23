@@ -87,6 +87,12 @@ class PermissionSeeder extends Seeder
             array('name' => 'Product Addons & Complementary Edit','group_name' => 'Product'),
             array('name' => 'Product Delete','group_name' => 'Product'),
             
+            array('name' => 'Sale View','group_name' => 'Reports'),
+            array('name' => 'Sale Item View','group_name' => 'Reports'),
+            array('name' => 'Purchase List','group_name' => 'Reports'),
+            array('name' => 'Stock Report','group_name' => 'Reports'),
+            array('name' => 'Payment List','group_name' => 'Reports'),
+            array('name' => 'Expiry List','group_name' => 'Reports'),
         ];
 
         // Create the permissions

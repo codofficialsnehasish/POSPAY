@@ -15,7 +15,7 @@
         <div class="auth-right py-32 px-24 d-flex flex-column justify-content-center">
             <div class="max-w-464-px mx-auto w-100">
                 <div style="display: flex;flex-direction: column;justify-content: center;align-items: center;text-align: center;">
-                    <a href="{{ route('dashboard') }}" class="mb-40 max-w-290-px">
+                    <a href="{{ route('dashboard') }}" class="mb-40" style="max-width: 380px;">
                         <img src="{{ asset('assets/dashboard-assets/images/web-logo.png') }}" alt="">
                         
                         {{-- <h4>YOUR LOGO</h4> --}}

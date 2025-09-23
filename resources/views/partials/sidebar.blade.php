@@ -154,6 +154,37 @@
                     </a>
                 </li>
             @endcanany
+
+            @canany(['Product Create', 'Product View','Product Edit','Product Delete'])
+                <li class="dropdown">
+                    <a href="javascript:void(0)">
+                        <iconify-icon icon="mdi:package-variant-closed" class="menu-icon"></iconify-icon>
+                        <span>Reports</span>
+                    </a>
+
+                    <ul class="sidebar-submenu">
+                        <li>
+                            <a href="{{ route('report.stock-report') }}">Current Stock Report</a>
+                        </li>
+                        <li>
+                            <a href="{{ route('report.sale-list') }}">Sales Report</a>
+                        </li>
+                        <li>
+                            <a href="{{ route('report.sale-item') }}">Sales Item Report</a>
+                        </li>
+                        <li>
+                            <a href="{{ route('report.purchase-list') }}">Purchase Report</a>
+                        </li>
+                        <li>
+                            <a href="{{ route('report.payment-list') }}">Payment / Transaction Report</a>
+                        </li>
+                        <li>
+                            <a href="{{ route('report.expiry-list') }}">Expiry Product Report</a>
+                        </li>
+                    </ul>
+                </li>
+
+            @endcanany
         </ul>
 
     </div>

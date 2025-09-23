@@ -69,7 +69,7 @@ class PurchaseController extends Controller
         ]);
     }
 
-    public function search_products(Request $request)
+    /*public function search_products(Request $request)
     {
         $vendorIds = $request->user()->vendors->pluck('id');
         $search = $request->input('search');
@@ -112,6 +112,88 @@ class PurchaseController extends Controller
             });
         });
 
+        return response()->json([
+            'status' => true,
+            'data'   => $data->values()
+        ]);
+    }*/
+    
+    public function search_products(Request $request)
+    {
+        $vendorIds = $request->user()->vendors->pluck('id');
+        $search = $request->input('search');
+    
+        // Query products visible and belong to vendor
+        $productsQuery = Product::with(['variations.options', 'hsncode']) // make sure you eager load hsncode
+            ->where('is_visible', 1)
+            ->whereIn('vendor_id', $vendorIds);
+    
+        if ($search) {
+            $productsQuery->where(function($query) use ($search) {
+                // Search by product name
+                $query->where('name', 'like', '%' . $search . '%')
+                    // Or search by barcode (exact match) in variations options
+                    ->orWhereHas('variations.options', function($q) use ($search) {
+                        $q->where('barcode', $search);
+                    });
+            });
+        }
+    
+        $products = $productsQuery->get();
+    
+        // Flatten data for API (only matched options)
+        $data = $products->flatMap(function ($product) use ($search) {
+            return $product->variations->flatMap(function ($variation) use ($product, $search) {
+                return $variation->options
+                    ->when($search, function ($options) use ($search, $product) {
+                        // if search looks like a barcode (all numbers) → filter by barcode
+                        if (is_numeric($search)) {
+                            return $options->where('barcode', $search);
+                        }
+        
+                        // if searching by name, just return all options (no filter here)
+                        return $options;
+                    })
+                    ->map(function ($option) use ($product, $variation) {
+                        $price = $option->price ?? $variation->price ?? $product->price;
+                        $gstRate = $product->hsncode->gst_rate ?? 0;
+                        $isGstIncluded = $product->is_gst_included ?? 0;
+    
+                        // Split GST into CGST and SGST
+                        $cgstRate = $gstRate / 2;
+                        $sgstRate = $gstRate / 2;
+    
+                        if ($isGstIncluded) {
+                            // If GST is included in price, extract base price first
+                            $basePrice = $price / (1 + ($gstRate / 100));
+                            $cgstAmount = $basePrice * ($cgstRate / 100);
+                            $sgstAmount = $basePrice * ($sgstRate / 100);
+                        } else {
+                            // GST not included, simply calculate on price
+                            $cgstAmount = $price * ($cgstRate / 100);
+                            $sgstAmount = $price * ($sgstRate / 100);
+                        }
+    
+                        return [
+                            'product_id'           => $product->id,
+                            'variation_id'         => $variation->id,
+                            'variation_option_id'  => $option->id,
+                            'product_name'         => $product->name . ' - ' . $option->name,
+                            'product_price'        => $price,
+                            'gst_rate'             => $gstRate,
+                            'is_gst_included'      => $isGstIncluded,
+                            'cgst_rate'            => $cgstRate,
+                            'sgst_rate'            => $sgstRate,
+                            'cgst_amount'          => round($cgstAmount, 2),
+                            'sgst_amount'          => round($sgstAmount, 2),
+                            'stock'                => $option->quantity,
+                            'barcode'              => $option->barcode,
+                            'product_image'        => getProductMainImage($product->id),
+                        ];
+                    });
+            });
+        });
+    
         return response()->json([
             'status' => true,
             'data'   => $data->values()

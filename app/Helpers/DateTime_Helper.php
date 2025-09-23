@@ -23,6 +23,13 @@
         }
     }
 
+    if (!function_exists('format_datetime_excel')) {
+        function format_datetime_excel($datetime){
+            $carbonDatetime = Carbon::parse($datetime);
+            return $carbonDatetime->format('d-m-y h:i A');
+        }
+    }
+
     if (!function_exists('format_date')) {
         function format_date($datetime){
             $carbonDatetime = Carbon::parse($datetime);
