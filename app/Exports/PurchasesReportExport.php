@@ -39,6 +39,7 @@ class PurchasesReportExport implements FromCollection, WithHeadings
         return [
             'Date',
             'Seller',
+            'Product',
             'Invoice #',
             'Total Amount',
         ];

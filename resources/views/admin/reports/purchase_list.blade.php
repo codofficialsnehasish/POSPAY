@@ -30,6 +30,7 @@
                         <th>S.L</th>
                         <th>Date</th>
                         <th>Seller</th>
+                        <th>Product</th>
                         <th>Invoice #</th>
                         <th>Total Amount</th>
                     </tr>
@@ -40,6 +41,15 @@
                         <td>{{ $loop->iteration }}</td>
                         <td>{{ format_date($purchase->purchase_date) }}</td>
                         <td>{{ $purchase->seller->seller_name }}</td>
+                        <td>
+                            @foreach($purchase->items as $item)
+                                {{ $item->product->name ?? '' }}
+                                @if($item->variation)
+                                    - {{ $item->variation->name }}
+                                @endif
+                                <br>
+                            @endforeach
+                        </td>
                         <td>{{ $purchase->invoice_number }}</td>
                         <td>{{ number_format($purchase->total_amount,2) }}</td>
                     </tr>

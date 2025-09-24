@@ -412,7 +412,8 @@
 if (!function_exists('today_sales_by_payment_method')) {
     function today_sales_by_payment_method()
     {
-        $paymentMethods = ['Cash On Delevery', 'Online', 'UPI', 'Card'];
+        // $paymentMethods = ['Cash On Delevery', 'Online', 'UPI', 'Card'];
+        $paymentMethods = ['Cash', 'UPI', 'Card'];
         $stats = [];
 
         $todayOrders = Order::whereDate('created_at', date('Y-m-d'))->get();

@@ -179,13 +179,21 @@ class ReportApiController extends Controller
 
 
         $exportData = $purchases->map(function ($purchase) {
+                        // Build product + variation string
+                        $products = $purchase->items->map(function ($item) {
+                            $variation = $item->variation ? ' - '.$item->variation->name : '';
+                            return $item->product->name . $variation;
+                        })->implode(", "); // join with newline or comma
+
                         return [
-                            'Date' => format_date($purchase->purchase_date),
+                            'Date' => format_date_excel($purchase->purchase_date),
                             'Seller' => $purchase->seller->seller_name,
+                            'Product' => $products, // here is your combined product + variation
                             'Invoice #' => $purchase->invoice_number,
-                            'Total Amount' => number_format($purchase->total_amount,2),
+                            'Total Amount' => number_format($purchase->total_amount, 2),
                         ];
                     });
+
 
         return Excel::download(new PurchasesReportExport($exportData), 'purchase_report.xlsx');
     }

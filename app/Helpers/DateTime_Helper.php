@@ -30,6 +30,13 @@
         }
     }
 
+    if (!function_exists('format_date_excel')) {
+        function format_date_excel($datetime){
+            $carbonDatetime = Carbon::parse($datetime);
+            return $carbonDatetime->format('d-m-y');
+        }
+    }
+
     if (!function_exists('format_date')) {
         function format_date($datetime){
             $carbonDatetime = Carbon::parse($datetime);
