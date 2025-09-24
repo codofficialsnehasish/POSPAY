@@ -24,6 +24,7 @@ use App\Http\Controllers\Admin\{
     TransactionController,
     StockTransactionController,
     ReportController,
+    PurchaseController,
 };
 
 use App\Http\Controllers\API\TransactionApi;
@@ -262,6 +263,9 @@ Route::middleware(['auth', 'verified'])->group(function(){
             Route::get('report/payment-list','payment_list')->name('report.payment-list');
             Route::get('report/expiry-list','expiry_list')->name('report.expiry-list');
         });
+
+        Route::get('purchase/search-products', [PurchaseController::class, 'searchProducts'])->name('purchases.search-products');
+        Route::resource('purchase', PurchaseController::class);
     });
 });
 

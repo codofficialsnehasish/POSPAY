@@ -155,6 +155,13 @@
                 </li>
             @endcanany
 
+            <li>
+                <a href="{{ route('purchase.index') }}">
+                    <iconify-icon icon="mdi:package-variant-closed" class="menu-icon"></iconify-icon>
+                    <span>Purchase</span>
+                </a>
+            </li>
+
             @canany(['Product Create', 'Product View','Product Edit','Product Delete'])
                 <li class="dropdown">
                     <a href="javascript:void(0)">
