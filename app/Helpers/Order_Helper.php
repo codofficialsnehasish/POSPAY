@@ -415,7 +415,7 @@ if (!function_exists('today_sales_by_payment_method')) {
         $paymentMethods = ['Cash On Delevery', 'Online', 'UPI', 'Card'];
         $stats = [];
 
-        $todayOrders = Order::whereDate('created_at', today())->get();
+        $todayOrders = Order::whereDate('created_at', date('Y-m-d'))->get();
 
         $totalSalesToday = $todayOrders->sum('total_amount');
 
@@ -434,6 +434,13 @@ if (!function_exists('today_sales_by_payment_method')) {
                 'percentage' => $percentage
             ];
         }
+
+        // Add total at the end
+        $stats[] = [
+            'payment_method' => 'All',
+            'total_sales' => $totalSalesToday,
+            'percentage' => 100
+        ];
 
         return $stats;
     }
