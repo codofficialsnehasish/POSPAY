@@ -15,6 +15,7 @@ use App\Http\Controllers\API\{
     DashboardController,
     TransactionApi,
     PurchaseController,
+    ReportApiController,
 };
 
 
@@ -110,4 +111,18 @@ Route::middleware('auth:sanctum')->group( function () {
         Route::get('get-sellers','get_seller');
         Route::post('purchase-store','storePurchase');
     });
+
+    // Route::controller(ReportApiController::class)->group( function() {
+    //     Route::prefix('reports')->group(function () {
+    //         Route::get('sales', [ReportApiController::class, 'sale_list']);        // /api/reports/sales
+    //         Route::get('sales/items', [ReportApiController::class, 'sale_item']); // /api/reports/sales/items
+    //         Route::get('purchases', [ReportApiController::class, 'purchase_list']); // /api/reports/purchases
+    //         Route::get('stocks', [ReportApiController::class, 'stock_report']);     // /api/reports/stocks
+    //         Route::get('payments', [ReportApiController::class, 'payment_list']);   // /api/reports/payments
+    //         Route::get('expiry', [ReportApiController::class, 'expiry_list']);      // /api/reports/expiry
+    //     });
+    // });
+
+    Route::get('get-report-list', [ReportApiController::class, 'get_report_list']);
+    Route::get('get-report-excel-link', [ReportApiController::class, 'get_report_excel_link']);
 });

@@ -95,10 +95,13 @@ class ReportController  extends Controller implements HasMiddleware {
     public function expiry_list(Request $request)
     {
         $expiryItems = StockTransaction::with(['product','variationOption'])
+            ->whereHas('product', function ($query){
+                    $query->where('vendor_id', auth()->user()->id);
+                })
             ->whereNotNull('expiry_date')
             ->where('expiry_date', '<=', now()->addDays(30)) // next 30 days expiry
             ->latest('expiry_date')
-            ->paginate(20);
+            ->get();
 
         return view('admin.reports.expiry_list', compact('expiryItems'));
     }

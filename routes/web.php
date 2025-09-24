@@ -27,7 +27,10 @@ use App\Http\Controllers\Admin\{
     PurchaseController,
 };
 
-use App\Http\Controllers\API\TransactionApi;
+use App\Http\Controllers\API\{
+    TransactionApi,
+    ReportApiController,
+};
 
 Route::get('/', function () {
     return redirect(route('login'));
@@ -271,5 +274,16 @@ Route::middleware(['auth', 'verified'])->group(function(){
 
 Route::get('/transaction-details/excel', [TransactionApi::class, 'downloadTransactionExcel'])
      ->name('transaction.details.excel');
+
+Route::controller(ReportApiController::class)->group( function() {
+    Route::prefix('reports')->group(function () {
+        Route::get('sales', 'sale_list')->name('report.sales');        // /reports/sales
+        Route::get('sales/items', 'sale_item')->name('report.sales-items'); // /reports/sales/items
+        Route::get('purchases', 'purchase_list')->name('report.purchases'); // /reports/purchases
+        Route::get('stocks', 'stock_report')->name('report.stocks');     // /reports/stocks
+        Route::get('payments', 'payment_list')->name('report.payments');   // /reports/payments
+        Route::get('expiry', 'expiry_list')->name('report.expiry');      // /reports/expiry
+    });
+});
 
 require __DIR__.'/auth.php';

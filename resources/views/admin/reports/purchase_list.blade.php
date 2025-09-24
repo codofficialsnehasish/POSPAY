@@ -28,20 +28,20 @@
                 <thead>
                     <tr>
                         <th>S.L</th>
+                        <th>Date</th>
+                        <th>Seller</th>
                         <th>Invoice #</th>
                         <th>Total Amount</th>
-                        <th>Seller</th>
-                        <th>Date</th>
                     </tr>
                 </thead>
                 <tbody>
                     @foreach($purchases as $purchase)
                     <tr>
                         <td>{{ $loop->iteration }}</td>
+                        <td>{{ format_date($purchase->purchase_date) }}</td>
+                        <td>{{ $purchase->seller->seller_name }}</td>
                         <td>{{ $purchase->invoice_number }}</td>
                         <td>{{ number_format($purchase->total_amount,2) }}</td>
-                        <td>{{ $purchase->seller->seller_name }}</td>
-                        <td>{{ format_date($purchase->purchase_date) }}</td>
                     </tr>
                     @endforeach
                 </tbody>

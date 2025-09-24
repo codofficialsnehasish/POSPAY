@@ -48,7 +48,6 @@
                     @endforeach
                 </tbody>
             </table>
-            {{ $expiryItems->links() }}
         </div>
     </div>
 </div>
