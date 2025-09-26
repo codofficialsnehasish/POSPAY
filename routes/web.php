@@ -25,7 +25,9 @@ use App\Http\Controllers\Admin\{
     StockTransactionController,
     ReportController,
     PurchaseController,
+    ProductExcelController,
 };
+
 
 use App\Http\Controllers\API\{
     TransactionApi,
@@ -269,6 +271,10 @@ Route::middleware(['auth', 'verified'])->group(function(){
 
         Route::get('purchase/search-products', [PurchaseController::class, 'searchProducts'])->name('purchases.search-products');
         Route::resource('purchase', PurchaseController::class);
+
+        Route::get('products/bulk-upload', [ProductExcelController::class, 'showUploadForm'])->name('products.bulk-upload-form');
+        Route::post('products/bulk-upload', [ProductExcelController::class, 'importProducts'])->name('products.bulk-upload');
+        Route::get('products/template-download', [ProductExcelController::class, 'downloadTemplate'])->name('products.template-download');
     });
 });
 

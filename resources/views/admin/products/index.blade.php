@@ -40,15 +40,25 @@ table.dataTable thead>tr>th.dt-orderable-asc span.dt-column-order, table.dataTab
         </div>
 
         <div class="card basic-data-table">
-            <div
-                class="card-header border-bottom bg-base py-16 px-24 d-flex align-items-center flex-wrap gap-3 justify-content-between">
+            <div class="card-header border-bottom bg-base py-16 px-24 d-flex align-items-center justify-content-between flex-wrap gap-3">
+                <!-- Title on left -->
                 <h5 class="card-title mb-0">All Products</h5>
-                <a href="{{ route('products.basic-info-create') }}"
+
+                <!-- Buttons on right -->
+                <div class="d-flex align-items-center gap-2">
+                    <a href="{{ route('products.basic-info-create') }}"
                     class="btn btn-primary text-sm btn-sm px-12 py-12 radius-8 d-flex align-items-center gap-2">
-                    <iconify-icon icon="ic:baseline-plus" class="icon text-xl line-height-1"></iconify-icon>
-                    Add New
-                </a>
+                        <iconify-icon icon="ic:baseline-plus" class="icon text-xl line-height-1"></iconify-icon>
+                        Add New
+                    </a>
+                    <a href="{{ route('products.bulk-upload-form') }}"
+                    class="btn btn-primary text-sm btn-sm px-12 py-12 radius-8 d-flex align-items-center gap-2">
+                        <iconify-icon icon="mdi:upload-multiple" class="icon text-xl line-height-1"></iconify-icon>
+                        Bulk Upload
+                    </a>
+                </div>
             </div>
+
             <form action="{{ route('products.multiple.filter') }}" class="mb-2 p-3" method="GET" id="filterForm">
 
                 <div class="row">

@@ -10,6 +10,33 @@ use Spatie\MediaLibrary\InteractsWithMedia;
 class Product extends Model implements HasMedia
 {
     use InteractsWithMedia;
+
+    protected $fillable = [
+        'name',
+        'slug',
+        'product_type',
+        'sort_description',
+        'long_description',
+        'brand_id',
+        'hsncode_id',
+        'is_gst_included',
+        'brand_owner',
+        'vendor_id',
+        'store_id',
+        'veg',
+        'price',
+        'product_price',
+        'discount_rate',
+        'discount_price',
+        'gst_rate',
+        'gst_amount',
+        'total_price',
+        'is_available',
+        'is_special',
+        'barcode',
+        'measure',
+        'is_visible',
+    ];
     
     public function product_subcategories()
     {
