@@ -32,10 +32,10 @@
                 <thead>
                     <tr>
                         <th>S.L</th>
-                        <th>Invoice No</th>
-                        <th>Supplier</th>
-                        <th>Total Amount</th>
                         <th>Purchase Date</th>
+                        <th>Supplier</th>
+                        <th>Invoice No</th>
+                        <th>Total Amount</th>
                         <th>Products</th>
                         <th>Action</th>
                     </tr>
@@ -44,19 +44,25 @@
                     @foreach($purchases as $purchase)
                     <tr>
                         <td>{{ $loop->iteration }}</td>
+                        <td>{{ format_date_excel($purchase->purchase_date) }}</td>
+                        <td>{{ $purchase->seller->seller_name }}</td>
                         <td>{{ $purchase->invoice_number }}</td>
-                        <td>{{ $purchase->seller_name }}</td>
                         <td>{{ number_format($purchase->total_amount, 2) }}</td>
-                        <td>{{ format_datetime($purchase->purchase_date) }}</td>
                         <td>
                             @foreach($purchase->items as $item)
-                                <div>{{ $item->product->name ?? '' }} - {{ $item->quantity }} pcs</div>
+                                <div>
+                                    {{ $item->product->name ?? '' }} 
+                                    @if($item->variation)
+                                        - {{ $item->variation->name }}
+                                    @endif
+                                    : {{ $item->quantity }} QTY
+                                </div>
                             @endforeach
                         </td>
                         <td>
                             <a href="{{ route('purchase.show', $purchase->id) }}" class="btn btn-sm btn-info">View</a>
-                            <a href="{{ route('purchase.edit', $purchase->id) }}" class="btn btn-sm btn-success">Edit</a>
-                            <button class="btn btn-sm btn-danger delete-item" data-url="{{ route('purchase.destroy', $purchase->id) }}">Delete</button>
+                            {{-- <a href="{{ route('purchase.edit', $purchase->id) }}" class="btn btn-sm btn-success">Edit</a> --}}
+                            {{-- <button class="btn btn-sm btn-danger delete-item" data-url="{{ route('purchase.destroy', $purchase->id) }}">Delete</button> --}}
                         </td>
                     </tr>
                     @endforeach

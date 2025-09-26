@@ -21,7 +21,7 @@ class PurchaseController extends Controller
 
     public function create()
     {
-        $sellers = SellerMaster::all();
+        $sellers = SellerMaster::where('vendor_id', auth()->user()->id)->get();;
         return view('admin.purchase.create', compact('sellers'));
     }
 
@@ -203,7 +203,10 @@ class PurchaseController extends Controller
 
         $purchase->update(['total_amount' => $totalAmount]);
 
-        return redirect()->route('admin.purchase.index')->with('success', 'Purchase created successfully!');
+        return response()->json([
+            'message' => 'Purchase created successfully!',
+            'purchase_id' => $purchase->id
+        ], 201);
     }
 
     public function show($id)

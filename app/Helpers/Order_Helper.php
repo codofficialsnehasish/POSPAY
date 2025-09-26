@@ -321,6 +321,36 @@
             return $sales;
         }
     }
+
+    if (!function_exists('yearly_sales_stats')) {
+        function yearly_sales_stats($yearsBack = 5) // optional: how many past years to include
+        {
+            $user = Auth::user();
+            $sales = [];
+
+            // Generate a list of years to display, e.g., last 5 years
+            $currentYear = now()->year;
+            $years = range($currentYear - $yearsBack + 1, $currentYear);
+
+            foreach ($years as $year) {
+                $query = Order::query()
+                    ->whereYear('created_at', $year);
+
+                if ($user && $user->hasRole('Vendor')) {
+                    $query->where('vendor_id', $user->id);
+                }
+
+                $sales[] = [
+                    'year' => $year,
+                    'total' => $query->sum('total_amount'),
+                ];
+            }
+
+            return $sales;
+        }
+    }
+
+
     
     
     

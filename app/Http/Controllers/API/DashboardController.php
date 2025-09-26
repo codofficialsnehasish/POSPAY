@@ -35,6 +35,7 @@ class DashboardController extends Controller
                 'last_month_orders' => $last_month_orders,
                 'quarterly_orders' => $quarterly_orders,
                 'yearly_orders' => $yearly_orders,
+                'total_yearly_sales_stats'=>yearly_sales_stats(),
                 'total_monthly_sales_stats'=>monthly_sales_stats(),
                 'total_daily_sales_stats'=>daily_order_stats(),
                 'category_wise_sales_stats'=>category_sales_stats(),
