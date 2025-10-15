@@ -43,6 +43,16 @@ class OrderAPI extends Controller
         try {
             $razorpayOrder = $api->order->create($orderData);
 
+            // $qrCode = $api->qrCode->create([
+            //     'type' => 'upi_qr',
+            //     'name' => 'Shop Payment',
+            //     'usage' => 'single_use',
+            //     'fixed_amount' => true,
+            //     'payment_amount' => $request->amount * 100,
+            //     'description' => 'Payment for order'
+            // ]);
+            
+
             return response()->json([
                 'success' => true,
                 'order_id' => $razorpayOrder['id'],
@@ -51,6 +61,15 @@ class OrderAPI extends Controller
                 'receipt' => $razorpayOrder['receipt'],
                 'key' => env('RAZORPAY_KEY') // frontend will need this
             ]);
+
+            // return response()->json([
+            //     'success' => true,
+            //     'order_id' => $razorpayOrder['id'],
+            //     'amount' => $razorpayOrder['amount'],
+            //     'currency' => $razorpayOrder['currency'],
+            //     'receipt' => $razorpayOrder['receipt'],
+            //     'qr_code_url' => $qrCode['image_url'] // <- Razorpay-hosted QR code image
+            // ]);
         } catch (\Exception $e) {
             return response()->json([
                 'success' => false,

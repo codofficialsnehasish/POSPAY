@@ -214,21 +214,24 @@
 if (!function_exists('total_products')) {
     function total_products()
     {
-        return Product::count();
+        // return Product::count();
+        return Product::where('vendor_id',auth()->user()->id)->count();
     }
 }
 
 if (!function_exists('total_brands')) {
     function total_brands()
     {
-        return Brand::count();
+        // return Brand::count();
+        return Brand::where('vendor_id',auth()->user()->id)->count();
     }
 }
 
 if (!function_exists('total_categories')) {
     function total_categories()
     {
-        return Category::count();
+        //return Category::count();
+        return Category::where('vendor_id',auth()->user()->id)->count();
     }
 }
 

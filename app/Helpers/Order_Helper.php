@@ -511,7 +511,7 @@ if (!function_exists('today_sales_by_payment_method')) {
      * @param  int  $limit
      * @return \Illuminate\Support\Collection
      */
-    function top_selling_products(int $limit = 5)
+    /*function top_selling_products(int $limit = 5)
     {
         return OrderItems::select('product_id', DB::raw('SUM(quantity) as total_sold'), DB::raw('COUNT(DISTINCT(order_id)) as total_orders'))
             ->groupBy('product_id')
@@ -529,6 +529,31 @@ if (!function_exists('today_sales_by_payment_method')) {
                 'total_orders' => $item->total_orders,
                  'image_url'    => $item->product->mainImage
                                     ? Storage::url($item->product->mainImage->path)
+                                    : asset('images/default-product.png'),
+            ]);
+    }*/
+
+    function top_selling_products(int $limit = 5)
+    {
+        return OrderItems::with('product')
+            ->select('product_id', DB::raw('SUM(quantity) as total_sold'), DB::raw('COUNT(DISTINCT(order_id)) as total_orders'))
+            ->whereHas('order', function ($query) {
+                $query->where('vendor_id', auth()->user()->id);
+            })
+            ->groupBy('product_id')
+            ->orderByDesc('total_sold')
+            ->take($limit)
+            ->get()
+            ->map(fn($item) => [
+                'id'           => $item->product_id,
+                'name'         => $item->product->name,
+                'category'     => $item->product->category?->name ?? '',
+                'price'        => $item->product->price,
+                'discount'     => $item->product->discount_percent,
+                'sold'         => $item->total_sold,
+                'total_orders' => $item->total_orders,
+                'image_url'    => getProductMainImage($item->product->id)
+                                    ? getProductMainImage($item->product->id)
                                     : asset('images/default-product.png'),
             ]);
     }

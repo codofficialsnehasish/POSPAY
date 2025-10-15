@@ -238,8 +238,8 @@
                                 <thead>
                                     <tr>
                                         <th scope="col">Items</th>
-                                        <th scope="col">Price</th>
-                                        <th scope="col">Discount </th>
+                                        {{-- <th scope="col">Price</th> --}}
+                                        {{-- <th scope="col">Discount </th> --}}
                                         <th scope="col">Sold</th>
                                         <th scope="col" class="text-center">Total Orders</th>
                                     </tr>
@@ -250,10 +250,15 @@
                                     @endphp
                                     @foreach ($topProducts as $prod)
                                         <tr>
-                                            <td>
+                                            <td style="max-height: 100px;">
                                                 <div class="d-flex align-items-center">
-                                                    <img src="{{ $prod['image_url'] }}" alt="{{ $prod['name'] }}"
-                                                        class="flex-shrink-0 me-12 radius-8">
+                                                    {{-- <img src="{{ $prod['image_url'] }}" alt="{{ $prod['name'] }}"
+                                                        class="flex-shrink-0 me-12 radius-8"> --}}
+                                                        <img class="img-thumbnail rounded me-2"
+                                                            style="object-fit: contain;height: 100px;"
+                                                            src="{{ $prod['image_url'] }}"
+                                                            width="100"
+                                                            alt="{{ $prod['name'] }}">
                                                     <div class="flex-grow-1">
                                                         <h6 class="text-md mb-0 fw-normal">{{ $prod['name'] }}</h6>
                                                         <span class="text-sm text-secondary-light fw-normal">
@@ -262,14 +267,14 @@
                                                     </div>
                                                 </div>
                                             </td>
-                                            <td>₹{{ number_format($prod['price'], 2) }}</td>
-                                            <td>
+                                            {{-- <td>₹{{ number_format($prod['price'], 2) }}</td> --}}
+                                            {{-- <td>
                                                 @if ($prod['discount'])
                                                     {{ $prod['discount'] }}%
                                                 @else
                                                     N/A
                                                 @endif
-                                            </td>
+                                            </td> --}}
                                             <td>{{ $prod['sold'] }}</td>
                                             <td class="text-center">
                                                 <span
@@ -312,7 +317,7 @@
                     </div>
                 </div>
             </div>
-
+            @if(auth()->user()->hasRole('Super Admin'))
             <div class="col-12">
                 <div class="card h-100">
                     <div class="card-body p-24">
@@ -325,6 +330,7 @@
                     </div>
                 </div>
             </div>
+            @endif
         </div>
 
     </div>
