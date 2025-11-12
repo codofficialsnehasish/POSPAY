@@ -32,8 +32,14 @@ class VendorController extends Controller  implements HasMiddleware
      */
     public function index()
     {
-   
-        $users = User::role('Vendor')->latest()->get();
+        $user = Auth::user();
+        if ($user->hasRole('Super Admin')) {
+            $users = User::with('admin')->role('Vendor')->latest()->get();
+        }else if($user->hasRole('Admin')){
+            $users = User::role('Vendor')->where('admin_id',$user->id)->latest()->get();
+        }else{
+            $users = collect();
+        }
             
         return view('admin.vendor.index',compact('users'));
     }

@@ -44,7 +44,10 @@
                                 <th>Name</th>
                                 <th>Email</th>
                                 <th>Phone</th>
-                                <th>Role</th>
+                                @if(auth()->user()->hasRole('Super Admin'))
+                                <th>Admin</th>
+                                @endif
+                                {{-- <th>Role</th> --}}
                                 <th>Registred Date</th>
                                 <th>Status</th>
                                 @canany(['Vendor Edit', 'Vendor Delete'])
@@ -63,7 +66,10 @@
                                     <td><span class="font-16">{{ $user->name }}</span></td>
                                     <td>{{ $user->email }}</td>
                                     <td>{{ $user->phone }}</td>
-                                    <td>{{ $user->getRoleNames()->first() }}</td>
+                                    {{-- <td>{{ $user->getRoleNames()->first() }}</td> --}}
+                                    @if(auth()->user()->hasRole('Super Admin'))
+                                    <td>{{ $user->admin?->name ?? 'N/A' }}</td>
+                                    @endif
                                     <td>{{ format_datetime($user->created_at) }}</td>
                                     <td>{!! check_status($user->status) !!}</td>
                                     <td>

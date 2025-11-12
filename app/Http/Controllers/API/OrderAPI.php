@@ -223,18 +223,21 @@ class OrderAPI extends Controller
                     ]);
                 }
                 
-                $totalGst += $cart_item->product->gst_amount ;
+                // $totalGst += $cart_item->product->gst_amount ;
+                $gst = calculate_cart_gst_by_userId($request->user()->id);
 
                 
             }
             
-
-            $cgst = $totalGst / 2;
-            $sgst = $totalGst / 2;
+            $order->sgst_amount = $gst['sgst'] ?? 0.00;
+            $order->cgst_amount = $gst['cgst'] ?? 0.00;
+            $totalGst  = $order->sgst_amount + $order->cgst_amount;
+            // $cgst = $totalGst / 2;
+            // $sgst = $totalGst / 2;
             
             $order->gst_amount = $totalGst;
-            $order->cgst_amount = $cgst;
-            $order->sgst_amount = $sgst;
+            // $order->cgst_amount = $cgst;
+            // $order->sgst_amount = $sgst;
 
             $order->save();
             

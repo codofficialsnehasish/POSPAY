@@ -38,77 +38,77 @@ class ProductAPI extends Controller
 
 
         
-    // public function get_products_by_category(string $id)
-    // {
-    //     $category = Category::find($id);
-    //     // echo "<pre>";
-    //     // print_r( $category);
-    //     // die;
+    /*public function get_products_by_category(string $id)
+    {
+        $category = Category::find($id);
+        // echo "<pre>";
+        // print_r( $category);
+        // die;
         
-    //     if ($category) {
-    //         $products = $category->products()
-    //             ->with([
-    //                 'addons.products',
-    //                 'complamentary.product',
-    //                 'variations.options', 
-    //             ])
-    //             ->where('is_visible', 1)
-    //             ->get();
+        if ($category) {
+            $products = $category->products()
+                ->with([
+                    'addons.products',
+                    'complamentary.product',
+                    'variations.options', 
+                ])
+                ->where('is_visible', 1)
+                ->get();
 
-    //         $products->each(function ($product) {
-    //             $product->image_url = getProductMainImage($product->id);
-    //         });
+            $products->each(function ($product) {
+                $product->image_url = getProductMainImage($product->id);
+            });
 
-    //         return response()->json([
-    //             'status' => 'true',
-    //             'data' => $products,
-    //         ]);
-    //     } else {
-    //         return response()->json([
-    //             'status' => 'false',
-    //             'message' => 'Category Not found',
-    //         ]);
-    //     }
-    // }
+            return response()->json([
+                'status' => 'true',
+                'data' => $products,
+            ]);
+        } else {
+            return response()->json([
+                'status' => 'false',
+                'message' => 'Category Not found',
+            ]);
+        }
+    }*/
 
-    // public function get_products_by_category(string $id)
-    // {
-    //     $category = Category::with('subcategory')->find($id);
+    /*public function get_products_by_category(string $id)
+    {
+        $category = Category::with('subcategory')->find($id);
 
-    //     if (!$category) {
-    //         return response()->json([
-    //             'status' => 'false',
-    //             'message' => 'Category not found',
-    //         ]);
-    //     }
+        if (!$category) {
+            return response()->json([
+                'status' => 'false',
+                'message' => 'Category not found',
+            ]);
+        }
 
-    //     // Get IDs of this category + its children
-    //     $categoryIds = collect([$category->id])->merge($category->subcategory->pluck('id'));
+        // Get IDs of this category + its children
+        $categoryIds = collect([$category->id])->merge($category->subcategory->pluck('id'));
 
-    //     // Fetch products from all these categories
-    //     $products = Product::whereHas('categories', function ($query) use ($categoryIds) {
-    //             $query->whereIn('categories.id', $categoryIds);
-    //         })
-    //         ->with([
-    //             'addons.products',
-    //             'complamentary.product',
-    //             'variations.options',
-    //         ])
-    //         ->where('is_visible', 1)
-    //         ->get();
+        // Fetch products from all these categories
+        $products = Product::whereHas('categories', function ($query) use ($categoryIds) {
+                $query->whereIn('categories.id', $categoryIds);
+            })
+            ->with([
+                'addons.products',
+                'complamentary.product',
+                'variations.options',
+            ])
+            ->where('is_visible', 1)
+            ->get();
 
-    //     // Attach image URLs
-    //     $products->each(function ($product) {
-    //         $product->image_url = getProductMainImage($product->id);
-    //     });
+        // Attach image URLs
+        $products->each(function ($product) {
+            $product->image_url = getProductMainImage($product->id);
+        });
 
-    //     return response()->json([
-    //         'status' => true,
-    //         'category' => $category,
-    //         'subcategories' => $category->subcategory,
-    //         'products' => $products,
-    //     ]);
-    // }
+        return response()->json([
+            'status' => true,
+            'category' => $category,
+            'subcategories' => $category->subcategory,
+            'products' => $products,
+        ]);
+    }*/
     
     
     
@@ -217,6 +217,38 @@ class ProductAPI extends Controller
             ->get();
     
         $result = [];
+
+        if ($parentCategories->isEmpty()) {
+            // if no category found with products, return all visible products for these vendors
+            $query = Product::whereIn('vendor_id', $vendorIds)
+                ->with([
+                    'addons.products',
+                    'complamentary.product',
+                    'variations.options',
+                ])
+                ->where('is_visible', 1);
+
+            if ($request->filled('search')) {
+                $query->where('name', 'like', '%' . $request->search . '%');
+            }
+
+            $products = $query->get();
+
+            // attach image URLs
+            $products->each(function ($product) {
+                $product->image_url = getProductMainImage($product->id);
+            });
+
+            return response()->json([
+                'status' => true,
+                'data' => [
+                    [
+                        'category' => null, // no specific category
+                        'products' => $products,
+                    ]
+                ],
+            ]);
+        }
     
         foreach ($parentCategories as $category) {
             // get category + child category IDs
@@ -265,56 +297,56 @@ class ProductAPI extends Controller
 
 
  
-//     public function get_category_wise_product(Request $request)
-// {
-//     // Fetch only parent categories
-//     $parentCategories = Category::with('subcategory')->whereNull('parent_id')->get();
+    /*public function get_category_wise_product(Request $request)
+    {
+        // Fetch only parent categories
+        $parentCategories = Category::with('subcategory')->whereNull('parent_id')->get();
 
-//     $result = [];
+        $result = [];
 
-//     foreach ($parentCategories as $category) {
-//         // Get category + child category IDs
-//         $categoryIds = collect([$category->id])
-//             ->merge($category->subcategory->pluck('id'));
+        foreach ($parentCategories as $category) {
+            // Get category + child category IDs
+            $categoryIds = collect([$category->id])
+                ->merge($category->subcategory->pluck('id'));
 
-//         // Fetch products for this parent + children
-//         $query = Product::whereHas('categories', function ($query) use ($categoryIds) {
-//                 $query->whereIn('categories.id', $categoryIds);
-//             })
-//             ->with([
-//                 'addons.products',
-//                 'complamentary.product',
-//                 'variations.options',
-//             ])
-//             ->where('is_visible', 1);
+            // Fetch products for this parent + children
+            $query = Product::whereHas('categories', function ($query) use ($categoryIds) {
+                    $query->whereIn('categories.id', $categoryIds);
+                })
+                ->with([
+                    'addons.products',
+                    'complamentary.product',
+                    'variations.options',
+                ])
+                ->where('is_visible', 1);
 
-//         // Apply search filter
-//         if ($request->filled('search')) {
-//             $query->where('name', 'like', '%' . $request->search . '%');
-//         }
+            // Apply search filter
+            if ($request->filled('search')) {
+                $query->where('name', 'like', '%' . $request->search . '%');
+            }
 
-//         $products = $query->get();
+            $products = $query->get();
 
-//         // Attach image URLs
-//         $products->each(function ($product) {
-//             $product->image_url = getProductMainImage($product->id);
-//         });
+            // Attach image URLs
+            $products->each(function ($product) {
+                $product->image_url = getProductMainImage($product->id);
+            });
 
-//         // Add to response
-//         $result[] = [
-//             'category' => $category,
-//             'products' => $products,
-//         ];
-//     }
+            // Add to response
+            $result[] = [
+                'category' => $category,
+                'products' => $products,
+            ];
+        }
 
-//     return response()->json([
-//         'status' => true,
-//         'data' => $result,
-//     ]);
-// }
+        return response()->json([
+            'status' => true,
+            'data' => $result,
+        ]);
+    }*/
 
     
-     public function search_product(Request $request)
+    public function search_product(Request $request)
     {
         $query = Product::with([
             'addons.products',
