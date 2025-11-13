@@ -41,7 +41,10 @@
                             <tr>
                                 <th>Sl No.</th>
                                 <th>Image</th>
+                                <th>Store ID</th>
                                 <th>Name</th>
+                                <th>Location</th>
+                                <th>GST No.</th>
                                 <th>Email</th>
                                 <th>Phone</th>
                                 @if(auth()->user()->hasRole('Super Admin'))
@@ -63,7 +66,10 @@
                                         <img class="avatar" width="50" src="{{ $user->getFirstMediaUrl('vendor-image') }}"
                                             alt="">
                                     </td>
+                                    <td>{{ $user->store_number }}</td>
                                     <td><span class="font-16">{{ $user->name }}</span></td>
+                                    <td>{{ $user->store_location }}</td>
+                                    <td>{{ $user->gst_no ?? 'N/A' }}</td>
                                     <td>{{ $user->email }}</td>
                                     <td>{{ $user->phone }}</td>
                                     {{-- <td>{{ $user->getRoleNames()->first() }}</td> --}}

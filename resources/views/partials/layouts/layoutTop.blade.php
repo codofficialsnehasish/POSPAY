@@ -6,7 +6,9 @@
 
 <body>
 
-    @include('partials.sidebar')
+    {{-- @include('partials.sidebar') --}}
+    @include('partials.topmenu')
 
-    <main class="dashboard-main">
-        @include('partials.navbar')
+    {{-- <main class="dashboard-main"> --}}
+    <main class="dashboard">
+        {{-- @include('partials.navbar') --}}

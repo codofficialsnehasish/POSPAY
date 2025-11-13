@@ -38,7 +38,16 @@ class UsersController extends Controller implements HasMiddleware
     public function create()
     {
         $roles = Role::all();
-        $vendors = User::role('Vendor')->latest()->get();
+
+        $user = Auth::user();
+        if ($user->hasRole('Super Admin')) {
+            $vendors = User::with('admin')->role('Vendor')->latest()->get();
+        }else if($user->hasRole('Admin')){
+            $vendors = User::role('Vendor')->where('admin_id',$user->id)->latest()->get();
+        }else{
+            $vendors = collect();
+        }
+        // $vendors = User::role('Vendor')->latest()->get();
         return view('admin.users.create',compact('roles','vendors'));
     }
 
@@ -95,7 +104,15 @@ class UsersController extends Controller implements HasMiddleware
         $data = User::findOrFail($id);
         $roles = Role::get();
         $userRoles = $data->roles->pluck('name')->toArray();
-        $vendors = User::role('Vendor')->latest()->get();
+        // $vendors = User::role('Vendor')->latest()->get();
+        $user = Auth::user();
+        if ($user->hasRole('Super Admin')) {
+            $vendors = User::with('admin')->role('Vendor')->latest()->get();
+        }else if($user->hasRole('Admin')){
+            $vendors = User::role('Vendor')->where('admin_id',$user->id)->latest()->get();
+        }else{
+            $vendors = collect();
+        }
         // echo "<pre>";
         // print_r($userRoles);
         // die;

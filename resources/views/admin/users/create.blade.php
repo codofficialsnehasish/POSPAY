@@ -102,7 +102,7 @@
                                             multiple="multiple" multiple data-placeholder="Choose ...">
                                             @foreach ($vendors as $vendor)
                                                 <option value="{{ $vendor->id }}"
-                                                    @if (old('vendors') == $vendor->id) selected @endif>{{ $vendor->name }}
+                                                    @if (old('vendors') == $vendor->id) selected @endif>{{ $vendor->store_number }} - {{ $vendor->name }}
                                                 </option>
                                             @endforeach
                                         </select>

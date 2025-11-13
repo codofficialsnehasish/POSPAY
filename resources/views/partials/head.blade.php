@@ -60,5 +60,57 @@
         }
     </style>
 
+    <style>
+        .main-menu .nav-link {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-weight: 500;
+            color: #333;
+            padding: 8px 14px;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            text-decoration: none;
+        }
+
+        .main-menu .nav-link:hover {
+            background-color: #f1f5ff;
+            color: #007bff;
+        }
+
+        .main-menu .nav-link.active {
+            background-color: #007bff;
+            color: #fff;
+            box-shadow: 0 2px 8px rgba(0, 123, 255, 0.3);
+        }
+
+        .main-menu .menu-icon {
+            font-size: 20px;
+            line-height: 1;
+        }
+
+        .dropdown-menu .dropdown-item {
+            border-radius: 6px;
+            padding: 8px 14px;
+            transition: background-color 0.2s;
+        }
+
+        .dropdown-menu .dropdown-item:hover {
+            background-color: #f0f8ff;
+        }
+
+        @media (max-width: 991px) {
+            .main-menu {
+                text-align: center;
+            }
+
+            .main-menu .nav-link {
+                justify-content: center;
+            }
+        }
+    </style>
+
+
+
     @yield('css')
 </head>

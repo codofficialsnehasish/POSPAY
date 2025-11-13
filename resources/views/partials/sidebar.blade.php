@@ -51,7 +51,7 @@
                 <li>
                     <a href="{{ route('vendor.index') }}">
                         <iconify-icon icon="mdi:store-outline" class="menu-icon"></iconify-icon>
-                        <span>Vendor</span>
+                        <span>Branch</span>
                     </a>
                 </li>
             @endcanany

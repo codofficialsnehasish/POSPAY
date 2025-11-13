@@ -118,7 +118,7 @@
                                             multiple="multiple" multiple data-placeholder="Choose ...">
                                             @foreach ($vendors as $vendor)
                                                 <option value="{{ $vendor->id }}"
-                                                    {{ in_array($vendor->id, $selected_vendors) ? 'selected' : '' }} >{{ $vendor->name }}
+                                                    {{ in_array($vendor->id, $selected_vendors) ? 'selected' : '' }} >{{ $vendor->store_number }} - {{ $vendor->name }}
                                                 </option>
                                             @endforeach
                                         </select>
