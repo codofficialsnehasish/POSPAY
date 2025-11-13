@@ -2,6 +2,23 @@
 
 @section('title', 'Dashboard')
 
+@section('css')
+<style>
+    .category-pill {
+        transition: all 0.2s ease-in-out;
+    }
+    .category-pill:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    }
+    #topCategoryChart {
+        max-width: 320px;
+        max-height: 320px;
+        margin: 0 auto;
+    }
+</style>
+@endsection
+
 @section('contents')
 
     <div class="dashboard-main-body">
@@ -221,118 +238,7 @@
                     </div>
                 </div>
             </div>
-        
-            <div class="col-12">
-                <div class="card h-100">
-                    <div class="card-body p-24">
-                        <div class="d-flex align-items-center flex-wrap gap-2 justify-content-between mb-20">
-                            <h6 class="mb-2 fw-bold text-lg mb-0">Top Selling Product</h6>
-                            {{-- <a href="javascript:void(0)"
-                                class="text-primary-600 hover-text-primary d-flex align-items-center gap-1">
-                                View All
-                                <iconify-icon icon="solar:alt-arrow-right-linear" class="icon"></iconify-icon>
-                            </a> --}}
-                        </div>
-                        <div class="table-responsive scroll-sm">
-                            <table class="table bordered-table mb-0">
-                                <thead>
-                                    <tr>
-                                        <th scope="col">Items</th>
-                                        {{-- <th scope="col">Price</th> --}}
-                                        {{-- <th scope="col">Discount </th> --}}
-                                        <th scope="col">Sold</th>
-                                        <th scope="col" class="text-center">Total Orders</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    @php
-                                        $topProducts =  top_selling_products()
-                                    @endphp
-                                    @foreach ($topProducts as $prod)
-                                        <tr>
-                                            <td style="max-height: 100px;">
-                                                <div class="d-flex align-items-center">
-                                                    {{-- <img src="{{ $prod['image_url'] }}" alt="{{ $prod['name'] }}"
-                                                        class="flex-shrink-0 me-12 radius-8"> --}}
-                                                        <img class="img-thumbnail rounded me-2"
-                                                            style="object-fit: contain;height: 100px;"
-                                                            src="{{ $prod['image_url'] }}"
-                                                            width="100"
-                                                            alt="{{ $prod['name'] }}">
-                                                    <div class="flex-grow-1">
-                                                        <h6 class="text-md mb-0 fw-normal">{{ $prod['name'] }}</h6>
-                                                        <span class="text-sm text-secondary-light fw-normal">
-                                                            {{ $prod['category'] }}
-                                                        </span>
-                                                    </div>
-                                                </div>
-                                            </td>
-                                            {{-- <td>₹{{ number_format($prod['price'], 2) }}</td> --}}
-                                            {{-- <td>
-                                                @if ($prod['discount'])
-                                                    {{ $prod['discount'] }}%
-                                                @else
-                                                    N/A
-                                                @endif
-                                            </td> --}}
-                                            <td>{{ $prod['sold'] }}</td>
-                                            <td class="text-center">
-                                                <span
-                                                    class="bg-success-focus text-success-main px-32 py-4 rounded-pill fw-medium text-sm">
-                                                    {{ $prod['total_orders'] }}
-                                                </span>
-                                            </td>
-                                        </tr>
-                                    @endforeach
-                                </tbody>
 
-                            </table>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="col-12">
-                <div class="card h-100">
-                    <div class="card-body p-24">
-                        <div class="d-flex align-items-center flex-wrap gap-2 justify-content-between mb-20">
-                            <h6 class="mb-2 fw-bold text-lg mb-0">Monthly Charts</h6>
-                        </div>
-                        <div class="table-responsive scroll-sm">
-                            <canvas id="monthlySalesChart" height="120"></canvas>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="col-12">
-                <div class="card h-100">
-                    <div class="card-body p-24">
-                        <div class="d-flex align-items-center flex-wrap gap-2 justify-content-between mb-20">
-                            <h6 class="mb-2 fw-bold text-lg mb-0">Daily Charts</h6>
-                        </div>
-                        <div class="table-responsive scroll-sm">
-                            <canvas id="dailySalesChart" height="120"></canvas>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            @if(auth()->user()->hasRole('Super Admin'))
-            <div class="col-12">
-                <div class="card h-100">
-                    <div class="card-body p-24">
-                        <div class="d-flex align-items-center flex-wrap gap-2 justify-content-between mb-20">
-                            <h6 class="mb-2 fw-bold text-lg mb-0">Orders By Vendor</h6>
-                        </div>
-                        <div class="table-responsive scroll-sm">
-                            <canvas id="vendorOrderChart" height="100"></canvas>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            @endif
-        </div>
-        <div class="row gy-4 mb-4">
             {{-- === Sales Statistics (Year Filter) === --}}
             <div class="col-xl-6 col-md-12">
                 <div class="card shadow radius-12 h-100">
@@ -380,6 +286,309 @@
                     </div>
                 </div>
             </div>
+
+            {{-- === Top Selling Products === --}}
+            <div class="col-xl-4 col-md-6 col-12">
+                <div class="card shadow radius-12 h-100">
+                    <div class="card-body p-20">
+                        <div class="d-flex align-items-center justify-content-between mb-3">
+                            <h6 class="fw-bold text-lg mb-0">🥇 Top Selling Products</h6>
+                        </div>
+
+                        <div class="table-responsive" style="max-height: 280px; overflow-y: auto;">
+                            <table class="table table-borderless align-middle mb-0">
+                                <tbody>
+                                    @foreach(top_selling_products(5) as $prod)
+                                        <tr>
+                                            <td width="20">
+                                                <img src="{{ $prod['image_url'] }}" alt="{{ $prod['name'] }}"
+                                                    class="rounded" width="20" height="20" style="object-fit: cover;">
+                                            </td>
+                                            <td>
+                                                <div class="mb-0 text-dark text-normal">{{ $prod['name'] }}</div>
+                                                <small class="text-muted">{{ $prod['category'] ?? 'Uncategorized' }}</small>
+                                            </td>
+                                            <td class="text-end">
+                                                <span class="fw-semibold text-success">{{ $prod['sold'] }}</span>
+                                                <small class="d-block text-muted">sold</small>
+                                            </td>
+                                        </tr>
+                                    @endforeach
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            {{-- === Low Stock Products === --}}
+            <div class="col-xl-4 col-md-6 col-12">
+                <div class="card shadow radius-12 h-100">
+                    <div class="card-body p-20">
+                        <div class="d-flex align-items-center justify-content-between mb-3">
+                            <h6 class="fw-bold text-lg mb-0">⚠️ Low Stock Products</h6>
+                        </div>
+
+                        <div class="table-responsive" style="max-height: 280px; overflow-y: auto;">
+                            <table class="table table-borderless align-middle mb-0">
+                                <tbody>
+                                    @foreach(low_stock_products(5) as $prod)
+                                        <tr>
+                                            <td width="20">
+                                                <img src="{{ $prod['image_url'] }}" alt="{{ $prod['name'] }}"
+                                                    class="rounded" width="20" height="20" style="object-fit: cover;">
+                                            </td>
+                                            <td>
+                                                <div class="mb-0 text-dark text-normal">{{ $prod['name'] }}</div>
+                                                <small class="text-muted">{{ $prod['category'] ?? 'Uncategorized' }}</small>
+                                            </td>
+                                            <td class="text-end">
+                                                <span class="fw-semibold text-danger">{{ $prod['stock'] }}</span>
+                                                <small class="d-block text-muted">left</small>
+                                            </td>
+                                        </tr>
+                                    @endforeach
+                                    @if(empty(low_stock_products(5)))
+                                        <tr><td colspan="3" class="text-center text-muted">All stocks are sufficient</td></tr>
+                                    @endif
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            @php
+                $recentSales = recent_sales(5);
+            @endphp
+
+            {{-- === Recent Sales === --}}
+            <div class="col-xl-4 col-md-6 col-12">
+                <div class="card shadow radius-12 h-100">
+                    <div class="card-body p-20">
+                        <div class="d-flex align-items-center justify-content-between mb-3">
+                            <h6 class="fw-bold text-lg mb-0">🕒 Recent Sales</h6>
+                        </div>
+
+                        <div class="table-responsive" style="max-height: 280px; overflow-y: auto;">
+                            <table class="table table-borderless align-middle mb-0">
+                                <tbody>
+                                    @forelse($recentSales as $sale)
+                                        <tr>
+                                            <td width="60">
+                                                <img src="{{ $sale['product_image'] }}" 
+                                                    alt="{{ $sale['product_name'] }}"
+                                                    class="rounded" width="50" height="50" 
+                                                    style="object-fit: cover;">
+                                            </td>
+                                            <td>
+                                                <div class="mb-0 text-dark text-normal">{{ $sale['product_name'] }}</div>
+                                                <small class="text-muted">{{ $sale['customer_name'] ?? 'Unknown' }}</small>
+                                            </td>
+                                            <td class="text-end">
+                                                <span class="fw-semibold text-success">
+                                                    ₹{{ number_format($sale['amount'],2) }}
+                                                </span>
+                                                <small class="d-block text-muted">
+                                                    {{ \Carbon\Carbon::parse($sale['date'])->diffForHumans() }}
+                                                </small>
+                                            </td>
+                                        </tr>
+                                    @empty
+                                        <tr><td colspan="3" class="text-center text-muted">No recent sales</td></tr>
+                                    @endforelse
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            {{-- === Top Customers === --}}
+            {{-- <div class="col-xl-4 col-md-6 col-12">
+                <div class="card shadow radius-12 h-100">
+                    <div class="card-body p-20">
+                        <div class="d-flex align-items-center justify-content-between mb-3">
+                            <h6 class="fw-bold text-lg mb-0">👑 Top Customers</h6>
+                        </div>
+                        <div class="table-responsive" style="max-height: 280px; overflow-y: auto;">
+                            <table class="table table-borderless align-middle mb-0">
+                                <tbody>
+                                    @foreach(top_customers() as $cust)
+                                        <tr>
+                                            <td>
+                                                <div>
+                                                    <h6 class="mb-0">{{ $cust['name'] }}</h6>
+                                                    <small class="text-muted">{{ $cust['email'] }}</small>
+                                                </div>
+                                            </td>
+                                            <td class="text-end">
+                                                <span class="fw-semibold text-success">
+                                                    ₹{{ number_format($cust['total_spent'], 2) }}
+                                                </span>
+                                                <small class="d-block text-muted">
+                                                    {{ $cust['total_orders'] }} orders
+                                                </small>
+                                            </td>
+                                        </tr>
+                                    @endforeach
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div> --}}
+
+            {{-- === Top Categories (Doughnut Chart + List) === --}}
+            <div class="col-xl-4 col-md-6 col-12">
+                <div class="card shadow radius-12 h-100">
+                    <div class="card-body p-20 text-center">
+                        <h6 class="fw-bold text-lg mb-3">🏷️ Top Categories</h6>
+
+                        {{-- Doughnut Chart --}}
+                        <div class="d-flex justify-content-center">
+                            <canvas id="topCategoryChart" height="320" width="320"></canvas>
+                        </div>
+
+                        {{-- Row-wise Category Pills --}}
+                        <div id="categoryList" class="d-flex flex-wrap justify-content-start gap-2 mt-4"></div>
+                    </div>
+                </div>
+            </div>
+
+
+            {{-- === Order Statistics (Heatmap) === --}}
+            <div class="col-xl-4 col-md-12 col-12">
+                <div class="card shadow radius-12 h-100">
+                    <div class="card-body p-20">
+                        <h6 class="fw-bold text-lg mb-3">🔥 Order Statistics (Time × Day)</h6>
+
+                        <div style="position: relative; height: 420px; width: 100%;">
+                            <canvas id="orderHeatmapChart"></canvas>
+                        </div>
+
+                        <p class="text-center text-muted mt-2 mb-0">
+                            Each square = 1 hour × 1 day
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            {{-- === Category Sales Heatmap === --}}
+            <div class="col-xl-4 col-md-12 col-12">
+                <div class="card shadow radius-12 h-100">
+                    <div class="card-body p-20">
+                        <h6 class="fw-bold text-lg mb-3">📊 Day-wise Category Sales</h6>
+
+                        <div style="position: relative; height: 420px; width: 100%;">
+                            <canvas id="categoryHeatmapChart"></canvas>
+                        </div>
+
+                        <p class="text-center text-muted mt-2 mb-0">
+                            Each square = Category × Day
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+
+
+
+
+
+        
+            {{-- <div class="col-12">
+                <div class="card h-100">
+                    <div class="card-body p-24">
+                        <div class="d-flex align-items-center flex-wrap gap-2 justify-content-between mb-20">
+                            <h6 class="mb-2 fw-bold text-lg mb-0">Top Selling Product</h6>
+                        </div>
+                        <div class="table-responsive scroll-sm">
+                            <table class="table bordered-table mb-0">
+                                <thead>
+                                    <tr>
+                                        <th scope="col">Items</th>
+                                        <th scope="col">Sold</th>
+                                        <th scope="col" class="text-center">Total Orders</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @php
+                                        $topProducts =  top_selling_products()
+                                    @endphp
+                                    @foreach ($topProducts as $prod)
+                                        <tr>
+                                            <td style="max-height: 100px;">
+                                                <div class="d-flex align-items-center">
+                                                        <img class="img-thumbnail rounded me-2"
+                                                            style="object-fit: contain;height: 100px;"
+                                                            src="{{ $prod['image_url'] }}"
+                                                            width="100"
+                                                            alt="{{ $prod['name'] }}">
+                                                    <div class="flex-grow-1">
+                                                        <h6 class="text-md mb-0 fw-normal">{{ $prod['name'] }}</h6>
+                                                        <span class="text-sm text-secondary-light fw-normal">
+                                                            {{ $prod['category'] }}
+                                                        </span>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                            <td>{{ $prod['sold'] }}</td>
+                                            <td class="text-center">
+                                                <span
+                                                    class="bg-success-focus text-success-main px-32 py-4 rounded-pill fw-medium text-sm">
+                                                    {{ $prod['total_orders'] }}
+                                                </span>
+                                            </td>
+                                        </tr>
+                                    @endforeach
+                                </tbody>
+
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div> --}}
+
+            {{-- <div class="col-12">
+                <div class="card h-100">
+                    <div class="card-body p-24">
+                        <div class="d-flex align-items-center flex-wrap gap-2 justify-content-between mb-20">
+                            <h6 class="mb-2 fw-bold text-lg mb-0">Monthly Charts</h6>
+                        </div>
+                        <div class="table-responsive scroll-sm">
+                            <canvas id="monthlySalesChart" height="120"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div> --}}
+
+            {{-- <div class="col-12">
+                <div class="card h-100">
+                    <div class="card-body p-24">
+                        <div class="d-flex align-items-center flex-wrap gap-2 justify-content-between mb-20">
+                            <h6 class="mb-2 fw-bold text-lg mb-0">Daily Charts</h6>
+                        </div>
+                        <div class="table-responsive scroll-sm">
+                            <canvas id="dailySalesChart" height="120"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div> --}}
+            @if(auth()->user()->hasRole('Super Admin'))
+            {{-- <div class="col-12">
+                <div class="card h-100">
+                    <div class="card-body p-24">
+                        <div class="d-flex align-items-center flex-wrap gap-2 justify-content-between mb-20">
+                            <h6 class="mb-2 fw-bold text-lg mb-0">Orders By Vendor</h6>
+                        </div>
+                        <div class="table-responsive scroll-sm">
+                            <canvas id="vendorOrderChart" height="100"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div> --}}
+            @endif
         </div>
 
     </div>
@@ -389,6 +598,8 @@
 @section('script')
 
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-chart-matrix@2.0.1"></script>
+
 
     <script src="{{ asset('assets/dashboard-assets/js/homeOneChart.js') }}"></script>
 
@@ -401,92 +612,89 @@
         const monthLabels = {!! json_encode(['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']) !!};
 
 
-        const ctx = document.getElementById('monthlySalesChart').getContext('2d');
-        new Chart(ctx, {
-            type: 'bar',
-            data: {
-                labels: monthLabels,
-                datasets: [{
-                    label: 'Monthly Sales (INR)',
-                    data: monthlySalesData,
-                    backgroundColor: 'rgba(54, 162, 235, 0.6)',
-                    borderColor: 'rgba(54, 162, 235, 1)',
-                    borderWidth: 1
-                }]
-            },
-            options: {
-                scales: {
-                    y: {
-                        beginAtZero: true,
-                        ticks: {
-                            callback: function(value) {
-                                return '₹' + value.toLocaleString();
-                            }
-                        }
-                    }
-                }
-            }
-        });
+        // const ctx = document.getElementById('monthlySalesChart').getContext('2d');
+        // new Chart(ctx, {
+        //     type: 'bar',
+        //     data: {
+        //         labels: monthLabels,
+        //         datasets: [{
+        //             label: 'Monthly Sales (INR)',
+        //             data: monthlySalesData,
+        //             backgroundColor: 'rgba(54, 162, 235, 0.6)',
+        //             borderColor: 'rgba(54, 162, 235, 1)',
+        //             borderWidth: 1
+        //         }]
+        //     },
+        //     options: {
+        //         scales: {
+        //             y: {
+        //                 beginAtZero: true,
+        //                 ticks: {
+        //                     callback: function(value) {
+        //                         return '₹' + value.toLocaleString();
+        //                     }
+        //                 }
+        //             }
+        //         }
+        //     }
+        // });
 
 
-        const ctxDaily = document.getElementById('dailySalesChart').getContext('2d');
-        new Chart(ctxDaily, {
-            type: 'bar',
-            data: {
-                labels: dailyLabels,
-                datasets: [{
-                    label: 'Daily Sales (INR)',
-                    data: dailySalesData,
-                    backgroundColor: 'rgba(255, 99, 132, 0.6)',
-                    borderColor: 'rgba(255, 99, 132, 1)',
-                    borderWidth: 1
-                }]
-            },
-            options: {
-                scales: {
-                    y: {
-                        beginAtZero: true
-                    }
-                }
-            }
-        });
+        // const ctxDaily = document.getElementById('dailySalesChart').getContext('2d');
+        // new Chart(ctxDaily, {
+        //     type: 'bar',
+        //     data: {
+        //         labels: dailyLabels,
+        //         datasets: [{
+        //             label: 'Daily Sales (INR)',
+        //             data: dailySalesData,
+        //             backgroundColor: 'rgba(255, 99, 132, 0.6)',
+        //             borderColor: 'rgba(255, 99, 132, 1)',
+        //             borderWidth: 1
+        //         }]
+        //     },
+        //     options: {
+        //         scales: {
+        //             y: {
+        //                 beginAtZero: true
+        //             }
+        //         }
+        //     }
+        // });
 
-        const vendorOrderCounts = @json(vendor_wise_order_count());
-        const vendorLabels = vendorOrderCounts.map(v => v.name);
-        const vendorData = vendorOrderCounts.map(v => v.count);
-        const ctxVendor = document.getElementById('vendorOrderChart').getContext('2d');
-        new Chart(ctxVendor, {
-            type: 'bar',
-            data: {
-                labels: vendorLabels,
-                datasets: [{
-                    label: 'Orders by Vendor',
-                    data: vendorData,
-                    backgroundColor: 'rgba(75, 192, 192, 0.6)',
-                    borderColor: 'rgba(75, 192, 192, 1)',
-                    borderWidth: 1
-                }]
-            },
-            options: {
-                indexAxis: 'y', // Makes it horizontal
-                scales: {
-                    x: {
-                        beginAtZero: true,
-                        ticks: {
-                            stepSize: 1
-                        }
-                    }
-                }
-            }
-        });
+        // const vendorOrderCounts = @json(vendor_wise_order_count());
+        // const vendorLabels = vendorOrderCounts.map(v => v.name);
+        // const vendorData = vendorOrderCounts.map(v => v.count);
+        // const ctxVendor = document.getElementById('vendorOrderChart').getContext('2d');
+        // new Chart(ctxVendor, {
+        //     type: 'bar',
+        //     data: {
+        //         labels: vendorLabels,
+        //         datasets: [{
+        //             label: 'Orders by Vendor',
+        //             data: vendorData,
+        //             backgroundColor: 'rgba(75, 192, 192, 0.6)',
+        //             borderColor: 'rgba(75, 192, 192, 1)',
+        //             borderWidth: 1
+        //         }]
+        //     },
+        //     options: {
+        //         indexAxis: 'y', // Makes it horizontal
+        //         scales: {
+        //             x: {
+        //                 beginAtZero: true,
+        //                 ticks: {
+        //                     stepSize: 1
+        //                 }
+        //             }
+        //         }
+        //     }
+        // });
     </script>
 
     <script>
         const orderLabels = @json(collect(daily_order_stats())->pluck('date'));
         const orderCounts = @json(collect(daily_order_stats())->pluck('count'));
-
-        console.log(orderLabels);
-        console.log(orderCounts);
 
 
 
@@ -681,7 +889,259 @@
         });
     </script>
 
+    <script>
+        // ====== Top Categories Doughnut ======
+        const topCategoryData = @json(top_categories());
+        const catLabels = topCategoryData.map(c => c.name);
+        const catValues = topCategoryData.map(c => c.count);
+        const catColors = topCategoryData.map(c => c.color);
 
+        // Render Doughnut Chart (smaller & smoother)
+        new Chart(document.getElementById('topCategoryChart'), {
+            type: 'doughnut',
+            data: {
+                labels: catLabels,
+                datasets: [{
+                    data: catValues,
+                    backgroundColor: catColors,
+                    borderWidth: 2,
+                    borderColor: '#fff'
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                cutout: '50%', // smaller ring (increased from 70%)
+                plugins: {
+                    legend: { display: false },
+                    tooltip: {
+                        callbacks: {
+                            label: (ctx) => `${ctx.label}: ${ctx.parsed} orders`
+                        }
+                    }
+                },
+                animation: { animateRotate: true, animateScale: true }
+            }
+        });
 
+        // ====== Create matching color pills ======
+        const categoryList = document.getElementById('categoryList');
+        topCategoryData.forEach(cat => {
+            const pill = document.createElement('div');
+            pill.className = 'd-flex align-items-center px-3 py-1 rounded-pill category-pill';
+            pill.style.backgroundColor = `${cat.color}15`; // soft background
+            pill.style.border = `1px solid ${cat.color}`;
+            pill.innerHTML = `
+                <span class="d-inline-block rounded-circle me-2"
+                    style="width:10px;height:10px;background-color:${cat.color}"></span>
+                <span class="fw-semibold text-dark">${cat.name}</span>
+                <span class="ms-2 text-muted small fw-semibold">(${cat.count})</span>
+            `;
+            categoryList.appendChild(pill);
+        });
+    </script>
 
+    <script>
+        const heatmapData = @json(order_heatmap_data());
+
+        // ✅ Exact label sets
+        const dayLabels = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+        const hourLabels = [
+            '12 am','1 am','2 am','3 am','4 am','5 am','6 am','7 am','8 am','9 am','10 am','11 am',
+            '12 pm','1 pm','2 pm','3 pm','4 pm','5 pm','6 pm','7 pm','8 pm','9 pm','10 pm','11 pm'
+        ];
+
+        const maxOrders = Math.max(...heatmapData.map(d => d.v), 1);
+
+        // ✅ Chart init
+        const ctxHeatmap = document.getElementById('orderHeatmapChart').getContext('2d');
+
+        new Chart(ctxHeatmap, {
+            type: 'matrix',
+            data: {
+                datasets: [{
+                    label: 'Orders Heatmap',
+                    data: heatmapData.map(d => ({ x: d.x, y: d.y, v: d.v })),
+                    backgroundColor(ctx) {
+                        const value = ctx.dataset.data[ctx.dataIndex].v;
+                        const alpha = value / maxOrders;
+                        // return `rgba(255, 159, 64, ${0.25 + alpha * 0.75})`;
+                        return `rgba(255, 120, 0, ${0.4 + alpha * 0.6})`;
+                    },
+                    borderColor: 'rgba(255,255,255,0.9)',
+                    borderWidth: 2,
+                    width(ctx) {
+                        const area = ctx.chart.chartArea;
+                        return area ? (area.width / 7) - 6 : 40;
+                    },
+                    height(ctx) {
+                        const area = ctx.chart.chartArea;
+                        return area ? (area.height / 24) - 4 : 20;
+                    }
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                layout: {
+                    padding: { top: 20, right: 20, bottom: 20, left: 20 }
+                },
+                animation: { duration: 800, easing: 'easeOutQuart' },
+                scales: {
+                    x: {
+                        type: 'linear',
+                        position: 'bottom',
+                        // ✅ Half-unit padding fixes label clipping
+                        min: -0.5,
+                        max: 6.5,
+                        offset: false,
+                        grid: { display: false },
+                        ticks: {
+                            stepSize: 1,
+                            // ✅ Force integer rounding to avoid floating indices
+                            callback: (value) => {
+                                const index = Math.round(value);
+                                // return dayLabels[index] ?? '';
+                                const label = dayLabels[index] ?? '';
+                                // Add uniform left "padding" (~20px visual)
+                                return '\u00A0\u00A0\u00A0\u00A0' + label; // 4 non-breaking spaces ≈ 20px
+                            },
+                            color: '#333',
+                            font: { size: 12, weight: '500' },
+                            padding: 6
+                        },
+                        // title: {
+                        //     display: true,
+                        //     text: 'Day of Week',
+                        //     color: '#555',
+                        //     font: { size: 13, weight: 'bold' }
+                        // }
+                    },
+                    y: {
+                        type: 'linear',
+                        reverse: true,
+                        min: -0.5,
+                        max: 23.5,
+                        grid: { display: false },
+                        offset: false,
+                        ticks: {
+                            stepSize: 3, // every 3 hours for clean look
+                            callback: (value) => {
+                                const index = Math.round(value);
+                                return hourLabels[index] ?? '';
+                            },
+                            color: '#333',
+                            font: { size: 11 },
+                            padding: 5
+                        },
+                        // title: {
+                        //     display: true,
+                        //     text: 'Hour of Day',
+                        //     color: '#555',
+                        //     font: { size: 13, weight: 'bold' }
+                        // }
+                    }
+                },
+                plugins: {
+                    legend: { display: false },
+                    tooltip: {
+                        backgroundColor: '#000',
+                        titleFont: { size: 13, weight: 'bold' },
+                        bodyFont: { size: 12 },
+                        callbacks: {
+                            label: ctx => {
+                                const day = dayLabels[ctx.raw.x];
+                                const hour = hourLabels[ctx.raw.y];
+                                return `${day} ${hour}: ${ctx.raw.v} Orders`;
+                            }
+                        }
+                    }
+                }
+            }
+        });
+    </script>
+
+    <script>
+        const catHeatmapData = @json(category_heatmap_data());
+
+        const catDayLabels = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+        const categoryLabels = [...new Set(catHeatmapData.map(d => d.category))];
+
+        const maxSales = Math.max(...catHeatmapData.map(d => d.v), 1);
+
+        const ctxCat = document.getElementById('categoryHeatmapChart').getContext('2d');
+
+        new Chart(ctxCat, {
+            type: 'matrix',
+            data: {
+                datasets: [{
+                    label: 'Category Sales Heatmap',
+                    data: catHeatmapData,
+                    backgroundColor(ctx) {
+                        const value = ctx.dataset.data[ctx.dataIndex].v;
+                        const alpha = value / maxSales;
+                        return `rgba(54, 162, 235, ${0.2 + alpha * 0.8})`;
+                    },
+                    borderColor: 'rgba(255,255,255,0.9)',
+                    borderWidth: 2,
+                    width(ctx) {
+                        const area = ctx.chart.chartArea;
+                        return area ? (area.width / 7) - 4 : 40;
+                    },
+                    height(ctx) {
+                        const area = ctx.chart.chartArea;
+                        return area ? (area.height / categoryLabels.length) - 4 : 40;
+                    }
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                layout: { padding: { top: 20, right: 20, bottom: 30, left: 20 } },
+                scales: {
+                    x: {
+                        type: 'linear',
+                        position: 'bottom',
+                        min: -0.5,
+                        max: 6.5,
+                        grid: { display: false },
+                        ticks: {
+                            stepSize: 1,
+                            callback: (value) => catDayLabels[Math.round(value)] ?? '',
+                            color: '#333',
+                            font: { size: 12, weight: '500' },
+                            padding: 6
+                        }
+                    },
+                    y: {
+                        type: 'linear',
+                        reverse: false,
+                        min: -0.5,
+                        max: categoryLabels.length - 0.5,
+                        grid: { display: false },
+                        ticks: {
+                            stepSize: 1,
+                            callback: (value) => categoryLabels[Math.round(value)] ?? '',
+                            color: '#333',
+                            font: { size: 11 },
+                            padding: 5
+                        }
+                    }
+                },
+                plugins: {
+                    legend: { display: false },
+                    tooltip: {
+                        backgroundColor: '#000',
+                        callbacks: {
+                            label: ctx => {
+                                const day = catDayLabels[ctx.raw.x];
+                                const cat = categoryLabels[ctx.raw.y];
+                                return `${cat} on ${day}: ${ctx.raw.v} sales`;
+                            }
+                        }
+                    }
+                }
+            }
+        });
+    </script>
 @endsection

@@ -7,6 +7,9 @@
     use App\Models\Category;
     use Carbon\Carbon;
     use Illuminate\Support\Facades\Auth;
+    use Illuminate\Support\Facades\DB;
+    use App\Models\Product;
+
     if (!function_exists('generateOrderNumber')) {
         function generateOrderNumber() {
             $dateTime = date('Ymd');
@@ -535,27 +538,266 @@ if (!function_exists('today_sales_by_payment_method')) {
 
     function top_selling_products(int $limit = 5)
     {
-        return OrderItems::with('product')
-            ->select('product_id', DB::raw('SUM(quantity) as total_sold'), DB::raw('COUNT(DISTINCT(order_id)) as total_orders'))
+        return OrderItems::with([
+                'product.categories',
+                'variation',
+                'option'
+            ])
+            ->select(
+                'product_id',
+                'variation_id',
+                'option_id',
+                DB::raw('SUM(quantity) as total_sold'),
+                DB::raw('COUNT(DISTINCT(order_id)) as total_orders')
+            )
             ->whereHas('order', function ($query) {
-                $query->where('vendor_id', auth()->user()->id);
+                $query->where('vendor_id', auth()->id());
             })
-            ->groupBy('product_id')
+            ->groupBy('product_id', 'variation_id', 'option_id')
             ->orderByDesc('total_sold')
             ->take($limit)
             ->get()
-            ->map(fn($item) => [
-                'id'           => $item->product_id,
-                'name'         => $item->product->name,
-                'category'     => $item->product->category?->name ?? '',
-                'price'        => $item->product->price,
-                'discount'     => $item->product->discount_percent,
-                'sold'         => $item->total_sold,
-                'total_orders' => $item->total_orders,
-                'image_url'    => getProductMainImage($item->product->id)
-                                    ? getProductMainImage($item->product->id)
-                                    : asset('images/default-product.png'),
+            ->map(function ($item) {
+                $product   = $item->product;
+                $option    = $item->option;
+                $variation = $item->variation;
+
+                // Build full product name like “Bira 91 Blonde Summer Lager Beer - 10ml”
+                $fullName = $product?->name ?? 'Unknown Product';
+                if ($option?->name) {
+                    $fullName .= ' - ' . $option->name;
+                }
+
+                return [
+                    'id'            => $item->product_id,
+                    'name'          => $fullName,
+                    'category'      => $product?->categories?->first()?->name ?? '',
+                    'price'         => $option?->price ?? $product?->price ?? 0,
+                    'sold'          => $item->total_sold,
+                    'total_orders'  => $item->total_orders,
+                    'image_url'     => getProductMainImage($product?->id)
+                                        ? getProductMainImage($product->id)
+                                        : asset('images/default-product.png'),
+                ];
+            });
+    }
+    
+}
+
+if (!function_exists('low_stock_products')) {
+    function low_stock_products(int $limit = 5)
+    {
+        return Product::with(['categories', 'variations.options'])
+            ->where('vendor_id', auth()->id())
+            ->get()
+            ->flatMap(function ($product) {
+                return $product->variations->flatMap(function ($variation) use ($product) {
+                    return $variation->options->map(function ($option) use ($product, $variation) {
+                        // Full product name like “Bira 91 Blonde Summer Lager Beer - 10ml”
+                        $fullName = $product->name;
+                        if (!empty($option->name)) {
+                            $fullName .= ' - ' . $option->name;
+                        }
+
+                        return [
+                            'id'          => $product->id,
+                            'name'        => $fullName,
+                            'category'    => $product->categories?->first()?->name ?? '',
+                            'price'       => $option->price ?? $product->price ?? 0,
+                            'stock'       => $option->quantity ?? 0,
+                            'image_url'   => getProductMainImage($product->id)
+                                                ? getProductMainImage($product->id)
+                                                : asset('images/default-product.png'),
+                        ];
+                    });
+                });
+            })
+            ->filter(fn($p) => $p['stock'] <= 10) // show variants with low stock
+            ->sortBy('stock')
+            ->take($limit)
+            ->values();
+    }
+}
+
+
+
+if (!function_exists('recent_sales')) {
+    function recent_sales(int $limit = 5)
+    {
+        return \App\Models\OrderItems::with([
+                'product.categories',
+                'order.user',
+                'variation',
+                'option'
+            ])
+            ->whereHas('order', function ($query) {
+                $query->where('vendor_id', auth()->id());
+            })
+            ->latest()
+            ->take($limit)
+            ->get()
+            ->map(function ($item) {
+                $product   = $item->product;
+                $option    = $item->option;
+                $variation = $item->variation;
+
+                // Build full name like “Bira 91 Blonde Summer Lager Beer - 10ml”
+                $fullName = $product?->name ?? 'Unknown Product';
+                if ($option?->name) {
+                    $fullName .= ' - ' . $option->name;
+                }
+
+                return [
+                    'id'            => $item->id,
+                    'product_name'  => $fullName,
+                    'category'      => $product?->categories?->first()?->name ?? '',
+                    'price'         => $option?->price ?? $product?->price ?? 0,
+                    'quantity'      => $item->quantity ?? 0,
+                    'amount'        => ($item->quantity ?? 0) * ($option?->price ?? $product?->price ?? 0),
+                    'date'          => $item->created_at,
+                    'product_image' => getProductMainImage($item->product_id)
+                                        ? getProductMainImage($item->product_id)
+                                        : asset('images/default-product.png'),
+                    'customer_name' => $item->order?->user?->name ?? 'Guest',
+                ];
+            });
+    }
+}
+
+
+/**
+ * TOP CUSTOMERS
+ */
+if (!function_exists('top_customers')) {
+    function top_customers(int $limit = 5)
+    {
+        return Order::with('user')
+            ->select('user_id', 
+                DB::raw('SUM(total_amount) as total_spent'),
+                DB::raw('COUNT(id) as total_orders')
+            )
+            ->where('vendor_id', auth()->id())
+            ->groupBy('user_id')
+            ->orderByDesc('total_spent')
+            ->take($limit)
+            ->get()
+            ->map(fn($order) => [
+                'name'  => $order->user?->name ?? 'Guest',
+                'email' => $order->user?->email ?? 'N/A',
+                'total_spent'  => $order->total_spent ?? 0,
+                'total_orders' => $order->total_orders ?? 0,
             ]);
+    }
+}
+
+
+/**
+ * TOP CATEGORIES (for Doughnut chart)
+ */
+if (!function_exists('top_categories')) {
+    function top_categories(int $limit = 5)
+    {
+        return OrderItems::with('product.categories')
+            ->whereHas('order', fn($q) => $q->where('vendor_id', auth()->id()))
+            ->select('product_id', DB::raw('SUM(quantity) as total_sold'))
+            ->groupBy('product_id')
+            ->get()
+            ->flatMap(function ($item) {
+                return $item->product->categories->map(function ($cat) use ($item) {
+                    return [
+                        'name'  => $cat->name,
+                        'count' => $item->total_sold,
+                    ];
+                });
+            })
+            ->groupBy('name')
+            ->map(fn($g) => [
+                'name'  => $g->first()['name'],
+                'count' => $g->sum('count'),
+                'color' => sprintf('#%06X', mt_rand(0, 0xFFFFFF)), // random color
+            ])
+            ->sortByDesc('count')
+            ->take($limit)
+            ->values();
+    }
+}
+
+
+/**
+ * HOURLY ORDER STATISTICS
+ */
+if (!function_exists('order_heatmap_data')) {
+    function order_heatmap_data()
+    {
+        $startDate = now()->subDays(6)->startOfDay();
+        $endDate   = now()->endOfDay();
+
+        $raw = \App\Models\Order::where('vendor_id', auth()->id())
+            ->whereBetween('created_at', [$startDate, $endDate])
+            ->select(
+                DB::raw('DAYOFWEEK(created_at) as weekday'), // 1 = Sunday
+                DB::raw('HOUR(created_at) as hour'),
+                DB::raw('COUNT(*) as total')
+            )
+            ->groupBy('weekday', 'hour')
+            ->get();
+
+        // Normalize days → 0=Mon ... 6=Sun for chart
+        $dayMap = collect([2,3,4,5,6,7,1]); // reorder Sunday last
+
+        $days = collect(range(0, 6)); // 0..6
+        $hours = collect(range(0, 23)); // 0..23
+
+        return $days->flatMap(function ($index) use ($hours, $dayMap, $raw) {
+            $day = $dayMap[$index]; // map to MySQL DAYOFWEEK
+            return $hours->map(function ($hour) use ($day, $index, $raw) {
+                $found = $raw->firstWhere(fn($r) => $r->weekday == $day && $r->hour == $hour);
+                return [
+                    'x' => $index, // ✅ Day (0–6)
+                    'y' => $hour,  // ✅ Hour (0–23)
+                    'v' => $found?->total ?? 0,
+                ];
+            });
+        })->values();
+    }
+}
+
+
+if (!function_exists('category_heatmap_data')) {
+    function category_heatmap_data()
+    {
+        $vendorId = auth()->id();
+
+        // Fetch total orders grouped by category & day of week
+        $data = \App\Models\OrderItems::select(
+                DB::raw('DAYOFWEEK(order_items.created_at) as weekday'),
+                'categories.name as category_name',
+                DB::raw('COUNT(order_items.id) as total')
+            )
+            ->join('products', 'order_items.product_id', '=', 'products.id')
+            ->join('product_categories', 'products.id', '=', 'product_categories.product_id') // ✅ correct pivot
+            ->join('categories', 'product_categories.category_id', '=', 'categories.id')
+            ->join('orders', 'order_items.order_id', '=', 'orders.id')
+            ->where('orders.vendor_id', $vendorId)
+            ->groupBy('weekday', 'categories.name')
+            ->get();
+
+        // Collect all unique category names
+        $categories = $data->pluck('category_name')->unique()->values();
+        $days = collect(range(1, 7)); // Sunday (1) → Saturday (7)
+
+        // Build full grid (7 days × each category)
+        return $categories->flatMap(function ($cat, $catIndex) use ($days, $data) {
+            return $days->map(function ($day) use ($cat, $catIndex, $data) {
+                $found = $data->first(fn($r) => $r->weekday == $day && $r->category_name == $cat);
+                return [
+                    'x' => $day - 1, // 0–6 for JS
+                    'y' => $catIndex,
+                    'v' => $found?->total ?? 0,
+                    'category' => $cat,
+                ];
+            });
+        })->values();
     }
 }
 
