@@ -239,7 +239,7 @@
                 <div class="card radius-12">
                     <div class="card-body p-16">
                         <div class="row gy-4">
-                            <div class="col-xxl-2 col-xl-3 col-sm-4">
+                            <div class="col-xxl-3 col-xl-3 col-sm-4">
                                 <div
                                     class="px-20 py-16 shadow-none radius-8 h-100 gradient-deep-4 left-line line-bg-warning position-relative overflow-hidden">
                                     <div class="d-flex flex-wrap align-items-center justify-content-between gap-1 mb-8">
@@ -256,7 +256,7 @@
 
                                 </div>
                             </div>
-                            <div class="col-xxl-2 col-xl-3 col-sm-4">
+                            <div class="col-xxl-3 col-xl-3 col-sm-4">
                                 <div
                                     class="px-20 py-16 shadow-none radius-8 h-100 gradient-deep-1 left-line line-bg-primary position-relative overflow-hidden">
                                     <div class="d-flex flex-wrap align-items-center justify-content-between gap-1 mb-8">
@@ -273,7 +273,7 @@
 
                                 </div>
                             </div>
-                            <div class="col-xxl-2 col-xl-3 col-sm-4">
+                            <div class="col-xxl-3 col-xl-3 col-sm-4">
                                 <div
                                     class="px-20 py-16 shadow-none radius-8 h-100 gradient-deep-3 left-line line-bg-success position-relative overflow-hidden">
                                     <div class="d-flex flex-wrap align-items-center justify-content-between gap-1 mb-8">
@@ -290,7 +290,7 @@
 
                                 </div>
                             </div>
-                            <div class="col-xxl-2 col-xl-3 col-sm-4">
+                            <div class="col-xxl-3 col-xl-3 col-sm-4">
                                 <div
                                     class="px-20 py-16 shadow-none radius-8 h-100 gradient-deep-4 left-line line-bg-warning position-relative overflow-hidden">
                                     <div class="d-flex flex-wrap align-items-center justify-content-between gap-1 mb-8">
@@ -307,7 +307,7 @@
 
                                 </div>
                             </div>
-                            <div class="col-xxl-2 col-xl-3 col-sm-4">
+                            <div class="col-xxl-3 col-xl-3 col-sm-4">
                                 <div
                                     class="px-20 py-16 shadow-none radius-8 h-100 gradient-deep-1 left-line line-bg-primary position-relative overflow-hidden">
                                     <div class="d-flex flex-wrap align-items-center justify-content-between gap-1 mb-8">
@@ -324,7 +324,7 @@
 
                                 </div>
                             </div>
-                            <div class="col-xxl-2 col-xl-3 col-sm-4">
+                            <div class="col-xxl-3 col-xl-3 col-sm-4">
                                 <div
                                     class="px-20 py-16 shadow-none radius-8 h-100 gradient-deep-2 left-line line-bg-lilac position-relative overflow-hidden">
                                     <div class="d-flex flex-wrap align-items-center justify-content-between gap-1 mb-8">
@@ -343,7 +343,7 @@
                                 </div>
                             </div>
 
-                            <div class="col-xxl-2 col-xl-3 col-sm-4">
+                            <div class="col-xxl-3 col-xl-3 col-sm-4">
                                 <div
                                     class="px-20 py-16 shadow-none radius-8 h-100 gradient-deep-4 left-line line-bg-warning position-relative overflow-hidden">
                                     <div class="d-flex flex-wrap align-items-center justify-content-between gap-1 mb-8">
@@ -361,7 +361,7 @@
                                 </div>
                             </div>
 
-                            <div class="col-xxl-2 col-xl-3 col-sm-4">
+                            <div class="col-xxl-3 col-xl-3 col-sm-4">
                                 <div
                                     class="px-20 py-16 shadow-none radius-8 h-100 gradient-deep-1 left-line line-bg-primary position-relative overflow-hidden">
                                     <div class="d-flex flex-wrap align-items-center justify-content-between gap-1 mb-8">
@@ -379,7 +379,7 @@
                                 </div>
                             </div>
 
-                            <div class="col-xxl-2 col-xl-3 col-sm-4">
+                            <div class="col-xxl-3 col-xl-3 col-sm-4">
                                 <div
                                     class="px-20 py-16 shadow-none radius-8 h-100 gradient-deep-3 left-line line-bg-success position-relative overflow-hidden">
                                     <div class="d-flex flex-wrap align-items-center justify-content-between gap-1 mb-8">
@@ -396,7 +396,7 @@
                                 </div>
                             </div>
 
-                            <div class="col-xxl-2 col-xl-3 col-sm-4">
+                            <div class="col-xxl-3 col-xl-3 col-sm-4">
                                 <div
                                     class="px-20 py-16 shadow-none radius-8 h-100 gradient-deep-4 left-line line-bg-warning position-relative overflow-hidden">
                                     <div class="d-flex flex-wrap align-items-center justify-content-between gap-1 mb-8">
@@ -414,7 +414,7 @@
                                 </div>
                             </div>
 
-                            <div class="col-xxl-2 col-xl-3 col-sm-4">
+                            <div class="col-xxl-3 col-xl-3 col-sm-4">
                                 <div
                                     class="px-20 py-16 shadow-none radius-8 h-100 gradient-deep-1 left-line line-bg-primary position-relative overflow-hidden">
                                     <div class="d-flex flex-wrap align-items-center justify-content-between gap-1 mb-8">
@@ -432,7 +432,7 @@
                                 </div>
                             </div>
 
-                            <div class="col-xxl-2 col-xl-3 col-sm-4">
+                            <div class="col-xxl-3 col-xl-3 col-sm-4">
                                 <div
                                     class="px-20 py-16 shadow-none radius-8 h-100 gradient-deep-2 left-line line-bg-lilac position-relative overflow-hidden">
                                     <div class="d-flex flex-wrap align-items-center justify-content-between gap-1 mb-8">

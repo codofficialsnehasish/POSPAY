@@ -111,7 +111,7 @@ class OrderAPI extends Controller
             // $coupone_discount = !empty($request->coupone_code) ? get_coupone_discount($request->coupone_code,$cart_total) : 0.00;
 
             // 🔹 If UPI → Verify Razorpay payment
-            if ($request->payment_method === "UPI") {
+            if ($request->payment_method === "UPI" && empty($request->txnId)) {
                 if (!$request->razorpay_order_id || !$request->gateway_transaction_id || !$request->razorpay_signature) {
                     return response()->json([
                         'status'  => false,

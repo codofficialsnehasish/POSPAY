@@ -98,6 +98,76 @@
                 </li>
                 @endif
 
+                @canany(['SeatNumber Create', 'SeatNumber View', 'SeatNumber Edit', 'SeatNumber Delete'])
+                    <li>
+                        <a class="nav-link {{ request()->routeIs('seatnumber.index') ? 'active' : '' }}" href="{{ route('seatnumber.index') }}">
+                            <iconify-icon icon="mdi:seat-outline" class="menu-icon"></iconify-icon>
+                            <span>Seat Number</span>
+                        </a>
+                    </li>
+                @endcanany
+
+                @canany(['Category Create', 'Category View','Category Edit','Category Delete'])
+                    <li>
+                        <a class="nav-link {{ request()->routeIs('category.index') ? 'active' : '' }}" href="{{ route('category.index') }}">
+                            <iconify-icon icon="mdi:shape-outline" class="menu-icon"></iconify-icon>
+                            <span>Category</span>
+                        </a>
+                    </li>
+                @endcanany
+
+                @canany(['Hsncode Create', 'Hsncode View', 'Hsncode Edit', 'Hsncode Delete'])
+                    <li>
+                        <a class="nav-link {{ request()->routeIs('hsncode.index') ? 'active' : '' }}" href="{{ route('hsncode.index') }}">
+                            <iconify-icon icon="mdi:barcode" class="menu-icon"></iconify-icon>
+                            <span>Hsncodes</span>
+                        </a>
+                    </li>
+                @endcanany
+
+                @canany(['Brand Create', 'Brand View', 'Brand Edit', 'Brand Delete'])
+                    <li>
+                        <a class="nav-link {{ request()->routeIs('brand.index') ? 'active' : '' }}" href="{{ route('brand.index') }}">
+                            <iconify-icon icon="mdi:tag-outline" class="menu-icon"></iconify-icon>
+                            <span>Brands</span>
+                        </a>
+                    </li>
+                @endcanany
+
+                @canany(['Unit Master Create', 'Unit Master View','Unit Master Edit','Unit Master Delete'])
+                <li>
+                    <a class="nav-link {{ request()->routeIs('units.index') ? 'active' : '' }}" href="{{ route('units.index') }}">
+                        <iconify-icon icon="mdi:scale-balance" class="menu-icon"></iconify-icon>
+                        <span>Units Master</span>
+                    </a>
+                </li>
+                @endcanany
+
+                @canany(['Seller Master Create', 'Seller Master View','Seller Master Edit','Seller Master Delete'])
+                <li>
+                    <a class="nav-link {{ request()->routeIs('sellers.index') ? 'active' : '' }}" href="{{ route('sellers.index') }}">
+                        <iconify-icon icon="mdi:handshake-outline" class="menu-icon"></iconify-icon>
+                        <span>Sellers Master</span>
+                    </a>
+                </li>
+                @endcanany
+
+                @canany(['Product Create', 'Product View','Product Edit','Product Delete'])
+                    <li>
+                        <a class="nav-link {{ request()->routeIs('product.index') ? 'active' : '' }}" href="{{ route('product.index') }}">
+                            <iconify-icon icon="mdi:package-variant-closed" class="menu-icon"></iconify-icon>
+                            <span>Products</span>
+                        </a>
+                    </li>
+                @endcanany
+
+                <li>
+                    <a class="nav-link {{ request()->routeIs('purchase.index') ? 'active' : '' }}" href="{{ route('purchase.index') }}">
+                        <iconify-icon icon="mdi:package-variant-closed" class="menu-icon"></iconify-icon>
+                        <span>Purchase</span>
+                    </a>
+                </li>
+
                 <!-- Reports Dropdown -->
                 <li class="nav-item dropdown">
                     <a class="nav-link dropdown-toggle {{ request()->is('report/*') ? 'active' : '' }}" href="#" id="reportsDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
