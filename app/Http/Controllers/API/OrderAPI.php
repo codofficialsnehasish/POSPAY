@@ -88,6 +88,14 @@ class OrderAPI extends Controller
             'gateway_transaction_id'=> 'nullable|string',
             'razorpay_order_id'     => 'nullable|string',
             'razorpay_signature'    => 'nullable|string',
+            'txnId'     => 'nullable|string',
+            'cardLastFourDigit'  => 'nullable|string',
+            'cardTxnTypeDesc'  => 'nullable|string',
+            'amountOriginal'     => 'nullable|string',
+            'currencyCode' => 'nullable|string',
+            'paymentMode' => 'nullable|string',
+            'deviceSerial' => 'nullable|string',
+            'deviceType' => 'nullable|string',
         ]);
 
         if ($validator->fails()) {
@@ -134,6 +142,24 @@ class OrderAPI extends Controller
                     ? 'Awaiting Payment'
                     : 'Payment Received';
             }
+
+            // 🔹 If POS CARD (from POS machine)
+            if ($request->paymentMode === "CARD" && $request->txnId) {
+
+                // No verification required (POS machine already verifies)
+                $payment_status = "Payment Received";
+                $gateway_transaction_id = $request->txnId;
+                $request->payment_method = 'Card';
+
+            } 
+            if ($request->paymentMode === "UPI" && $request->txnId) {
+
+                // No verification required (POS machine already verifies)
+                $payment_status = "Payment Received";
+                $gateway_transaction_id = $request->txnId;
+                $request->payment_method = 'UPI';
+
+            } 
 
             // return $payment_status;
     
@@ -260,7 +286,7 @@ class OrderAPI extends Controller
                 'amount'                  => $order->discounted_price,
                 'payment_method'          => $request->payment_method,
                 'payment_status'          => $payment_status ?? 'Awaiting Payment',
-                'gateway_transaction_id'  => $request->gateway_transaction_id ?? null,
+                'gateway_transaction_id'  => $gateway_transaction_id ?? $request->gateway_transaction_id,
                 'currency'                => 'INR',
                 'paid_at'                 => $payment_status == 'Payment Received' ? now() : null,
             ]);
