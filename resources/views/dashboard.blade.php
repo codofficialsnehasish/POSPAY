@@ -235,6 +235,226 @@
                 </div>
             </div> --}}
 
+            <div class="col-12">
+                <div class="card radius-12">
+                    <div class="card-body p-16">
+                        <div class="row gy-4">
+                            <div class="col-xxl-2 col-xl-3 col-sm-4">
+                                <div
+                                    class="px-20 py-16 shadow-none radius-8 h-100 gradient-deep-4 left-line line-bg-warning position-relative overflow-hidden">
+                                    <div class="d-flex flex-wrap align-items-center justify-content-between gap-1 mb-8">
+                                        <div>
+                                            <span class="mb-2 fw-medium text-secondary-light text-md">Order Nos.</span>
+                                            <h6 class="fw-semibold mb-1">
+                                                {{ format_price(order_total_by_period('monthly')) }}</h6>
+                                        </div>
+                                        <span
+                                            class="w-44-px h-44-px radius-8 d-inline-flex justify-content-center align-items-center text-2xl mb-12 bg-warning-focus text-warning-600">
+                                            <i class="ri-file-list-3-fill"></i>
+                                        </span>
+                                    </div>
+
+                                </div>
+                            </div>
+                            <div class="col-xxl-2 col-xl-3 col-sm-4">
+                                <div
+                                    class="px-20 py-16 shadow-none radius-8 h-100 gradient-deep-1 left-line line-bg-primary position-relative overflow-hidden">
+                                    <div class="d-flex flex-wrap align-items-center justify-content-between gap-1 mb-8">
+                                        <div>
+                                            <span class="mb-2 fw-medium text-secondary-light text-md">Returned Nos.</span>
+                                            <h6 class="fw-semibold mb-1">
+                                                {{ format_price(order_total_by_period('last_month')) }}</h6>
+                                        </div>
+                                        <span
+                                            class="w-44-px h-44-px radius-8 d-inline-flex justify-content-center align-items-center text-2xl mb-12 bg-primary-100 text-primary-600">
+                                            <i class="ri-arrow-go-back-fill"></i>
+                                        </span>
+                                    </div>
+
+                                </div>
+                            </div>
+                            <div class="col-xxl-2 col-xl-3 col-sm-4">
+                                <div
+                                    class="px-20 py-16 shadow-none radius-8 h-100 gradient-deep-3 left-line line-bg-success position-relative overflow-hidden">
+                                    <div class="d-flex flex-wrap align-items-center justify-content-between gap-1 mb-8">
+                                        <div>
+                                            <span class="mb-2 fw-medium text-secondary-light text-md">Categories</span>
+                                            <h6 class="fw-semibold mb-1">{{ format_price(order_total_by_period('weekly')) }}
+                                            </h6>
+                                        </div>
+                                        <span
+                                            class="w-44-px h-44-px radius-8 d-inline-flex justify-content-center align-items-center text-2xl mb-12 bg-success-200 text-success-600">
+                                            <i class="ri-stack-fill"></i>
+                                        </span>
+                                    </div>
+
+                                </div>
+                            </div>
+                            <div class="col-xxl-2 col-xl-3 col-sm-4">
+                                <div
+                                    class="px-20 py-16 shadow-none radius-8 h-100 gradient-deep-4 left-line line-bg-warning position-relative overflow-hidden">
+                                    <div class="d-flex flex-wrap align-items-center justify-content-between gap-1 mb-8">
+                                        <div>
+                                            <span class="mb-2 fw-medium text-secondary-light text-md">SKUs</span>
+                                            <h6 class="fw-semibold mb-1">
+                                                {{ format_price(order_total_by_period('monthly')) }}</h6>
+                                        </div>
+                                        <span
+                                            class="w-44-px h-44-px radius-8 d-inline-flex justify-content-center align-items-center text-2xl mb-12 bg-warning-focus text-warning-600">
+                                            <i class="ri-barcode-box-fill"></i>
+                                        </span>
+                                    </div>
+
+                                </div>
+                            </div>
+                            <div class="col-xxl-2 col-xl-3 col-sm-4">
+                                <div
+                                    class="px-20 py-16 shadow-none radius-8 h-100 gradient-deep-1 left-line line-bg-primary position-relative overflow-hidden">
+                                    <div class="d-flex flex-wrap align-items-center justify-content-between gap-1 mb-8">
+                                        <div>
+                                            <span class="mb-2 fw-medium text-secondary-light text-md">Low Stock</span>
+                                            <h6 class="fw-semibold mb-1">
+                                                {{ format_price(order_total_by_period('last_month')) }}</h6>
+                                        </div>
+                                        <span
+                                            class="w-44-px h-44-px radius-8 d-inline-flex justify-content-center align-items-center text-2xl mb-12 bg-primary-100 text-primary-600">
+                                            <i class="ri-alert-line"></i>
+                                        </span>
+                                    </div>
+
+                                </div>
+                            </div>
+                            <div class="col-xxl-2 col-xl-3 col-sm-4">
+                                <div
+                                    class="px-20 py-16 shadow-none radius-8 h-100 gradient-deep-2 left-line line-bg-lilac position-relative overflow-hidden">
+                                    <div class="d-flex flex-wrap align-items-center justify-content-between gap-1 mb-8">
+                                        <div>
+                                            <span class="mb-2 fw-medium text-secondary-light text-md">Avg Order Val</span>
+                                            <h6 class="fw-semibold mb-1">
+                                                {{ format_price(order_total_by_period('quarterly')) }}
+                                            </h6>
+                                        </div>
+                                        <span
+                                            class="w-44-px h-44-px radius-8 d-inline-flex justify-content-center align-items-center text-2xl mb-12 bg-lilac-200 text-lilac-600">
+                                            <i class="ri-line-chart-fill"></i>
+                                        </span>
+                                    </div>
+
+                                </div>
+                            </div>
+
+                            <div class="col-xxl-2 col-xl-3 col-sm-4">
+                                <div
+                                    class="px-20 py-16 shadow-none radius-8 h-100 gradient-deep-4 left-line line-bg-warning position-relative overflow-hidden">
+                                    <div class="d-flex flex-wrap align-items-center justify-content-between gap-1 mb-8">
+                                        <div>
+                                            <span class="mb-2 fw-medium text-secondary-light text-md">Sales</span>
+                                            <h6 class="fw-semibold mb-1">
+                                                {{ format_price(order_total_by_period('monthly')) }}</h6>
+                                        </div>
+                                        <span
+                                            class="w-44-px h-44-px radius-8 d-inline-flex justify-content-center align-items-center text-2xl mb-12 bg-warning-focus text-warning-600">
+                                            <i class="ri-shopping-cart-fill"></i>
+                                        </span>
+                                    </div>
+
+                                </div>
+                            </div>
+
+                            <div class="col-xxl-2 col-xl-3 col-sm-4">
+                                <div
+                                    class="px-20 py-16 shadow-none radius-8 h-100 gradient-deep-1 left-line line-bg-primary position-relative overflow-hidden">
+                                    <div class="d-flex flex-wrap align-items-center justify-content-between gap-1 mb-8">
+                                        <div>
+                                            <span class="mb-2 fw-medium text-secondary-light text-md">Purchase</span>
+                                            <h6 class="fw-semibold mb-1">
+                                                {{ format_price(order_total_by_period('last_month')) }}</h6>
+                                        </div>
+                                        <span
+                                            class="w-44-px h-44-px radius-8 d-inline-flex justify-content-center align-items-center text-2xl mb-12 bg-primary-100 text-primary-600">
+                                            <i class="ri-shopping-bag-3-fill"></i>
+                                        </span>
+                                    </div>
+
+                                </div>
+                            </div>
+
+                            <div class="col-xxl-2 col-xl-3 col-sm-4">
+                                <div
+                                    class="px-20 py-16 shadow-none radius-8 h-100 gradient-deep-3 left-line line-bg-success position-relative overflow-hidden">
+                                    <div class="d-flex flex-wrap align-items-center justify-content-between gap-1 mb-8">
+                                        <div>
+                                            <span class="mb-2 fw-medium text-secondary-light text-md">Stock</span>
+                                            <h6 class="fw-semibold mb-1">{{ format_price(order_total_by_period('weekly')) }}
+                                            </h6>
+                                        </div>
+                                        <span
+                                            class="w-44-px h-44-px radius-8 d-inline-flex justify-content-center align-items-center text-2xl mb-12 bg-success-200 text-success-600">
+                                            <i class="ri-archive-stack-fill"></i>
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-xxl-2 col-xl-3 col-sm-4">
+                                <div
+                                    class="px-20 py-16 shadow-none radius-8 h-100 gradient-deep-4 left-line line-bg-warning position-relative overflow-hidden">
+                                    <div class="d-flex flex-wrap align-items-center justify-content-between gap-1 mb-8">
+                                        <div>
+                                            <span class="mb-2 fw-medium text-secondary-light text-md">Cash</span>
+                                            <h6 class="fw-semibold mb-1">
+                                                {{ format_price(order_total_by_period('monthly')) }}</h6>
+                                        </div>
+                                        <span
+                                            class="w-44-px h-44-px radius-8 d-inline-flex justify-content-center align-items-center text-2xl mb-12 bg-warning-focus text-warning-600">
+                                            <i class="ri-money-rupee-circle-fill"></i>
+                                        </span>
+                                    </div>
+
+                                </div>
+                            </div>
+
+                            <div class="col-xxl-2 col-xl-3 col-sm-4">
+                                <div
+                                    class="px-20 py-16 shadow-none radius-8 h-100 gradient-deep-1 left-line line-bg-primary position-relative overflow-hidden">
+                                    <div class="d-flex flex-wrap align-items-center justify-content-between gap-1 mb-8">
+                                        <div>
+                                            <span class="mb-2 fw-medium text-secondary-light text-md">Card</span>
+                                            <h6 class="fw-semibold mb-1">
+                                                {{ format_price(order_total_by_period('last_month')) }}</h6>
+                                        </div>
+                                        <span
+                                            class="w-44-px h-44-px radius-8 d-inline-flex justify-content-center align-items-center text-2xl mb-12 bg-primary-100 text-primary-600">
+                                            <i class="ri-bank-card-2-fill"></i>
+                                        </span>
+                                    </div>
+
+                                </div>
+                            </div>
+
+                            <div class="col-xxl-2 col-xl-3 col-sm-4">
+                                <div
+                                    class="px-20 py-16 shadow-none radius-8 h-100 gradient-deep-2 left-line line-bg-lilac position-relative overflow-hidden">
+                                    <div class="d-flex flex-wrap align-items-center justify-content-between gap-1 mb-8">
+                                        <div>
+                                            <span class="mb-2 fw-medium text-secondary-light text-md">UPI</span>
+                                            <h6 class="fw-semibold mb-1">
+                                                {{ format_price(order_total_by_period('quarterly')) }}
+                                            </h6>
+                                        </div>
+                                        <span
+                                            class="w-44-px h-44-px radius-8 d-inline-flex justify-content-center align-items-center text-2xl mb-12 bg-lilac-200 text-lilac-600">
+                                            <i class="ri-smartphone-line"></i>
+                                        </span>
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
             {{-- === Sales Statistics (Year Filter) === --}}
             <div class="col-xl-6 col-md-12">
                 <div class="card shadow radius-12 h-100">
