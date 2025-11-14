@@ -38,7 +38,7 @@
         </div> --}}
 
         <div class="row gy-4">
-            <div class="col-12">
+            {{-- <div class="col-12">
                 <div class="card radius-12">
                     <div class="card-body p-16">
                         <div class="row gy-4">
@@ -163,7 +163,6 @@
 
                                 </div>
                             </div>
-                            {{-- Total Vendors --}}
 
 
                             <div class="col-xxl-3 col-xl-4 col-sm-6">
@@ -183,7 +182,6 @@
                                 </div>
                             </div>
 
-                            {{-- Total Products --}}
                             <div class="col-xxl-3 col-xl-4 col-sm-6">
                                 <div
                                     class="px-20 py-16 shadow-none radius-8 h-100 gradient-deep-4 left-line line-bg-warning position-relative overflow-hidden">
@@ -200,7 +198,6 @@
                                 </div>
                             </div>
 
-                            {{-- Total Brands --}}
                             <div class="col-xxl-3 col-xl-4 col-sm-6">
                                 <div
                                     class="px-20 py-16 shadow-none radius-8 h-100 gradient-deep-3 left-line line-bg-info position-relative overflow-hidden">
@@ -217,7 +214,6 @@
                                 </div>
                             </div>
 
-                            {{-- Total Categories --}}
                             <div class="col-xxl-3 col-xl-4 col-sm-6">
                                 <div
                                     class="px-20 py-16 shadow-none radius-8 h-100 gradient-deep-1 left-line line-bg-success position-relative overflow-hidden">
@@ -237,7 +233,7 @@
                         </div>
                     </div>
                 </div>
-            </div>
+            </div> --}}
 
             {{-- === Sales Statistics (Year Filter) === --}}
             <div class="col-xl-6 col-md-12">

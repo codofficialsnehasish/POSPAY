@@ -40,7 +40,7 @@ class ReportController  extends Controller implements HasMiddleware {
 
     public function sale_list(Request $request)
     {
-        $orders = Order::with(['user','vendor'])
+        $orders = Order::with(['user','vendor','transactions'])
             ->where('vendor_id', auth()->user()->id)
             ->latest()
             ->get();
@@ -62,7 +62,7 @@ class ReportController  extends Controller implements HasMiddleware {
 
     public function purchase_list(Request $request)
     {
-        $purchases = Purchase::with(['vendor','items.product'])
+        $purchases = Purchase::with(['vendor','items','items.product'])
             ->latest()
             ->get();
 

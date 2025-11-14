@@ -26,7 +26,8 @@
     if (!function_exists('format_datetime_excel')) {
         function format_datetime_excel($datetime){
             $carbonDatetime = Carbon::parse($datetime);
-            return $carbonDatetime->format('d-m-y h:i A');
+            // return $carbonDatetime->format('d-m-y h:i A');
+            return $carbonDatetime->format('d-m-y');
         }
     }
 
