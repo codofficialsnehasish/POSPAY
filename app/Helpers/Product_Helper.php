@@ -21,7 +21,7 @@
             $mainImage = $product->getMedia('products-media')
                 ->firstWhere('custom_properties.is_main', true);
 
-            return $mainImage ? $mainImage->getUrl() : null;
+            return $mainImage ? $mainImage->getUrl() : asset('images/default-product.png');
         }
     }
 

@@ -212,6 +212,8 @@ Route::middleware(['auth', 'verified'])->group(function(){
 
                 Route::get('/filter','product_filter')->name('products.multiple.filter');
 
+                Route::post('update-availability', 'updateAvailability')->name('products.updateAvailability');
+
 
             });
         });

@@ -162,6 +162,80 @@
 
 
                     </div>
+                    
+                    {{--<div class="card mt-3">
+                        <div class="card-header d-flex justify-content-between align-items-center">
+                            <h5 class="card-title mb-0">Products</h5>
+
+                            <label class="d-flex align-items-center" style="cursor:pointer;">
+                                <input type="checkbox" id="selectAll" class="form-check-input me-2" style="width: 18px; height: 18px;">
+                                Select All
+                            </label>
+                        </div>
+
+                        <div class="card-body">
+
+                            @foreach($products as $product)
+                                <div class="product-card border rounded p-3 mb-3 d-flex gap-3 align-items-start">
+
+                                    <!-- Checkbox -->
+                                    <div class="pt-1">
+                                        <input type="checkbox" 
+                                            class="product-checkbox form-check-input"
+                                            name="products[]" 
+                                            value="{{ $product->id }}"
+                                            style="width: 18px; height: 18px;">
+                                    </div>
+
+                                    <!-- Image -->
+                                    <div>
+                                        @if(getProductMainImage($product->id))
+                                            <img src="{{ getProductMainImage($product->id) }}"
+                                                width="70" height="70" class="rounded"
+                                                alt="">
+                                        @endif
+                                    </div>
+
+                                    <!-- Product Details -->
+                                    <div class="flex-grow-1">
+
+                                        <h6 class="mb-1">{{ $product->name }}</h6>
+
+                                        <!-- Categories -->
+                                        <p class="text-muted mb-1">
+                                            Category:
+                                            @if($product->categories->count())
+                                                {{ $product->categories->pluck('name')->join(', ') }}
+                                            @else
+                                                N/A
+                                            @endif
+                                        </p>
+
+                                        <!-- Variations -->
+                                        @foreach($product->variations as $variation)
+                                            <strong>{{ $variation->name }}:</strong>
+                                            @foreach($variation->options as $option)
+                                                <span class="badge bg-primary">
+                                                    {{ $option->name }} - ₹{{ $option->price }}
+                                                </span>
+                                            @endforeach
+                                            <br>
+                                        @endforeach
+
+                                    </div>
+
+                                    <!-- Stock Input -->
+                                    <div style="min-width: 100px;">
+                                        <label class="form-label">Stock</label>
+                                        <input type="number" name="stock[{{ $product->id }}]" 
+                                            class="form-control" min="1" value="1">
+                                    </div>
+
+                                </div>
+                            @endforeach
+
+                        </div>
+                    </div>--}}
                 </div>
                 <div class="col-md-3">
 
@@ -349,27 +423,27 @@
 
             //     var lastInner = $('.inner-feilds').last(); // Get the last .inner element
             //     var html = `
-        //    <div class="row mb-4 stock-input-row">
-        //         <div class="row mb-24 gy-3 align-items-center">
-        //             <label class="form-label mb-0 col-sm-2" >Branch Name</label>
-        //               <div class="col-sm-10">
-        //                                 <div class="icon-field">
-        //                                     <span class="icon">
-        //                                         <iconify-icon icon="solar:lock-password-outline"></iconify-icon>
-        //                                     </span>
-        //                 <input class="form-control" name="branch[` + index + `][name]" type="text" id="branch_name_` +
+            //    <div class="row mb-4 stock-input-row">
+            //         <div class="row mb-24 gy-3 align-items-center">
+            //             <label class="form-label mb-0 col-sm-2" >Branch Name</label>
+            //               <div class="col-sm-10">
+            //                                 <div class="icon-field">
+            //                                     <span class="icon">
+            //                                         <iconify-icon icon="solar:lock-password-outline"></iconify-icon>
+            //                                     </span>
+            //                 <input class="form-control" name="branch[` + index + `][name]" type="text" id="branch_name_` +
             //                 index + `" placeholder="Branch Name" value=""  required  autocomplete="off"/>
-        //                      </div>
-        //         </div>
-        //              <div class="invalid-feedback">This field is required.</div>
-        //         </div>
+            //                      </div>
+            //         </div>
+            //              <div class="invalid-feedback">This field is required.</div>
+            //         </div>
 
 
-        //       <div class="col-sm-1" style="display: flex;align-items: center !important;">
-        //          <span class="text-danger stock-delete-btn" data-feather="trash-2" style="cursor: pointer;">
-        //          </span>
-        //       </div>
-        //    </div>`;
+            //       <div class="col-sm-1" style="display: flex;align-items: center !important;">
+            //          <span class="text-danger stock-delete-btn" data-feather="trash-2" style="cursor: pointer;">
+            //          </span>
+            //       </div>
+            //    </div>`;
             //     // $('.inner-feilds').append(html);
             //     lastInner.append(html);
             //     index++;
@@ -431,6 +505,20 @@
 
 
 
+        });
+
+        $('#selectAll').on('change', function () {
+            $('.product-checkbox').prop('checked', $(this).is(':checked'));
+        });
+
+        // Click anywhere on card to toggle checkbox
+        $(document).on('click', '.product-card', function (e) {
+
+            // Stop toggling if click is directly on checkbox or input
+            if ($(e.target).is('input')) return;
+
+            let checkbox = $(this).find('.product-checkbox');
+            checkbox.prop('checked', !checkbox.prop('checked'));
         });
     </script>
 @endsection

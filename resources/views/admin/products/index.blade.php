@@ -46,16 +46,20 @@ table.dataTable thead>tr>th.dt-orderable-asc span.dt-column-order, table.dataTab
 
                 <!-- Buttons on right -->
                 <div class="d-flex align-items-center gap-2">
+                    @can('Product Basic Info Create')
                     <a href="{{ route('products.basic-info-create') }}"
                     class="btn btn-primary text-sm btn-sm px-12 py-12 radius-8 d-flex align-items-center gap-2">
                         <iconify-icon icon="ic:baseline-plus" class="icon text-xl line-height-1"></iconify-icon>
                         Add New
                     </a>
+                    @endcan
+                    @can('Product Bulk Upload')
                     <a href="{{ route('products.bulk-upload-form') }}"
                     class="btn btn-primary text-sm btn-sm px-12 py-12 radius-8 d-flex align-items-center gap-2">
                         <iconify-icon icon="mdi:upload-multiple" class="icon text-xl line-height-1"></iconify-icon>
                         Bulk Upload
                     </a>
+                    @endcan
                 </div>
             </div>
 
@@ -120,16 +124,24 @@ table.dataTable thead>tr>th.dt-orderable-asc span.dt-column-order, table.dataTab
                             <th class="text-wrap">Title</th>
                             {{-- <th class="text-wrap">Description</th> --}}
                             <th class="text-wrap">Image</th>
+                            @if(auth()->user()->hasRole('Vendor'))
+                            <th class="text-wrap">Availability</th>
+                            @else
                             <th class="text-wrap">Status</th>
+                            @endif
                             {{-- <th class="text-wrap">Barcode</th> --}}
+                            @if(!auth()->user()->hasRole('Vendor'))
                             <th class="text-wrap" style="width: 150px;">Created At</th>
+                            @endauth
+                            @canany(['Product Basic Info Edit','Product Delete'])
                             <th class="text-wrap">Action</th>
+                            @endcanany
                         </tr>
                     </thead>
                     <tbody>
                         @if ($products->isNotEmpty())
                             @foreach ($products as $prouct)
-                                <tr>
+                                <tr class="product-row" data-id="{{ $prouct->id }}">
                                     <td>
                                         <div class="form-check style-check d-flex align-items-center">
                                             {{-- <input class="form-check-input" type="checkbox"> --}}
@@ -138,7 +150,29 @@ table.dataTable thead>tr>th.dt-orderable-asc span.dt-column-order, table.dataTab
                                             </label>
                                         </div>
                                     </td>
-                                    <td class="text-wrap">{{ $prouct->name }}</td>
+                                    <td class="text-wrap">
+                                        {{ $prouct->name }}
+                                        <!-- Categories -->
+                                        <p class="text-muted mb-1">
+                                            Category:
+                                            @if($prouct->categories->count())
+                                                {{ $prouct->categories->pluck('name')->join(', ') }}
+                                            @else
+                                                N/A
+                                            @endif
+                                        </p>
+
+                                        <!-- Variations -->
+                                        @foreach($prouct->variations as $variation)
+                                            <strong>{{ $variation->name }}:</strong>
+                                            @foreach($variation->options as $option)
+                                                <span class="badge bg-primary">
+                                                    {{ $option->name }} - ₹{{ $option->price }}
+                                                </span>
+                                            @endforeach
+                                            <br>
+                                        @endforeach
+                                    </td>
                                     {{-- <td class="text-wrap">{!! $prouct->sort_description !!}</td> --}}
                                     <td style="max-height: 100px;">
                                         @if(getProductMainImage($prouct->id))
@@ -149,14 +183,37 @@ table.dataTable thead>tr>th.dt-orderable-asc span.dt-column-order, table.dataTab
                                                 alt="">
                                         @endif
                                     </td>
+                                    @if(auth()->user()->hasRole('Vendor'))
+                                        @php
+                                            $vendorProduct = \App\Models\VendorProduct::where('vendor_id', auth()->id())
+                                                            ->where('product_id', $prouct->id)
+                                                            ->first();
+                                        @endphp
+
+                                        <td>
+                                            <div class="form-check form-switch">
+                                                <input type="checkbox"
+                                                    class="form-check-input availability-switch"
+                                                    data-id="{{ $prouct->id }}"
+                                                    {{ ($vendorProduct && $vendorProduct->availability) ? 'checked' : '' }}>
+                                            </div>
+                                        </td>
+                                    @else
                                     <td>{!! check_visibility($prouct->is_visible) !!}</td>
+                                    @endif
                                     {{-- <td class="text-wrap">{{ $prouct->barcode }}</td> --}}
+                                    @if(!auth()->user()->hasRole('Vendor'))
                                     <td class="text-wrap" style="width: 150px;">{{ format_datetime($prouct->created_at) }}</td>
+                                    @endif
+                                    @canany(['Product Basic Info Edit','Product Delete'])
                                     <td>
+                                        @can('Product Basic Info Edit')
                                         <a href="{{ route('products.basic-info-edit', $prouct->id) }}"
                                             class="w-32-px h-32-px bg-success-focus text-success-main rounded-circle d-inline-flex align-items-center justify-content-center">
                                             <iconify-icon icon="lucide:edit"></iconify-icon>
                                         </a>
+                                        @endcan
+                                        @can('Product Delete')
                                         <form action="{{ route('products.delete', $prouct->id) }}"
                                             onsubmit="return confirm('Are you sure?')" method="POST"
                                             style="display:inline;">
@@ -167,7 +224,9 @@ table.dataTable thead>tr>th.dt-orderable-asc span.dt-column-order, table.dataTab
                                                 type="submit"><iconify-icon
                                                     icon="mingcute:delete-2-line"></iconify-icon></button>
                                         </form>
+                                        @endcan
                                     </td>
+                                    @endcanany
                                 </tr>
                             @endforeach
                         @endif
@@ -206,4 +265,45 @@ table.dataTable thead>tr>th.dt-orderable-asc span.dt-column-order, table.dataTab
             window.location.href = "{{ route('product.index') }}";
         });
     </script>
+
+    <script>
+        $(document).ready(function () {
+
+            // When clicking on TR, toggle switch
+            $('.product-row').on('click', function (e) {
+
+                // If user clicked the switch itself, do nothing
+                if ($(e.target).closest('.availability-switch').length) {
+                    return;
+                }
+
+                let switchBtn = $(this).find('.availability-switch');
+                switchBtn.prop('checked', !switchBtn.prop('checked')).trigger('change');
+            });
+
+            // When switch changes, update DB
+            $('.availability-switch').on('change', function () {
+                let productId = $(this).data('id');
+                let newStatus = $(this).prop('checked') ? 1 : 0;
+
+                $.ajax({
+                    url: "{{ route('products.updateAvailability') }}",
+                    method: "POST",
+                    data: {
+                        id: productId,
+                        is_visible: newStatus,
+                        _token: "{{ csrf_token() }}"
+                    },
+                    success: function(res) {
+                        console.log("Updated");
+                    },
+                    error: function() {
+                        alert("Something went wrong!");
+                    }
+                });
+            });
+
+        });
+    </script>
+
 @endsection

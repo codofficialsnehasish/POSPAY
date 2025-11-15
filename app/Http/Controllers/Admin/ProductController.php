@@ -13,6 +13,7 @@ use App\Models\ProductVariation;
 use App\Models\ProductVariationOption;
 use App\Models\Brand;
 use App\Models\Hsncode;
+use App\Models\VendorProduct;
 use App\Models\Unit;
 use Illuminate\Routing\Controllers\HasMiddleware;
 use Illuminate\Routing\Controllers\Middleware;
@@ -40,9 +41,12 @@ class ProductController extends Controller implements HasMiddleware
         $user = Auth::user();
 
         if ($user->hasRole('Super Admin')) {
-            $products = Product::all(); 
+            $products = Product::with('categories','variations.options')->all(); 
+        } elseif ($user->hasRole('Admin')) {
+            $products = Product::with('categories','variations.options')->where('admin_id', $user->id)->get(); 
         } elseif ($user->hasRole('Vendor')) {
-            $products = Product::where('vendor_id', $user->id)->get(); 
+            // $products = Product::where('vendor_id', $user->id)->get(); 
+            $products = Product::with('categories','variations.options')->where('admin_id', $user->admin->id)->get(); 
         } else {
             $products = collect(); 
         }
@@ -98,10 +102,11 @@ class ProductController extends Controller implements HasMiddleware
             'product_name' => 'required|string|max:255',
             'product_type' => 'nullable|in:simple,attribute',
         ]);
-         $vendor_id =Auth::guard('web')->user()->id;
+        $user_id =Auth::guard('web')->user()->id;
         $product = new Product();
         $product->name = $request->product_name;
-        $product->vendor_id = $vendor_id;
+        // $product->vendor_id = $user_id;
+        $product->admin_id = $user_id;
         $product->brand_owner = $request->brand_owner;
         // $product->product_type = $request->product_type ?? 'simple';
         $product->product_type = 'attribute';
@@ -694,4 +699,20 @@ class ProductController extends Controller implements HasMiddleware
             return back()->with('error','Not Found');
         }
     }
+
+    public function updateAvailability(Request $request)
+    {
+        VendorProduct::updateOrCreate(
+            [
+                'vendor_id'  => auth()->id(),
+                'product_id' => $request->id,
+            ],
+            [
+                'availability' => $request->is_visible,
+            ]
+        );
+
+        return response()->json(['success' => true]);
+    }
+
 }

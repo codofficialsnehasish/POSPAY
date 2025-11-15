@@ -9,6 +9,7 @@ use App\Models\User;
 use Illuminate\Support\Facades\Hash;
 use App\Models\Coach;
 use App\Models\Branch;
+use App\Models\Product;
 
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
@@ -57,7 +58,9 @@ class VendorController extends Controller  implements HasMiddleware
             $admins = User::role('Admin')->get(); 
         }
 
-        return view('admin.vendor.create', compact('coaches', 'admins', 'user'));
+        $products = Product::with('variations.options')->where('admin_id',$user->id)->get();
+
+        return view('admin.vendor.create', compact('coaches', 'admins', 'user','products'));
     }
 
 
@@ -165,9 +168,9 @@ class VendorController extends Controller  implements HasMiddleware
         if ($user->hasRole('Super Admin')) {
             $admins = User::role('Admin')->get(); 
         }
+        $products = Product::with('categories','variations.options')->where('admin_id',$user->id)->get();
 
-
-        return view('admin.vendor.edit',compact('vendor','coaches','selected_branches','admins','user'));
+        return view('admin.vendor.edit',compact('vendor','coaches','selected_branches','admins','user','products'));
     }
 
     /**
