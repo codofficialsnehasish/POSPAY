@@ -41,7 +41,7 @@ class ProductController extends Controller implements HasMiddleware
         $user = Auth::user();
 
         if ($user->hasRole('Super Admin')) {
-            $products = Product::with('categories','variations.options')->all(); 
+            $products = Product::with('categories','variations.options')->get(); 
         } elseif ($user->hasRole('Admin')) {
             $products = Product::with('categories','variations.options')->where('admin_id', $user->id)->get(); 
         } elseif ($user->hasRole('Vendor')) {

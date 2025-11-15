@@ -94,6 +94,8 @@ class CartAPI extends Controller
             return response()->json(['error' => $validator->errors()], 422);
         }
 
+        $vendorId = $request->vendorId;
+
         $product = Product::findOrFail($request->product_id);
         $cartItems = [];
         
@@ -101,6 +103,7 @@ class CartAPI extends Controller
 
             foreach ($request->items as $item) {
                 $existingCartItem = Cart::where('user_id', $request->user()->id)
+                    ->where('vendor_id',$vendorId)
                     ->where('product_id', $request->product_id)
                     ->where('variation_id', $item['variation_id'])
                     ->where('option_id', $item['option_id'])
@@ -115,6 +118,7 @@ class CartAPI extends Controller
     
                     $existingCartItem = Cart::create([
                         'user_id' => $request->user()->id,
+                        'vendor_id' => $vendorId,
                         'product_id' => $request->product_id,
                         'variation_id' => $item['variation_id'],
                         'option_id' => $item['option_id'],
@@ -131,6 +135,7 @@ class CartAPI extends Controller
             
              // Non-variant product
             $existingCartItem = Cart::where('user_id', $request->user()->id)
+            ->where('vendor_id',$vendorId)
             ->where('product_id', $request->product_id)
             ->whereNull('variation_id')
             ->whereNull('option_id')
@@ -146,6 +151,7 @@ class CartAPI extends Controller
             } else {
                 $existingCartItem = Cart::create([
                     'user_id' => $request->user()->id,
+                    'vendor_id' => $vendorId,
                     'product_id' => $request->product_id,
                     'quantity' =>  $request->quantity,
                     'product_title' => $product_title,
@@ -185,7 +191,8 @@ class CartAPI extends Controller
     
     public function cart_items(Request $request)
     {
-        $cart_items = Cart::with(['product', 'variationOption'])->where('user_id', $request->user()->id)->get();
+        $vendorId = $request->vendorId;
+        $cart_items = Cart::with(['product', 'variationOption'])->where('user_id', $request->user()->id)->where('vendor_id',$vendorId)->get();
 
         $cart_items->each(function ($cartItem) {
             // Load product image
@@ -232,8 +239,10 @@ class CartAPI extends Controller
         //             ->where('product_id', $request->product_id)
         //             ->first();
 
+        $vendorId = $request->vendorId;
 
         $existingCartItem = Cart::where('user_id', $request->user()->id)
+            ->where('vendor_id',$vendorId)
             ->where('product_id', $request->product_id)
             ->where('variation_id', $request->variation_id)
             ->where('option_id', $request->option_id)
@@ -272,7 +281,10 @@ class CartAPI extends Controller
             return response()->json(['error' => $validator->errors()], 422);
         }
 
+        $vendorId = $request->vendorId;
+
         $existingCartItem = Cart::where('user_id', $request->user()->id)
+            ->where('vendor_id',$vendorId)
             ->where('product_id', $request->product_id)
             ->where('variation_id', $request->variation_id)
             ->where('option_id', $request->option_id)
@@ -281,7 +293,7 @@ class CartAPI extends Controller
         if ($existingCartItem) {
             $existingCartItem->delete();
             
-            $CartItems = Cart::with('product')->where('user_id', $request->user()->id)->get();
+            $CartItems = Cart::with('product')->where('user_id', $request->user()->id)->where('vendor_id',$vendorId)->get();
 
             $CartItems->each(function ($cartItem) {
                 // Load the media collection for each product
@@ -302,7 +314,8 @@ class CartAPI extends Controller
     }
 
     public function clear_cart(Request $request){
-        Cart::where('user_id', $request->user()->id)->delete();
+        $vendorId = $request->vendorId;
+        Cart::where('user_id', $request->user()->id)->where('vendor_id',$vendorId)->delete();
 
         return response()->json([
             'status' => true,

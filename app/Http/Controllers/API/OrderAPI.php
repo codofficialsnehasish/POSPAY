@@ -102,6 +102,7 @@ class OrderAPI extends Controller
             return response()->json(['error' => $validator->errors()], 422);
         }
 
+        $vendorId = $request->vendorId;
         $cart_items = Cart::where('user_id', $request->user()->id)->get();
         $totalGst =0;
         if($cart_items){
@@ -166,7 +167,7 @@ class OrderAPI extends Controller
             $order= Order::create([
                 'order_number'=>generateOrderNumber(),
                 'user_id'=>$request->user()->id,
-                'vendor_id'=>$request->user()->vendor_id,
+                'vendor_id'=>$vendorId, //$request->user()->vendor_id,
                 'order_type'=>"attendee",
                 'order_status'=>"Order Confirmed",
                 'price_subtotal'=>$cart_sub_total,
@@ -329,7 +330,8 @@ class OrderAPI extends Controller
     
     public function order_history(Request $request)
     {
-        $vendorIds = $request->user()->vendors->pluck('id');
+        // $vendorIds = $request->user()->vendors->pluck('id');
+        $vendorIds = collect([$request->vendorId]);
 
         $query = Order::with('items.product.media')
          ->where('is_darft', 0) 
@@ -382,6 +384,8 @@ class OrderAPI extends Controller
         if ($validator->fails()) {
             return response()->json(['error' => $validator->errors()], 422);
         }
+
+        $vendorId = $request->vendorId;
         $totalGst = 0;
 
         $cart_items = Cart::where('user_id', $request->user()->id)->get();
@@ -395,7 +399,7 @@ class OrderAPI extends Controller
            $order= Order::create([
                 'order_number'=>generateDraftOrderNumber(),
                 'user_id'=>$request->user()->id,
-                'vendor_id'=>$request->user()->vendor_id,
+                'vendor_id'=>$vendorId, //$request->user()->vendor_id,
                 'order_type'=>"attendee",
                 'order_status'=>"Order Pending",
                 'price_subtotal'=>$cart_sub_total,
@@ -493,7 +497,9 @@ class OrderAPI extends Controller
     
     public function draft_order_history(Request $request)
     {
+        $vendorId = $request->vendorId;
         $query = Order::with('items.product.media')
+        ->where('vendor_id',$vendorId,)
          ->where('user_id',$request->user()->id)
         ->where('is_darft', '1') 
         ->orderBy('id', 'desc');

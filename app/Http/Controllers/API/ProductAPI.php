@@ -10,6 +10,7 @@ use Carbon\Carbon;
 
 use App\Models\Product;
 use App\Models\Category;
+use App\Models\VendorProduct;
 use App\Models\ProductVariationOption;
 use App\Models\Cart;
 
@@ -112,7 +113,7 @@ class ProductAPI extends Controller
     
     
     
-    public function get_products_by_category(Request $request, string $id)
+    /*public function get_products_by_category(Request $request, string $id)
     {
         $category = Category::with('subcategory')->find($id);
 
@@ -147,7 +148,63 @@ class ProductAPI extends Controller
             'subcategories' => $category->subcategory,
             'products' => $products,
         ]);
+    }*/
+
+    public function get_products_by_category(Request $request, string $id)
+    {
+        // 1. Get vendor IDs for logged in user
+        // $vendorIds = $request->user()->vendors->pluck('id');
+        $vendorIds = collect([$request->vendorId]);
+
+        // 2. Get only available product IDs for these vendors
+        $availableProductIds = VendorProduct::whereIn('vendor_id', $vendorIds)
+            ->where('availability', 1)
+            ->pluck('product_id');
+
+        // 3. Find category
+        $category = Category::with('subcategory')->find($id);
+
+        if (!$category) {
+            return response()->json([
+                'status' => 'false',
+                'message' => 'Category not found',
+            ]);
+        }
+
+        // 4. Category + subcategory IDs
+        $categoryIds = collect([$category->id])->merge($category->subcategory->pluck('id'));
+
+        // 5. Product Query
+        $query = Product::whereHas('categories', function ($query) use ($categoryIds) {
+                $query->whereIn('categories.id', $categoryIds);
+            })
+            ->with([
+                'addons.products',
+                'complamentary.product',
+                'variations.options',
+            ])
+            ->where('is_visible', 1)
+            ->whereIn('id', $availableProductIds); // ⭐ APPLY VENDOR AVAILABLE PRODUCTS HERE
+
+        // 6. Search filter
+        if ($request->filled('search')) {
+            $query->where('name', 'like', '%' . $request->search . '%');
+        }
+
+        // 7. Get products
+        $products = $query->get();
+        $products->each(function ($product) {
+            $product->image_url = getProductMainImage($product->id);
+        });
+
+        return response()->json([
+            'status' => true,
+            'category' => $category,
+            'subcategories' => $category->subcategory,
+            'products' => $products,
+        ]);
     }
+
     
     
     /*public function get_category_wise_product(Request $request)
@@ -199,7 +256,8 @@ class ProductAPI extends Controller
     public function get_category_wise_product(Request $request)
     {
         // get all vendor IDs linked to the logged-in user
-        $vendorIds = $request->user()->vendors->pluck('id');
+        // $vendorIds = $request->user()->vendors->pluck('id');
+        $vendorIds = collect([$request->vendorId]);
     
         if ($vendorIds->isEmpty()) {
             return response()->json([
@@ -207,12 +265,19 @@ class ProductAPI extends Controller
                 'message' => 'No vendors assigned to this user',
             ], 400);
         }
+
+        $availableProductIds = VendorProduct::whereIn('vendor_id', $vendorIds)
+        ->where('availability', 1)
+        ->pluck('product_id');
     
         // fetch only parent categories that have products for these vendors
         $parentCategories = Category::with('subcategory')
             ->whereNull('parent_id')
-            ->whereHas('products', function ($q) use ($vendorIds) {
-                $q->whereIn('vendor_id', $vendorIds);
+            // ->whereHas('products', function ($q) use ($vendorIds) {
+            //     $q->whereIn('vendor_id', $vendorIds);
+            // })
+            ->whereHas('products', function ($q) use ($availableProductIds) {
+                $q->whereIn('products.id', $availableProductIds);
             })
             ->get();
     
@@ -220,7 +285,7 @@ class ProductAPI extends Controller
 
         if ($parentCategories->isEmpty()) {
             // if no category found with products, return all visible products for these vendors
-            $query = Product::whereIn('vendor_id', $vendorIds)
+            $query = Product::whereIn('id', $availableProductIds) //whereIn('vendor_id', $vendorIds)
                 ->with([
                     'addons.products',
                     'complamentary.product',
@@ -256,7 +321,7 @@ class ProductAPI extends Controller
                 ->merge($category->subcategory->pluck('id'));
     
             // fetch products for these vendors and categories
-            $query = Product::whereIn('vendor_id', $vendorIds)
+            $query = Product::whereIn('id', $availableProductIds) //whereIn('vendor_id', $vendorIds)
                 ->whereHas('categories', function ($query) use ($categoryIds) {
                     $query->whereIn('categories.id', $categoryIds);
                 })
@@ -293,60 +358,8 @@ class ProductAPI extends Controller
         ]);
     }
 
-
-
-
- 
-    /*public function get_category_wise_product(Request $request)
-    {
-        // Fetch only parent categories
-        $parentCategories = Category::with('subcategory')->whereNull('parent_id')->get();
-
-        $result = [];
-
-        foreach ($parentCategories as $category) {
-            // Get category + child category IDs
-            $categoryIds = collect([$category->id])
-                ->merge($category->subcategory->pluck('id'));
-
-            // Fetch products for this parent + children
-            $query = Product::whereHas('categories', function ($query) use ($categoryIds) {
-                    $query->whereIn('categories.id', $categoryIds);
-                })
-                ->with([
-                    'addons.products',
-                    'complamentary.product',
-                    'variations.options',
-                ])
-                ->where('is_visible', 1);
-
-            // Apply search filter
-            if ($request->filled('search')) {
-                $query->where('name', 'like', '%' . $request->search . '%');
-            }
-
-            $products = $query->get();
-
-            // Attach image URLs
-            $products->each(function ($product) {
-                $product->image_url = getProductMainImage($product->id);
-            });
-
-            // Add to response
-            $result[] = [
-                'category' => $category,
-                'products' => $products,
-            ];
-        }
-
-        return response()->json([
-            'status' => true,
-            'data' => $result,
-        ]);
-    }*/
-
     
-    public function search_product(Request $request)
+    /*public function search_product(Request $request)
     {
         $query = Product::with([
             'addons.products',
@@ -395,52 +408,56 @@ class ProductAPI extends Controller
                 'products' => $products,
             ],
         ]);
-    }
+    }*/
 
-
-    /*public function get_product_by_barcode(Request $request)
+    public function search_product(Request $request)
     {
-        if (!$request->filled('barcode')) {
-            return response()->json([
-                'status' => false,
-                'message' => 'Barcode is required',
-            ]);
-        }
+        // 1. Get vendor IDs for the logged-in user
+        // $vendorIds = $request->user()->vendors->pluck('id');
+        $vendorIds = collect([$request->vendorId]);
 
-        $product = Product::with([
+        // 2. Get only available product IDs for these vendors
+        $availableProductIds = VendorProduct::whereIn('vendor_id', $vendorIds)
+            ->where('availability', 1)
+            ->pluck('product_id');
+
+        // 3. Build the search query
+        $query = Product::with([
                 'addons.products',
                 'complamentary.product',
                 'variations.options',
-                'categories.subcategory', // 🔹 eager load categories & subcategories
             ])
             ->where('is_visible', 1)
-            ->where('barcode', $request->barcode)
-            ->first();
+            ->whereIn('id', $availableProductIds);   // ⭐ APPLY FILTER
 
-        if (!$product) {
-            return response()->json([
-                'status' => false,
-                'message' => 'No product found for this barcode',
-            ]);
+        // Filter by product name
+        if ($request->filled('name')) {
+            $query->where('name', 'like', '%' . $request->name . '%');
         }
 
-        // Attach image URL
-        $product->image_url = getProductMainImage($product->id);
+        // Optional brand/category/price filters you commented out
+        // can go here if needed.
 
-        // Assuming each product belongs to at least one category
-        $category = $product->categories->first();
-        $subcategories = $category ? $category->subcategory : [];
+        $products = $query->get();
+
+        $products->each(function ($product) {
+            $product->image_url = getProductMainImage($product->id);
+        });
 
         return response()->json([
-            'status' => true,
-            'category' => $category,
-            'subcategories' => $subcategories,
-            'products' => [$product], // return as array for consistency
+            'response' => true,
+            'message' => 'get product searching data',
+            'data' => [
+                'products' => $products,
+            ],
         ]);
-    }*/
+    }
+
 
     public function get_product_by_barcode(Request $request)
     {
+        $vendorId = $request->vendorId;
+        
         if (!$request->filled('barcode')) {
             return response()->json([
                 'status' => false,
@@ -457,6 +474,7 @@ class ProductAPI extends Controller
         }
 
         $existingCartItem = Cart::where('user_id', $request->user()->id)
+            ->where('vendor_id',$vendorId)
             ->where('product_id', $product_veriation_option->variation->product_id)
             ->where('variation_id', $product_veriation_option->variation->id)
             ->where('option_id', $product_veriation_option->id)
@@ -471,6 +489,7 @@ class ProductAPI extends Controller
 
             $existingCartItem = Cart::create([
                 'user_id' => $request->user()->id,
+                'vendor_id' => $vendorId,
                 'product_id' => $product->id,
                 'variation_id' => $product_veriation_option->variation->id,
                 'option_id' => $product_veriation_option->id,

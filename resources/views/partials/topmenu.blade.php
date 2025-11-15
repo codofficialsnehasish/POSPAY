@@ -19,6 +19,7 @@
         <div class="collapse navbar-collapse justify-content-center" id="topMenu">
             <ul class="navbar-nav main-menu align-items-center">
 
+                {{-- Dashboard --}}
                 <li class="nav-item">
                     <a class="nav-link {{ request()->routeIs('dashboard') ? 'active' : '' }}" href="{{ route('dashboard') }}">
                         <iconify-icon icon="mdi:view-dashboard-outline" class="menu-icon"></iconify-icon>
@@ -26,155 +27,114 @@
                     </a>
                 </li>
 
-                @canany(['Permission Create', 'Permission View', 'Permission Edit', 'Permission Delete'])
-                <li class="nav-item">
-                    <a class="nav-link {{ request()->routeIs('permission.*') ? 'active' : '' }}" href="{{ route('permission.index') }}">
-                        <iconify-icon icon="mdi:key-outline" class="menu-icon"></iconify-icon>
-                        <span>Permissions</span>
-                    </a>
-                </li>
-                @endcanany
-
-                @canany(['Role Create', 'Role View', 'Role Edit', 'Role Delete'])
-                <li class="nav-item">
-                    <a class="nav-link {{ request()->routeIs('role.*') ? 'active' : '' }}" href="{{ route('role.index') }}">
-                        <iconify-icon icon="mdi:shield-account-outline" class="menu-icon"></iconify-icon>
-                        <span>Roles</span>
-                    </a>
-                </li>
-                @endcanany
-
-                @canany(['Admin Create', 'Admin View', 'Admin Edit', 'Admin Delete'])
-                <li class="nav-item">
-                    <a class="nav-link {{ request()->routeIs('admin.*') ? 'active' : '' }}" href="{{ route('admin.index') }}">
-                        <iconify-icon icon="mdi:account-tie-outline" class="menu-icon"></iconify-icon>
-                        <span>Admins</span>
-                    </a>
-                </li>
-                @endcanany
-
-                @canany(['Vendor Create', 'Vendor View', 'Vendor Edit', 'Vendor Delete'])
-                <li class="nav-item">
-                    <a class="nav-link {{ request()->routeIs('vendor.*') ? 'active' : '' }}" href="{{ route('vendor.index') }}">
-                        <iconify-icon icon="mdi:store-outline" class="menu-icon"></iconify-icon>
-                        <span>Branch</span>
-                    </a>
-                </li>
-                @endcanany
-
-                @canany(['User Create', 'User View','User Edit','User Delete'])
-                <li class="nav-item">
-                    <a class="nav-link {{ request()->routeIs('user.*') ? 'active' : '' }}" href="{{ route('user.index') }}">
-                        <iconify-icon icon="mdi:account-multiple-outline" class="menu-icon"></iconify-icon>
-                        <span>Users</span>
-                    </a>
-                </li>
-                @endcanany
-
-                @canany(['Order Create', 'Order View','Order Edit','Order Delete'])
-                <li class="nav-item">
-                    <a class="nav-link {{ request()->routeIs('order.*') ? 'active' : '' }}" href="{{ route('order.index') }}">
-                        <iconify-icon icon="mdi:cart-outline" class="menu-icon"></iconify-icon>
-                        <span>Orders</span>
-                    </a>
-                </li>
-                @endcanany
-
-                @canany(['Transaction View'])
-                <li class="nav-item">
-                    <a class="nav-link {{ request()->routeIs('transaction.*') ? 'active' : '' }}" href="{{ route('transaction.get-date-wise-total-payment') }}">
-                        <iconify-icon icon="mdi:cash-multiple" class="menu-icon"></iconify-icon>
-                        <span>Transactions</span>
-                    </a>
-                </li>
-                @endcanany
-
-                @if(auth()->user()->is_purchase_enabled)
-                <li class="nav-item">
-                    <a class="nav-link {{ request()->routeIs('stock.transactions') ? 'active' : '' }}" href="{{ route('stock.transactions') }}">
-                        <iconify-icon icon="mdi:scale-balance" class="menu-icon"></iconify-icon>
-                        <span>Stock Transaction</span>
-                    </a>
-                </li>
-                @endif
-
-                @canany(['SeatNumber Create', 'SeatNumber View', 'SeatNumber Edit', 'SeatNumber Delete'])
-                    <li>
-                        <a class="nav-link {{ request()->routeIs('seatnumber.index') ? 'active' : '' }}" href="{{ route('seatnumber.index') }}">
-                            <iconify-icon icon="mdi:seat-outline" class="menu-icon"></iconify-icon>
-                            <span>Seat Number</span>
-                        </a>
-                    </li>
-                @endcanany
-
-                @canany(['Category Create', 'Category View','Category Edit','Category Delete'])
-                    <li>
-                        <a class="nav-link {{ request()->routeIs('category.index') ? 'active' : '' }}" href="{{ route('category.index') }}">
-                            <iconify-icon icon="mdi:shape-outline" class="menu-icon"></iconify-icon>
-                            <span>Category</span>
-                        </a>
-                    </li>
-                @endcanany
-
-                @canany(['Hsncode Create', 'Hsncode View', 'Hsncode Edit', 'Hsncode Delete'])
-                    <li>
-                        <a class="nav-link {{ request()->routeIs('hsncode.index') ? 'active' : '' }}" href="{{ route('hsncode.index') }}">
-                            <iconify-icon icon="mdi:barcode" class="menu-icon"></iconify-icon>
-                            <span>Hsncodes</span>
-                        </a>
-                    </li>
-                @endcanany
-
-                @canany(['Brand Create', 'Brand View', 'Brand Edit', 'Brand Delete'])
-                    <li>
-                        <a class="nav-link {{ request()->routeIs('brand.index') ? 'active' : '' }}" href="{{ route('brand.index') }}">
-                            <iconify-icon icon="mdi:tag-outline" class="menu-icon"></iconify-icon>
-                            <span>Brands</span>
-                        </a>
-                    </li>
-                @endcanany
-
-                @canany(['Unit Master Create', 'Unit Master View','Unit Master Edit','Unit Master Delete'])
-                <li>
-                    <a class="nav-link {{ request()->routeIs('units.index') ? 'active' : '' }}" href="{{ route('units.index') }}">
-                        <iconify-icon icon="mdi:scale-balance" class="menu-icon"></iconify-icon>
-                        <span>Units Master</span>
-                    </a>
-                </li>
-                @endcanany
-
-                @canany(['Seller Master Create', 'Seller Master View','Seller Master Edit','Seller Master Delete'])
-                <li>
-                    <a class="nav-link {{ request()->routeIs('sellers.index') ? 'active' : '' }}" href="{{ route('sellers.index') }}">
-                        <iconify-icon icon="mdi:handshake-outline" class="menu-icon"></iconify-icon>
-                        <span>Sellers Master</span>
-                    </a>
-                </li>
-                @endcanany
-
-                @canany(['Product Create', 'Product View','Product Edit','Product Delete'])
-                    <li>
-                        <a class="nav-link {{ request()->routeIs('product.index') ? 'active' : '' }}" href="{{ route('product.index') }}">
-                            <iconify-icon icon="mdi:package-variant-closed" class="menu-icon"></iconify-icon>
-                            <span>Products</span>
-                        </a>
-                    </li>
-                @endcanany
-
-                <li>
-                    <a class="nav-link {{ request()->routeIs('purchase.index') ? 'active' : '' }}" href="{{ route('purchase.index') }}">
-                        <iconify-icon icon="mdi:package-variant-closed" class="menu-icon"></iconify-icon>
-                        <span>Purchase</span>
-                    </a>
-                </li>
-
-                <!-- Reports Dropdown -->
+                {{-- User Management --}}
                 <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle {{ request()->is('report/*') ? 'active' : '' }}" href="#" id="reportsDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                    <a class="nav-link dropdown-toggle {{ request()->is('permission/*') || request()->is('role/*') || request()->is('admin/*') || request()->is('vendor/*') || request()->is('user/*') ? 'active' : '' }}"
+                        href="#" data-bs-toggle="dropdown">
+                        <iconify-icon icon="mdi:account-group-outline" class="menu-icon"></iconify-icon>
+                        <span>User Management</span>
+                    </a>
+                    <ul class="dropdown-menu shadow-lg border-0 rounded-3 p-2">
+                        @canany(['Permission View'])
+                            <li><a class="dropdown-item" href="{{ route('permission.index') }}">Permissions</a></li>
+                        @endcanany
+                        @canany(['Role View'])
+                            <li><a class="dropdown-item" href="{{ route('role.index') }}">Roles</a></li>
+                        @endcanany
+                        @canany(['Admin View'])
+                            <li><a class="dropdown-item" href="{{ route('admin.index') }}">Admins</a></li>
+                        @endcanany
+                        @canany(['Vendor View'])
+                            <li><a class="dropdown-item" href="{{ route('vendor.index') }}">Branch (Vendors)</a></li>
+                        @endcanany
+                        @canany(['User View'])
+                            <li><a class="dropdown-item" href="{{ route('user.index') }}">Users</a></li>
+                        @endcanany
+                    </ul>
+                </li>
+
+                {{-- Product Management --}}
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle
+                        {{ request()->is('category/*') || request()->is('brand/*') || request()->is('units/*') || request()->is('hsncode/*') || request()->is('product/*') || request()->is('purchase/*') ? 'active' : '' }}"
+                        href="#" data-bs-toggle="dropdown">
+                        <iconify-icon icon="mdi:package-variant" class="menu-icon"></iconify-icon>
+                        <span>Product Management</span>
+                    </a>
+                    <ul class="dropdown-menu shadow-lg border-0 rounded-3 p-2">
+                        @canany(['Category View'])
+                            <li><a class="dropdown-item" href="{{ route('category.index') }}">Categories</a></li>
+                        @endcanany
+
+                        @canany(['Brand View'])
+                            <li><a class="dropdown-item" href="{{ route('brand.index') }}">Brands</a></li>
+                        @endcanany
+
+                        @canany(['Unit Master View'])
+                            <li><a class="dropdown-item" href="{{ route('units.index') }}">Unit Master</a></li>
+                        @endcanany
+
+                        @canany(['Hsncode View'])
+                            <li><a class="dropdown-item" href="{{ route('hsncode.index') }}">HSN Codes</a></li>
+                        @endcanany
+
+                        @canany(['Product View'])
+                            <li><a class="dropdown-item" href="{{ route('product.index') }}">Products</a></li>
+                        @endcanany
+
+                        <li><a class="dropdown-item" href="{{ route('purchase.index') }}">Purchase</a></li>
+                    </ul>
+                </li>
+
+                {{-- Sales & Orders --}}
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle
+                        {{ request()->is('order/*') || request()->is('transaction/*') ? 'active' : '' }}"
+                        href="#" data-bs-toggle="dropdown">
+                        <iconify-icon icon="mdi:cart-outline" class="menu-icon"></iconify-icon>
+                        <span>Sales & Orders</span>
+                    </a>
+                    <ul class="dropdown-menu shadow-lg border-0 rounded-3 p-2">
+                        @canany(['Order View'])
+                            <li><a class="dropdown-item" href="{{ route('order.index') }}">Orders</a></li>
+                        @endcanany
+
+                        @canany(['Transaction View'])
+                            <li><a class="dropdown-item" href="{{ route('transaction.get-date-wise-total-payment') }}">Transactions</a></li>
+                        @endcanany
+                    </ul>
+                </li>
+
+                {{-- Stock & Sellers --}}
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle 
+                        {{ request()->is('seatnumber/*') || request()->is('sellers/*') || request()->routeIs('stock.transactions') ? 'active' : '' }}"
+                        href="#" data-bs-toggle="dropdown">
+                        <iconify-icon icon="mdi:store-settings-outline" class="menu-icon"></iconify-icon>
+                        <span>Inventory</span>
+                    </a>
+                    <ul class="dropdown-menu shadow-lg border-0 rounded-3 p-2">
+                        @if(auth()->user()->is_purchase_enabled)
+                            <li><a class="dropdown-item" href="{{ route('stock.transactions') }}">Stock Transaction</a></li>
+                        @endif
+
+                        @canany(['SeatNumber View'])
+                            <li><a class="dropdown-item" href="{{ route('seatnumber.index') }}">Seat Number</a></li>
+                        @endcanany
+
+                        @canany(['Seller Master View'])
+                            <li><a class="dropdown-item" href="{{ route('sellers.index') }}">Sellers</a></li>
+                        @endcanany
+                    </ul>
+                </li>
+
+                {{-- Reports --}}
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle {{ request()->is('report/*') ? 'active' : '' }}" data-bs-toggle="dropdown">
                         <iconify-icon icon="mdi:file-chart-outline" class="menu-icon"></iconify-icon>
                         <span>Reports</span>
                     </a>
-                    <ul class="dropdown-menu shadow-lg border-0 rounded-3 p-2" aria-labelledby="reportsDropdown">
+                    <ul class="dropdown-menu shadow-lg border-0 rounded-3 p-2">
                         <li><a class="dropdown-item" href="{{ route('report.stock-report') }}">Current Stock</a></li>
                         <li><a class="dropdown-item" href="{{ route('report.sale-list') }}">Sales</a></li>
                         <li><a class="dropdown-item" href="{{ route('report.sale-item') }}">Sales Item</a></li>
@@ -185,6 +145,7 @@
                 </li>
 
             </ul>
+
         </div>
 
 
