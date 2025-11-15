@@ -42,7 +42,7 @@
                 <div class="card radius-12">
                     <div class="card-body p-16">
                         <div class="row gy-4">
-                            <div class="col-xxl-3 col-xl-4 col-sm-6">
+                            <div class="col-xxl-2 col-xl-4 col-sm-6">
                                 <div
                                     class="px-20 py-16 shadow-none radius-8 h-100 gradient-deep-1 left-line line-bg-primary position-relative overflow-hidden">
                                     <div class="d-flex flex-wrap align-items-center justify-content-between gap-1 mb-8">
@@ -58,7 +58,7 @@
 
                                 </div>
                             </div>
-                            <div class="col-xxl-3 col-xl-4 col-sm-6">
+                            <div class="col-xxl-2 col-xl-4 col-sm-6">
                                 <div
                                     class="px-20 py-16 shadow-none radius-8 h-100 gradient-deep-2 left-line line-bg-lilac position-relative overflow-hidden">
                                     <div class="d-flex flex-wrap align-items-center justify-content-between gap-1 mb-8">
@@ -75,7 +75,7 @@
 
                                 </div>
                             </div>
-                            <div class="col-xxl-3 col-xl-4 col-sm-6">
+                            <div class="col-xxl-2 col-xl-4 col-sm-6">
                                 <div
                                     class="px-20 py-16 shadow-none radius-8 h-100 gradient-deep-3 left-line line-bg-success position-relative overflow-hidden">
                                     <div class="d-flex flex-wrap align-items-center justify-content-between gap-1 mb-8">
@@ -92,7 +92,7 @@
 
                                 </div>
                             </div>
-                            <div class="col-xxl-3 col-xl-4 col-sm-6">
+                            <div class="col-xxl-2 col-xl-4 col-sm-6">
                                 <div
                                     class="px-20 py-16 shadow-none radius-8 h-100 gradient-deep-4 left-line line-bg-warning position-relative overflow-hidden">
                                     <div class="d-flex flex-wrap align-items-center justify-content-between gap-1 mb-8">
@@ -109,7 +109,7 @@
 
                                 </div>
                             </div>
-                            <div class="col-xxl-3 col-xl-4 col-sm-6">
+                            <div class="col-xxl-2 col-xl-4 col-sm-6">
                                 <div
                                     class="px-20 py-16 shadow-none radius-8 h-100 gradient-deep-1 left-line line-bg-primary position-relative overflow-hidden">
                                     <div class="d-flex flex-wrap align-items-center justify-content-between gap-1 mb-8">
@@ -127,7 +127,7 @@
 
                                 </div>
                             </div>
-                            <div class="col-xxl-3 col-xl-4 col-sm-6">
+                            <div class="col-xxl-2 col-xl-4 col-sm-6">
                                 <div
                                     class="px-20 py-16 shadow-none radius-8 h-100 gradient-deep-2 left-line line-bg-lilac position-relative overflow-hidden">
                                     <div class="d-flex flex-wrap align-items-center justify-content-between gap-1 mb-8">
@@ -146,7 +146,7 @@
 
                                 </div>
                             </div>
-                            <div class="col-xxl-3 col-xl-4 col-sm-6">
+                            <div class="col-xxl-2 col-xl-4 col-sm-6">
                                 <div
                                     class="px-20 py-16 shadow-none radius-8 h-100 gradient-deep-3 left-line line-bg-success position-relative overflow-hidden">
                                     <div class="d-flex flex-wrap align-items-center justify-content-between gap-1 mb-8">
@@ -165,7 +165,7 @@
                             </div>
 
 
-                            <div class="col-xxl-3 col-xl-4 col-sm-6">
+                            <div class="col-xxl-2 col-xl-4 col-sm-6">
                                 <div
                                     class="px-20 py-16 shadow-none radius-8 h-100 gradient-deep-2 left-line line-bg-lilac position-relative overflow-hidden">
                                     <div class="d-flex flex-wrap align-items-center justify-content-between gap-1 mb-8">
@@ -182,7 +182,7 @@
                                 </div>
                             </div>
 
-                            <div class="col-xxl-3 col-xl-4 col-sm-6">
+                            <div class="col-xxl-2 col-xl-4 col-sm-6">
                                 <div
                                     class="px-20 py-16 shadow-none radius-8 h-100 gradient-deep-4 left-line line-bg-warning position-relative overflow-hidden">
                                     <div class="d-flex flex-wrap align-items-center justify-content-between gap-1 mb-8">
@@ -198,7 +198,7 @@
                                 </div>
                             </div>
 
-                            <div class="col-xxl-3 col-xl-4 col-sm-6">
+                            <div class="col-xxl-2 col-xl-4 col-sm-6">
                                 <div
                                     class="px-20 py-16 shadow-none radius-8 h-100 gradient-deep-3 left-line line-bg-info position-relative overflow-hidden">
                                     <div class="d-flex flex-wrap align-items-center justify-content-between gap-1 mb-8">
@@ -214,7 +214,7 @@
                                 </div>
                             </div>
 
-                            <div class="col-xxl-3 col-xl-4 col-sm-6">
+                            <div class="col-xxl-2 col-xl-4 col-sm-6">
                                 <div
                                     class="px-20 py-16 shadow-none radius-8 h-100 gradient-deep-1 left-line line-bg-success position-relative overflow-hidden">
                                     <div class="d-flex flex-wrap align-items-center justify-content-between gap-1 mb-8">
@@ -239,14 +239,14 @@
                 <div class="card radius-12">
                     <div class="card-body p-16">
                         <div class="row gy-4">
-                            <div class="col-xxl-3 col-xl-3 col-sm-4">
+                            <div class="col-xxl-2 col-xl-3 col-sm-4">
                                 <div
                                     class="px-20 py-16 shadow-none radius-8 h-100 gradient-deep-4 left-line line-bg-warning position-relative overflow-hidden">
                                     <div class="d-flex flex-wrap align-items-center justify-content-between gap-1 mb-8">
                                         <div>
                                             <span class="mb-2 fw-medium text-secondary-light text-md">Order Nos.</span>
                                             <h6 class="fw-semibold mb-1">
-                                                {{ format_price(order_total_by_period('monthly')) }}</h6>
+                                                {{ total_order_count() }}</h6>
                                         </div>
                                         <span
                                             class="w-44-px h-44-px radius-8 d-inline-flex justify-content-center align-items-center text-2xl mb-12 bg-warning-focus text-warning-600">
@@ -256,14 +256,14 @@
 
                                 </div>
                             </div>
-                            <div class="col-xxl-3 col-xl-3 col-sm-4">
+                            <div class="col-xxl-2 col-xl-3 col-sm-4">
                                 <div
                                     class="px-20 py-16 shadow-none radius-8 h-100 gradient-deep-1 left-line line-bg-primary position-relative overflow-hidden">
                                     <div class="d-flex flex-wrap align-items-center justify-content-between gap-1 mb-8">
                                         <div>
                                             <span class="mb-2 fw-medium text-secondary-light text-md">Returned Nos.</span>
                                             <h6 class="fw-semibold mb-1">
-                                                {{ format_price(order_total_by_period('last_month')) }}</h6>
+                                                {{ 0 }}</h6>
                                         </div>
                                         <span
                                             class="w-44-px h-44-px radius-8 d-inline-flex justify-content-center align-items-center text-2xl mb-12 bg-primary-100 text-primary-600">
@@ -273,13 +273,13 @@
 
                                 </div>
                             </div>
-                            <div class="col-xxl-3 col-xl-3 col-sm-4">
+                            <div class="col-xxl-2 col-xl-3 col-sm-4">
                                 <div
                                     class="px-20 py-16 shadow-none radius-8 h-100 gradient-deep-3 left-line line-bg-success position-relative overflow-hidden">
                                     <div class="d-flex flex-wrap align-items-center justify-content-between gap-1 mb-8">
                                         <div>
                                             <span class="mb-2 fw-medium text-secondary-light text-md">Categories</span>
-                                            <h6 class="fw-semibold mb-1">{{ format_price(order_total_by_period('weekly')) }}
+                                            <h6 class="fw-semibold mb-1">{{ total_category_count() }}
                                             </h6>
                                         </div>
                                         <span
@@ -290,14 +290,14 @@
 
                                 </div>
                             </div>
-                            <div class="col-xxl-3 col-xl-3 col-sm-4">
+                            <div class="col-xxl-2 col-xl-3 col-sm-4">
                                 <div
                                     class="px-20 py-16 shadow-none radius-8 h-100 gradient-deep-4 left-line line-bg-warning position-relative overflow-hidden">
                                     <div class="d-flex flex-wrap align-items-center justify-content-between gap-1 mb-8">
                                         <div>
                                             <span class="mb-2 fw-medium text-secondary-light text-md">SKUs</span>
                                             <h6 class="fw-semibold mb-1">
-                                                {{ format_price(order_total_by_period('monthly')) }}</h6>
+                                                {{ total_variation_option_count() }}</h6>
                                         </div>
                                         <span
                                             class="w-44-px h-44-px radius-8 d-inline-flex justify-content-center align-items-center text-2xl mb-12 bg-warning-focus text-warning-600">
@@ -307,14 +307,14 @@
 
                                 </div>
                             </div>
-                            <div class="col-xxl-3 col-xl-3 col-sm-4">
+                            <div class="col-xxl-2 col-xl-3 col-sm-4">
                                 <div
                                     class="px-20 py-16 shadow-none radius-8 h-100 gradient-deep-1 left-line line-bg-primary position-relative overflow-hidden">
                                     <div class="d-flex flex-wrap align-items-center justify-content-between gap-1 mb-8">
                                         <div>
                                             <span class="mb-2 fw-medium text-secondary-light text-md">Low Stock</span>
                                             <h6 class="fw-semibold mb-1">
-                                                {{ format_price(order_total_by_period('last_month')) }}</h6>
+                                                {{ low_stock_variation_option_count(10) }}</h6>
                                         </div>
                                         <span
                                             class="w-44-px h-44-px radius-8 d-inline-flex justify-content-center align-items-center text-2xl mb-12 bg-primary-100 text-primary-600">
@@ -324,14 +324,14 @@
 
                                 </div>
                             </div>
-                            <div class="col-xxl-3 col-xl-3 col-sm-4">
+                            <div class="col-xxl-2 col-xl-3 col-sm-4">
                                 <div
                                     class="px-20 py-16 shadow-none radius-8 h-100 gradient-deep-2 left-line line-bg-lilac position-relative overflow-hidden">
                                     <div class="d-flex flex-wrap align-items-center justify-content-between gap-1 mb-8">
                                         <div>
                                             <span class="mb-2 fw-medium text-secondary-light text-md">Avg Order Val</span>
                                             <h6 class="fw-semibold mb-1">
-                                                {{ format_price(order_total_by_period('quarterly')) }}
+                                                ₹{{ average_order_value() }}
                                             </h6>
                                         </div>
                                         <span
@@ -343,14 +343,14 @@
                                 </div>
                             </div>
 
-                            <div class="col-xxl-3 col-xl-3 col-sm-4">
+                            <div class="col-xxl-2 col-xl-3 col-sm-4">
                                 <div
                                     class="px-20 py-16 shadow-none radius-8 h-100 gradient-deep-4 left-line line-bg-warning position-relative overflow-hidden">
                                     <div class="d-flex flex-wrap align-items-center justify-content-between gap-1 mb-8">
                                         <div>
                                             <span class="mb-2 fw-medium text-secondary-light text-md">Sales</span>
                                             <h6 class="fw-semibold mb-1">
-                                                {{ format_price(order_total_by_period('monthly')) }}</h6>
+                                                ₹{{ total_orders() }}</h6>
                                         </div>
                                         <span
                                             class="w-44-px h-44-px radius-8 d-inline-flex justify-content-center align-items-center text-2xl mb-12 bg-warning-focus text-warning-600">
@@ -361,14 +361,14 @@
                                 </div>
                             </div>
 
-                            <div class="col-xxl-3 col-xl-3 col-sm-4">
+                            <div class="col-xxl-2 col-xl-3 col-sm-4">
                                 <div
                                     class="px-20 py-16 shadow-none radius-8 h-100 gradient-deep-1 left-line line-bg-primary position-relative overflow-hidden">
                                     <div class="d-flex flex-wrap align-items-center justify-content-between gap-1 mb-8">
                                         <div>
                                             <span class="mb-2 fw-medium text-secondary-light text-md">Purchase</span>
                                             <h6 class="fw-semibold mb-1">
-                                                {{ format_price(order_total_by_period('last_month')) }}</h6>
+                                                ₹{{ total_purchase_amount() }}</h6>
                                         </div>
                                         <span
                                             class="w-44-px h-44-px radius-8 d-inline-flex justify-content-center align-items-center text-2xl mb-12 bg-primary-100 text-primary-600">
@@ -379,13 +379,13 @@
                                 </div>
                             </div>
 
-                            <div class="col-xxl-3 col-xl-3 col-sm-4">
+                            <div class="col-xxl-2 col-xl-3 col-sm-4">
                                 <div
                                     class="px-20 py-16 shadow-none radius-8 h-100 gradient-deep-3 left-line line-bg-success position-relative overflow-hidden">
                                     <div class="d-flex flex-wrap align-items-center justify-content-between gap-1 mb-8">
                                         <div>
                                             <span class="mb-2 fw-medium text-secondary-light text-md">Stock</span>
-                                            <h6 class="fw-semibold mb-1">{{ format_price(order_total_by_period('weekly')) }}
+                                            <h6 class="fw-semibold mb-1">{{ total_stock_count() }}
                                             </h6>
                                         </div>
                                         <span
@@ -396,14 +396,14 @@
                                 </div>
                             </div>
 
-                            <div class="col-xxl-3 col-xl-3 col-sm-4">
+                            <div class="col-xxl-2 col-xl-3 col-sm-4">
                                 <div
                                     class="px-20 py-16 shadow-none radius-8 h-100 gradient-deep-4 left-line line-bg-warning position-relative overflow-hidden">
                                     <div class="d-flex flex-wrap align-items-center justify-content-between gap-1 mb-8">
                                         <div>
                                             <span class="mb-2 fw-medium text-secondary-light text-md">Cash</span>
                                             <h6 class="fw-semibold mb-1">
-                                                {{ format_price(order_total_by_period('monthly')) }}</h6>
+                                                ₹{{ total_payment_amount('Cash') }}</h6>
                                         </div>
                                         <span
                                             class="w-44-px h-44-px radius-8 d-inline-flex justify-content-center align-items-center text-2xl mb-12 bg-warning-focus text-warning-600">
@@ -414,14 +414,14 @@
                                 </div>
                             </div>
 
-                            <div class="col-xxl-3 col-xl-3 col-sm-4">
+                            <div class="col-xxl-2 col-xl-3 col-sm-4">
                                 <div
                                     class="px-20 py-16 shadow-none radius-8 h-100 gradient-deep-1 left-line line-bg-primary position-relative overflow-hidden">
                                     <div class="d-flex flex-wrap align-items-center justify-content-between gap-1 mb-8">
                                         <div>
                                             <span class="mb-2 fw-medium text-secondary-light text-md">Card</span>
                                             <h6 class="fw-semibold mb-1">
-                                                {{ format_price(order_total_by_period('last_month')) }}</h6>
+                                                ₹{{ total_payment_amount('Card') }}</h6>
                                         </div>
                                         <span
                                             class="w-44-px h-44-px radius-8 d-inline-flex justify-content-center align-items-center text-2xl mb-12 bg-primary-100 text-primary-600">
@@ -432,14 +432,14 @@
                                 </div>
                             </div>
 
-                            <div class="col-xxl-3 col-xl-3 col-sm-4">
+                            <div class="col-xxl-2 col-xl-3 col-sm-4">
                                 <div
                                     class="px-20 py-16 shadow-none radius-8 h-100 gradient-deep-2 left-line line-bg-lilac position-relative overflow-hidden">
                                     <div class="d-flex flex-wrap align-items-center justify-content-between gap-1 mb-8">
                                         <div>
                                             <span class="mb-2 fw-medium text-secondary-light text-md">UPI</span>
                                             <h6 class="fw-semibold mb-1">
-                                                {{ format_price(order_total_by_period('quarterly')) }}
+                                                ₹{{ total_payment_amount('UPI') }}
                                             </h6>
                                         </div>
                                         <span
@@ -943,7 +943,7 @@
         chart.render();
     </script>
 
-    <script>
+    {{-- <script>
         document.addEventListener("DOMContentLoaded", () => {
 
             // Gradient helper
@@ -1103,7 +1103,178 @@
             });
 
         });
+    </script> --}}
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+
+            // === Gradient Helper ===
+            function gradientFill(ctx, color1, color2) {
+                const gradient = ctx.createLinearGradient(0, 0, 0, 300);
+                gradient.addColorStop(0, color1);
+                gradient.addColorStop(1, color2);
+                return gradient;
+            }
+
+            const months = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+
+
+            /* ---------------------------------------------
+            SALES STATISTICS (YEAR FILTER)
+            ----------------------------------------------*/
+            const ctxSales = document.getElementById('salesStatisticsChart').getContext('2d');
+            let salesChart;
+
+            async function renderSalesChart(year) {
+
+                // 🔥 Fetch real data
+                const res = await fetch(`/chart/sales/${year}`);
+                const result = await res.json();
+
+                const data = result.months;  // 12 numbers
+                const totalRevenue = result.total;
+
+                document.getElementById('totalRevenue').innerText = "₹" + totalRevenue.toLocaleString();
+
+                if (salesChart) salesChart.destroy();
+
+                salesChart = new Chart(ctxSales, {
+                    type: 'bar',
+                    data: {
+                        labels: months,
+                        datasets: [{
+                            label: `Sales in ${year}`,
+                            data,
+                            backgroundColor: gradientFill(ctxSales, '#487FFF', '#A0BFFF'),
+                            borderRadius: 8,
+                            borderSkipped: false,
+                            hoverBackgroundColor: '#315ECF'
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        animation: { duration: 1200, easing: 'easeOutQuart' },
+                        plugins: {
+                            legend: { display: false },
+                            tooltip: {
+                                backgroundColor: '#1e1e2d',
+                                titleColor: '#fff',
+                                bodyColor: '#fff',
+                                padding: 12,
+                                displayColors: false,
+                                callbacks: {
+                                    label: ctx => `₹${ctx.formattedValue}`
+                                }
+                            }
+                        },
+                        scales: {
+                            x: { grid: { display: false }, ticks: { color: '#777' } },
+                            y: {
+                                beginAtZero: true,
+                                ticks: { callback: v => '₹' + v.toLocaleString(), color: '#777' },
+                                grid: { color: 'rgba(0,0,0,0.05)' }
+                            }
+                        }
+                    }
+                });
+            }
+
+            // Load current year on page load
+            renderSalesChart(new Date().getFullYear());
+
+            document.getElementById('salesYearSelect')
+                .addEventListener('change', e => renderSalesChart(e.target.value));
+
+
+
+            /* ---------------------------------------------
+            SALES VS PURCHASE (RANGE FILTER)
+            ----------------------------------------------*/
+            const ctxSP = document.getElementById('salesPurchaseChart').getContext('2d');
+            let spChart;
+
+            async function renderSPChart(range) {
+
+                // 🔥 Fetch real data by selected range
+                const res = await fetch(`/chart/sales-purchase/${range}`);
+                const data = await res.json();
+
+                const labels = data.labels;
+                const sales = data.sales;
+                const purchase = data.purchase;
+
+                document.getElementById('totalSales').innerText = "₹" + data.total_sales.toLocaleString();
+                document.getElementById('totalPurchase').innerText = "₹" + data.total_purchase.toLocaleString();
+
+                if (spChart) spChart.destroy();
+
+                spChart = new Chart(ctxSP, {
+                    type: 'bar',
+                    data: {
+                        labels,
+                        datasets: [
+                            {
+                                label: 'Sales',
+                                data: sales,
+                                backgroundColor: gradientFill(ctxSP, '#487FFF', '#A0BFFF'),
+                                borderRadius: 8,
+                                barThickness: 18,
+                                borderSkipped: false
+                            },
+                            {
+                                label: 'Purchase',
+                                data: purchase,
+                                backgroundColor: gradientFill(ctxSP, '#FF6384', '#FFB3C1'),
+                                borderRadius: 8,
+                                barThickness: 18,
+                                borderSkipped: false
+                            }
+                        ]
+                    },
+                    options: {
+                        responsive: true,
+                        interaction: { mode: 'index', intersect: false },
+                        animation: { duration: 1300, easing: 'easeOutQuint' },
+                        plugins: {
+                            legend: {
+                                display: true,
+                                labels: { color: '#444', boxWidth: 12, padding: 20 }
+                            },
+                            tooltip: {
+                                backgroundColor: '#1e1e2d',
+                                titleColor: '#fff',
+                                bodyColor: '#fff',
+                                padding: 10,
+                                displayColors: true,
+                                callbacks: {
+                                    label: ctx => `${ctx.dataset.label}: ₹${ctx.formattedValue}`
+                                }
+                            }
+                        },
+                        scales: {
+                            x: { grid: { display: false }, ticks: { color: '#666' } },
+                            y: {
+                                beginAtZero: true,
+                                grid: { color: 'rgba(0,0,0,0.05)' },
+                                ticks: { color: '#666', callback: v => '₹' + v.toLocaleString() }
+                            }
+                        }
+                    }
+                });
+            }
+
+            renderSPChart('1M');
+
+            document.querySelectorAll('.range-btn').forEach(btn => {
+                btn.addEventListener('click', function () {
+                    document.querySelectorAll('.range-btn').forEach(b => b.classList.remove('active'));
+                    this.classList.add('active');
+                    renderSPChart(this.dataset.range);
+                });
+            });
+
+        });
     </script>
+
 
     <script>
         // ====== Top Categories Doughnut ======

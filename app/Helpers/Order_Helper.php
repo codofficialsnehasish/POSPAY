@@ -5,6 +5,9 @@
     use App\Models\Cart;
     use App\Models\Coupon;
     use App\Models\Category;
+    use App\Models\VendorProduct;
+    use App\Models\Purchase;
+    use App\Models\ProductVariationOption;
     use Carbon\Carbon;
     use Illuminate\Support\Facades\Auth;
     use Illuminate\Support\Facades\DB;
@@ -95,9 +98,210 @@
                 $query->where('vendor_id', $user->id);
             }
 
-            return $query->sum('total_amount');
+            return intval($query->sum('total_amount'));
         }
     }
+
+    if (!function_exists('total_payment_amount')) {
+        function total_payment_amount($method)
+        {
+            $query = Order::query()
+                ->where('payment_method', $method); // card, cash, upi
+
+            $user = Auth::user();
+            if ($user && $user->hasRole('Vendor')) {
+                $query->where('vendor_id', $user->id);
+            }
+
+            return intval($query->sum('total_amount'));
+        }
+    }
+
+    if (!function_exists('average_order_value')) {
+        function average_order_value()
+        {
+            $query = Order::query();
+
+            $user = Auth::user();
+            if ($user && $user->hasRole('Vendor')) {
+                $query->where('vendor_id', $user->id);
+            }
+
+            $totalAmount = $query->sum('total_amount');
+            $totalOrders = $query->count();
+
+            if ($totalOrders == 0) {
+                return 0; // Avoid division by zero
+            }
+
+            return intval($totalAmount / $totalOrders);
+        }
+    }
+
+
+    if (!function_exists('total_order_count')) {
+        function total_order_count()
+        {
+            $query = Order::query();
+
+            $user = Auth::user();
+            if ($user && $user->hasRole('Vendor')) {
+                $query->where('vendor_id', $user->id);
+            }
+
+            return $query->count();
+        }
+    }
+
+    if (!function_exists('total_category_count')) {
+        function total_category_count($id = null)
+        {
+            $query = Category::query();
+
+            $user = Auth::user();
+
+            // If vendor, apply vendor filters
+            if ($user && $user->hasRole('Vendor')) {
+
+                // Get available product IDs for this vendor
+                $availableProductIds = VendorProduct::where('vendor_id', $user->id)
+                    ->where('availability', 1)
+                    ->pluck('product_id');
+
+                // Base vendor categories
+                $query->where('vendor_id', $user->id)
+                    ->where('is_visible', 1);
+
+                // Parent / child category filter
+                if ($id) {
+                    $query->where('parent_id', $id);
+                } else {
+                    $query->whereNull('parent_id');
+                }
+
+                // Include only categories that have available products of the vendor
+                $query->whereHas('products', function ($q) use ($availableProductIds) {
+                    $q->whereIn('products.id', $availableProductIds);
+                });
+            }
+
+            return $query->count();
+        }
+    }
+
+    if (!function_exists('total_variation_option_count')) {
+        function total_variation_option_count($productId = null)
+        {
+            $query = ProductVariationOption::query();
+
+            $user = Auth::user();
+
+            if ($user && $user->hasRole('Vendor')) {
+
+                // Get available product IDs for this vendor
+                $availableProductIds = VendorProduct::where('vendor_id', $user->id)
+                    ->where('availability', 1)
+                    ->pluck('product_id');
+
+                // Restrict to vendor products
+                $query->whereHas('variation.product', function ($q) use ($availableProductIds) {
+                    $q->whereIn('products.id', $availableProductIds);
+                });
+
+                // Optional filter by product
+                if ($productId) {
+                    $query->whereHas('variation', function ($q) use ($productId) {
+                        $q->where('product_id', $productId);
+                    });
+                }
+            }
+
+            return $query->count();
+        }
+    }
+
+    if (!function_exists('low_stock_variation_option_count')) {
+        function low_stock_variation_option_count($threshold = 5, $productId = null)
+        {
+            $query = ProductVariationOption::query()
+                ->where('quantity', '<=', $threshold);
+
+            $user = Auth::user();
+
+            if ($user && $user->hasRole('Vendor')) {
+
+                // Get available product IDs for this vendor
+                $availableProductIds = VendorProduct::where('vendor_id', $user->id)
+                    ->where('availability', 1)
+                    ->pluck('product_id');
+
+                // Restrict to vendor's available products
+                $query->whereHas('variation.product', function ($q) use ($availableProductIds) {
+                    $q->whereIn('products.id', $availableProductIds);
+                });
+
+                // Optional: filter by specific product
+                if ($productId) {
+                    $query->whereHas('variation', function ($q) use ($productId) {
+                        $q->where('product_id', $productId);
+                    });
+                }
+            }
+
+            return $query->count();
+        }
+    }
+
+    if (!function_exists('total_stock_count')) {
+        function total_stock_count($productId = null)
+        {
+            $query = ProductVariationOption::query();
+
+            $user = Auth::user();
+
+            if ($user && $user->hasRole('Vendor')) {
+
+                // Get available product IDs for this vendor
+                $availableProductIds = VendorProduct::where('vendor_id', $user->id)
+                    ->where('availability', 1)
+                    ->pluck('product_id');
+
+                // Restrict to vendor's available products
+                $query->whereHas('variation.product', function ($q) use ($availableProductIds) {
+                    $q->whereIn('products.id', $availableProductIds);
+                });
+
+                // Optional: filter by specific product
+                if ($productId) {
+                    $query->whereHas('variation', function ($q) use ($productId) {
+                        $q->where('product_id', $productId);
+                    });
+                }
+            }
+
+            // Sum total quantity
+            return intval($query->sum('quantity'));
+        }
+    }
+
+    if (!function_exists('total_purchase_amount')) {
+        function total_purchase_amount()
+        {
+            $query = Purchase::query();
+
+            $user = Auth::user();
+
+            // Vendor filter
+            if ($user && $user->hasRole('Vendor')) {
+                $query->where('vendor_id', $user->id);
+            }
+
+            return intval($query->sum('total_amount')); // no decimals
+        }
+    }
+
+
+
     
     if (!function_exists('today_orders')) {
         function today_orders()
@@ -357,34 +561,34 @@
     
     
     
-   if (!function_exists('daily_order_stats')) {
-    function daily_order_stats($days = 7)
-    {
-        $user = Auth::user();
-        $stats = [];
+    if (!function_exists('daily_order_stats')) {
+        function daily_order_stats($days = 7)
+        {
+            $user = Auth::user();
+            $stats = [];
 
-        for ($i = $days - 1; $i >= 0; $i--) {
-            $dateObj = now()->subDays($i);
-            $date = $dateObj->format('Y-m-d');
-            $displayDate = $dateObj->format('d M');
+            for ($i = $days - 1; $i >= 0; $i--) {
+                $dateObj = now()->subDays($i);
+                $date = $dateObj->format('Y-m-d');
+                $displayDate = $dateObj->format('d M');
 
-            $query = \App\Models\Order::query()
-                ->whereDate('created_at', $date);
+                $query = \App\Models\Order::query()
+                    ->whereDate('created_at', $date);
 
-            if ($user && $user->hasRole('Vendor')) {
-                $query->where('vendor_id', $user->id);
+                if ($user && $user->hasRole('Vendor')) {
+                    $query->where('vendor_id', $user->id);
+                }
+
+                $stats[] = [
+                    'date' => $displayDate,
+                    'count' => $query->count(),
+                    'total' => (float) $query->sum('total_amount'),
+                ];
             }
 
-            $stats[] = [
-                'date' => $displayDate,
-                'count' => $query->count(),
-                'total' => (float) $query->sum('total_amount'),
-            ];
+            return $stats;
         }
-
-        return $stats;
     }
-}
 
 
     if (!function_exists('category_sales_stats')) {
@@ -442,43 +646,43 @@
     }
 }
 
-if (!function_exists('today_sales_by_payment_method')) {
-    function today_sales_by_payment_method()
-    {
-        // $paymentMethods = ['Cash On Delevery', 'Online', 'UPI', 'Card'];
-        $paymentMethods = ['Cash', 'UPI', 'Card'];
-        $stats = [];
+    if (!function_exists('today_sales_by_payment_method')) {
+        function today_sales_by_payment_method()
+        {
+            // $paymentMethods = ['Cash On Delevery', 'Online', 'UPI', 'Card'];
+            $paymentMethods = ['Cash', 'UPI', 'Card'];
+            $stats = [];
 
-        $todayOrders = Order::whereDate('created_at', date('Y-m-d'))->get();
+            $todayOrders = Order::whereDate('created_at', date('Y-m-d'))->get();
 
-        $totalSalesToday = $todayOrders->sum('total_amount');
+            $totalSalesToday = $todayOrders->sum('total_amount');
 
-        foreach ($paymentMethods as $method) {
-            $methodSales = $todayOrders
-                ->where('payment_method', $method)
-                ->sum('total_amount');
+            foreach ($paymentMethods as $method) {
+                $methodSales = $todayOrders
+                    ->where('payment_method', $method)
+                    ->sum('total_amount');
 
-            $percentage = $totalSalesToday > 0 
-                ? round(($methodSales / $totalSalesToday) * 100, 2)
-                : 0;
+                $percentage = $totalSalesToday > 0 
+                    ? round(($methodSales / $totalSalesToday) * 100, 2)
+                    : 0;
 
+                $stats[] = [
+                    'payment_method' => $method,
+                    'total_sales' => $methodSales,
+                    'percentage' => $percentage
+                ];
+            }
+
+            // Add total at the end
             $stats[] = [
-                'payment_method' => $method,
-                'total_sales' => $methodSales,
-                'percentage' => $percentage
+                'payment_method' => 'All',
+                'total_sales' => $totalSalesToday,
+                'percentage' => 100
             ];
+
+            return $stats;
         }
-
-        // Add total at the end
-        $stats[] = [
-            'payment_method' => 'All',
-            'total_sales' => $totalSalesToday,
-            'percentage' => 100
-        ];
-
-        return $stats;
     }
-}
 
 
 
@@ -801,5 +1005,216 @@ if (!function_exists('category_heatmap_data')) {
     }
 }
 
+//////////////////////////////////////////////////////////
 
 
+
+if (!function_exists('get_monthly_sales')) {
+    function get_monthly_sales($year = null)
+    {
+        $year = $year ?: date('Y');
+
+        $query = Order::query()->selectRaw('MONTH(created_at) as month, SUM(total_amount) as total');
+
+        $user = Auth::user();
+        if ($user && $user->hasRole('Vendor')) {
+            $query->where('vendor_id', $user->id);
+        }
+
+        $data = $query
+            ->whereYear('created_at', $year)
+            ->groupBy('month')
+            ->pluck('total', 'month')
+            ->toArray();
+
+        $result = [];
+        for ($i = 1; $i <= 12; $i++) {
+            $result[] = $data[$i] ?? 0;
+        }
+
+        return $result;
+    }
+}
+
+if (!function_exists('get_monthly_purchase')) {
+    function get_monthly_purchase($year = null)
+    {
+        $year = $year ?: date('Y');
+
+        $query = Purchase::query()->selectRaw('MONTH(purchase_date) as month, SUM(total_amount) as total');
+
+        $user = Auth::user();
+        if ($user && $user->hasRole('Vendor')) {
+            $query->where('vendor_id', $user->id);
+        }
+
+        $data = $query
+            ->whereYear('purchase_date', $year)
+            ->groupBy('month')
+            ->pluck('total', 'month')
+            ->toArray();
+
+        $result = [];
+        for ($i = 1; $i <= 12; $i++) {
+            $result[] = $data[$i] ?? 0;
+        }
+
+        return $result;
+    }
+}
+
+
+if (!function_exists('get_sales_range')) {
+    function get_sales_range($start, $end)
+    {
+        $query = Order::query();
+
+        $user = Auth::user();
+        if ($user && $user->hasRole('Vendor')) {
+            $query->where('vendor_id', $user->id);
+        }
+
+        return intval($query->whereBetween('created_at', [$start, $end])->sum('total_amount'));
+    }
+}
+
+
+if (!function_exists('get_purchase_range')) {
+    function get_purchase_range($start, $end)
+    {
+        $query = Purchase::query();
+
+        $user = Auth::user();
+        if ($user && $user->hasRole('Vendor')) {
+            $query->where('vendor_id', $user->id);
+        }
+
+        return intval($query->whereBetween('purchase_date', [$start, $end])->sum('total_amount'));
+    }
+}
+
+if (!function_exists('get_sales_by_year')) {
+    function get_sales_by_year($year)
+    {
+        $user = Auth::user();
+
+        $monthly = [];
+
+        // Loop 12 months
+        for ($m = 1; $m <= 12; $m++) {
+
+            $query = Order::whereYear('created_at', $year)
+                ->whereMonth('created_at', $m);
+
+            // Vendor filter
+            if ($user && $user->hasRole('Vendor')) {
+                $query->where('vendor_id', $user->id);
+            }
+
+            $monthly[] = (int) $query->sum('total_amount');
+        }
+
+        return $monthly; // returns array of 12 values
+    }
+}
+
+
+
+if (!function_exists('get_sales_purchase_range')) {
+    function get_sales_purchase_range($range)
+    {
+        $user = Auth::user();
+        $today = now();
+
+        switch ($range) {
+            case '1D':
+                $start = $today->copy()->startOfDay();
+                $end   = $today->copy()->endOfDay();
+                $labels = ['Today'];
+                break;
+
+            case '1W':
+                $start = $today->copy()->startOfWeek();
+                $end   = $today->copy()->endOfWeek();
+                $labels = ['Mon','Tue','Wed','Thu','Fri','Sat','Sun'];
+                break;
+
+            case '1M':
+                $start = $today->copy()->startOfMonth();
+                $end   = $today->copy()->endOfMonth();
+                $days  = $today->daysInMonth;
+                $labels = range(1, $days);
+                break;
+
+            case '3M':
+                $start = $today->copy()->subMonths(3)->startOfMonth();
+                $end   = $today->copy()->endOfMonth();
+                $labels = ['Jan','Feb','Mar'];
+                break;
+
+            case '6M':
+                $start = $today->copy()->subMonths(6)->startOfMonth();
+                $end   = $today->copy()->endOfMonth();
+                $labels = ['Jan','Feb','Mar','Apr','May','Jun'];
+                break;
+
+            case '1Y':
+            default:
+                $start = $today->copy()->startOfYear();
+                $end   = $today->copy()->endOfYear();
+                $labels = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+                break;
+        }
+
+
+        // Generate sales & purchase arrays for labels
+        $sales = [];
+        $purchase = [];
+
+        foreach ($labels as $index => $label) {
+
+            $querySales = Order::query();
+            $queryPurchase = Purchase::query();
+
+            // Vendor filter
+            if ($user && $user->hasRole('Vendor')) {
+                $querySales->where('vendor_id', $user->id);
+                $queryPurchase->where('vendor_id', $user->id);
+            }
+
+            // Range-based filtering
+            if ($range === '1D') {
+                $querySales->whereBetween('created_at', [$start, $end]);
+                $queryPurchase->whereBetween('purchase_date', [$start, $end]);
+            }
+            elseif ($range === '1W') {
+                $day = $index + 1;
+                $querySales->whereDay('created_at', '=', $start->copy()->addDays($index)->day);
+                $queryPurchase->whereDay('purchase_date', '=', $start->copy()->addDays($index)->day);
+            }
+            elseif ($range === '1M') {
+                $day = $index + 1;
+                $querySales->whereDay('created_at', $day);
+                $queryPurchase->whereDay('purchase_date', $day);
+            }
+            else {
+                // 3M, 6M, 1Y → monthly data
+                $month = $index + 1;
+
+                $querySales->whereMonth('created_at', $month);
+                $queryPurchase->whereMonth('purchase_date', $month);
+            }
+
+            $sales[] = (int) $querySales->sum('total_amount');
+            $purchase[] = (int) $queryPurchase->sum('total_amount');
+        }
+
+        return [
+            'labels' => $labels,
+            'sales' => $sales,
+            'purchase' => $purchase,
+            'total_sales' => array_sum($sales),
+            'total_purchase' => array_sum($purchase),
+        ];
+    }
+}

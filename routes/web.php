@@ -42,6 +42,20 @@ Route::get('/dashboard', function () {
     return view('dashboard');
 })->middleware(['auth', 'verified'])->name('dashboard');
 
+// Get monthly sales by year
+Route::get('/chart/sales/{year}', function ($year) {
+    return response()->json([
+        'months' => get_sales_by_year($year),    // return 12 values
+        'total'  => array_sum(get_sales_by_year($year)),
+    ]);
+});
+
+// Get sales vs purchase by range
+Route::get('/chart/sales-purchase/{range}', function ($range) {
+    return response()->json(get_sales_purchase_range($range));
+});
+
+
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
