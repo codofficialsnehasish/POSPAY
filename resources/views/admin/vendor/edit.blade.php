@@ -1,13 +1,13 @@
 @extends('layouts.app')
 
-@section('title', 'Vendor Edit')
+@section('title', 'Branch Edit')
 
 @section('contents')
 
     <div class="dashboard-main-body">
 
         <div class="d-flex flex-wrap align-items-center justify-content-between gap-3 mb-24">
-            <h6 class="fw-semibold mb-0">Edit Vendor</h6>
+            <h6 class="fw-semibold mb-0">Edit Branch</h6>
             <ul class="d-flex align-items-center gap-2">
                 <li class="fw-medium">
                     <a href="i{{ route('dashboard') }}" class="d-flex align-items-center gap-1 hover-text-primary">
@@ -16,7 +16,7 @@
                     </a>
                 </li>
                 <li>-</li>
-                <li class="fw-medium">Edit Vendor</li>
+                <li class="fw-medium">Edit Branch</li>
             </ul>
         </div>
 
@@ -27,7 +27,7 @@
                 <div class="col-md-9">
                     <div class="card">
                         <div class="card-header">
-                            <h5 class="card-title mb-0">Vendor Details</h5>
+                            <h5 class="card-title mb-0">Branch Details</h5>
                         </div>
                         <div class="card-body">
                             <div class="row mb-24 gy-3 align-items-center">

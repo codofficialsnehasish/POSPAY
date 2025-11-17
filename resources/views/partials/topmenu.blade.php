@@ -78,7 +78,7 @@
 
                 {{-- Product Management --}}
                 <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle {{ Str::startsWith(request()->path(), 'admin/category') || Str::startsWith(request()->path(), 'admin/brand') || Str::startsWith(request()->path(), 'admin/units') || Str::startsWith(request()->path(), 'admin/hsncode') || Str::startsWith(request()->path(), 'admin/product') || Str::startsWith(request()->path(), 'admin/purchase') ? 'active' : '' }}"
+                    <a class="nav-link dropdown-toggle {{ Str::startsWith(request()->path(), 'admin/category') || Str::startsWith(request()->path(), 'admin/brand') || Str::startsWith(request()->path(), 'admin/units') || Str::startsWith(request()->path(), 'admin/hsncode') || Str::startsWith(request()->path(), 'admin/product') ? 'active' : '' }}"
                         href="#" data-bs-toggle="dropdown">
                         <iconify-icon icon="mdi:package-variant" class="menu-icon"></iconify-icon>
                         <span>Product Management</span>
@@ -104,9 +104,9 @@
                             <li><a class="dropdown-item" href="{{ route('product.index') }}">Products</a></li>
                         @endcanany
 
-                        @if(auth()->user()->is_purchase_enabled)
+                        {{-- @if(auth()->user()->is_purchase_enabled)
                         <li><a class="dropdown-item" href="{{ route('purchase.index') }}">Purchase</a></li>
-                        @endif
+                        @endif --}}
                     </ul>
                 </li>
 

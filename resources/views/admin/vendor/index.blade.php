@@ -1,13 +1,13 @@
 @extends('layouts.app')
 
-@section('title', 'Vendor')
+@section('title', 'Branch')
 
 @section('contents')
 
 
     <div class="dashboard-main-body">
         <div class="d-flex flex-wrap align-items-center justify-content-between gap-3 mb-24">
-            <h6 class="fw-semibold mb-0">Vendors</h6>
+            <h6 class="fw-semibold mb-0">Branch</h6>
             <ul class="d-flex align-items-center gap-2">
                 <li class="fw-medium">
                     <a href="index.php" class="d-flex align-items-center gap-1 hover-text-primary">
@@ -16,7 +16,7 @@
                     </a>
                 </li>
                 <li>-</li>
-                <li class="fw-medium">Vendors</li>
+                <li class="fw-medium">Branch</li>
             </ul>
         </div>
 
