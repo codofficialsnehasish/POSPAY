@@ -31,7 +31,26 @@ class UsersController extends Controller implements HasMiddleware
 
     public function index()
     {
-        $users = User::role('User')->latest()->get();
+        $user = Auth::user();
+
+        if ($user->hasRole('Super Admin')) {
+            $users = User::role('User')->latest()->get();
+        } else if($user->hasRole('Admin')) {
+            $users = User::role('User')->where('admin_id',$user->id)->latest()->get();
+        }else if($user->hasRole('Vendor')){
+            // $users = User::with('vendors')->role('User')->where('vendors.vendor_id',$user->id)->latest()->get();
+            $users = User::role('User')
+                        ->whereHas('vendors', function ($q) use ($user) {
+                            $q->where('user_vendors.vendor_id', $user->id);
+                        })
+                        ->latest()
+                        ->get();
+
+
+        }else{
+            $users = collect();
+        }
+
         return view('admin.users.index',compact('users'));
     }
 
@@ -54,7 +73,7 @@ class UsersController extends Controller implements HasMiddleware
     public function store(Request $request)
     {
         
-        $vendor_id =Auth::guard('web')->user()->id;
+        $user_id =Auth::guard('web')->user()->id;
         $validator = Validator::make($request->all(), [
             'first_name' => 'required|regex:/^[a-zA-Z\s]+$/|max:255',
             'last_name' => 'required|regex:/^[a-zA-Z\s]+$/|max:255',
@@ -74,7 +93,8 @@ class UsersController extends Controller implements HasMiddleware
                 'phone'=>$request->phone,
                 'password' => Hash::make($request->password),
                 'status'=>$request->status,
-                'vendor_id'=>$vendor_id
+                'vendor_id'=>$user_id,
+                'admin_id'=>$user_id,
             ]);
             if ($request->has('vendors')) 
             {

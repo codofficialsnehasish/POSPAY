@@ -80,7 +80,7 @@ class User extends Authenticatable implements HasMedia
     
     public function vendors()
     {
-        return $this->belongsToMany(User::class, 'user_vendors', 'user_id', 'vendor_id');
+        return $this->belongsToMany(User::class, 'user_vendors', 'user_id', 'vendor_id')->withPivot('vendor_id');
     }
 
     public function admin()
@@ -96,6 +96,16 @@ class User extends Authenticatable implements HasMedia
     public function orders()
     {
         return $this->hasMany(Order::class, 'vendor_id');
+    }
+
+    public function vendorUsers()
+    {
+        return $this->belongsToMany(
+            User::class,       // related model
+            'user_vendors',    // pivot table
+            'vendor_id',       // column in pivot referring TO vendor
+            'user_id'          // column in pivot referring TO user
+        );
     }
 
 }

@@ -92,4 +92,26 @@
         }
     </script>
 
+    <script>
+    document.addEventListener("DOMContentLoaded", function () {
+        document.querySelectorAll(".submenu-toggle").forEach(function (element) {
+            element.addEventListener("click", function (e) {
+                e.preventDefault();
+                e.stopPropagation();
+
+                let submenu = this.nextElementSibling;
+
+                // Hide other submenus
+                document.querySelectorAll(".dropdown-submenu .dropdown-menu").forEach(function (menu) {
+                    if (menu !== submenu) menu.style.display = "none";
+                });
+
+                // Toggle this submenu
+                submenu.style.display = submenu.style.display === "block" ? "none" : "block";
+            });
+        });
+    });
+    </script>
+
+
     @yield('script')

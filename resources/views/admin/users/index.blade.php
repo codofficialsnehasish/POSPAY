@@ -45,6 +45,7 @@
                                 <th>Email</th>
                                 <th>Phone</th>
                                 <th>Role</th>
+                                <th>Vendor</th>
                                 <th>Registred Date</th>
                                 <th>Status</th>
                                 @canany(['User Edit', 'User Delete'])
@@ -64,12 +65,21 @@
                                     <td>{{ $user->email }}</td>
                                     <td>{{ $user->phone }}</td>
                                     <td>{{ $user->getRoleNames()->first() }}</td>
-                                    <td>{{ format_datetime($user->created_at) }}</td>
-
+                                    <td>
+                                        @if(auth()->user()->hasRole('Vendor'))
+                                        <p>{{ auth()->user()->name }}</p>
+                                        @else
+                                        @foreach ($user->vendors as $vendor)
+                                            <p>{{ $vendor->name }} ({{ $vendor->store_number }})</p>
+                                        @endforeach
+                                        @endif
+                                    </td>
+                                    <td>{{ format_datetime_excel($user->created_at) }}</td>
+ 
                                     
                                     <td>{!! check_status($user->status) !!}</td>
+                                    @canany(['User Edit', 'User Delete'])
                                     <td>
-
                                         @can('User Edit')
                                             <a href="{{ route('user.edit', $user->id) }}"
                                                 class="bg-success-focus text-success-600 bg-hover-success-200 fw-medium w-40-px h-40-px d-flex justify-content-center align-items-center rounded-circle"
@@ -84,6 +94,7 @@
                                                     class="menu-icon"></iconify-icon></a>
                                         @endcan
                                     </td>
+                                    @endcanany
                                 </tr>
                             @endforeach
                         </tbody>

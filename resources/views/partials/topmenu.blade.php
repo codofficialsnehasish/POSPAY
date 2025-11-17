@@ -27,9 +27,26 @@
                     </a>
                 </li>
 
+                {{-- Entry --}}
+                @if(auth()->user()->is_purchase_enabled)
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle {{ Str::startsWith(request()->path(),'admin/purchase') ? 'active' : '' }}"
+                        href="#" data-bs-toggle="dropdown">
+                        <iconify-icon icon="mdi:account-group-outline" class="menu-icon"></iconify-icon>
+                        <span>Entry</span>
+                    </a>
+                    <ul class="dropdown-menu shadow-lg border-0 rounded-3 p-2">
+                        @if(auth()->user()->is_purchase_enabled)
+                        <li><a class="dropdown-item" href="{{ route('purchase.index') }}">Purchase</a></li>
+                        @endif
+                    </ul>
+                </li>
+                @endif
+
                 {{-- User Management --}}
                 <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle {{ request()->is('permission/*') || request()->is('role/*') || request()->is('admin/*') || request()->is('vendor/*') || request()->is('user/*') ? 'active' : '' }}"
+                    <a class="nav-link dropdown-toggle {{ Str::startsWith(request()->path(), 'admin/permission') || Str::startsWith(request()->path(), 'admin/seatnumber') || Str::startsWith(request()->path(), 'admin/role') || Str::startsWith(request()->path(), 'admin/sellers') || Str::startsWith(request()->path(), 'admin/admin') || Str::startsWith(request()->path(), 'admin/vendor') || Str::startsWith(request()->path(), 'admin/user') ? 'active' : '' }}"
+
                         href="#" data-bs-toggle="dropdown">
                         <iconify-icon icon="mdi:account-group-outline" class="menu-icon"></iconify-icon>
                         <span>User Management</span>
@@ -45,18 +62,23 @@
                             <li><a class="dropdown-item" href="{{ route('admin.index') }}">Admins</a></li>
                         @endcanany
                         @canany(['Vendor View'])
-                            <li><a class="dropdown-item" href="{{ route('vendor.index') }}">Branch (Vendors)</a></li>
+                            <li><a class="dropdown-item" href="{{ route('vendor.index') }}">Branch</a></li>
+                        @endcanany
+                        @canany(['SeatNumber View'])
+                            <li><a class="dropdown-item" href="{{ route('seatnumber.index') }}">Seat Number</a></li>
                         @endcanany
                         @canany(['User View'])
                             <li><a class="dropdown-item" href="{{ route('user.index') }}">Users</a></li>
+                        @endcanany
+                        @canany(['Seller Master View'])
+                            <li><a class="dropdown-item" href="{{ route('sellers.index') }}">Sellers</a></li>
                         @endcanany
                     </ul>
                 </li>
 
                 {{-- Product Management --}}
                 <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle
-                        {{ request()->is('category/*') || request()->is('brand/*') || request()->is('units/*') || request()->is('hsncode/*') || request()->is('product/*') || request()->is('purchase/*') ? 'active' : '' }}"
+                    <a class="nav-link dropdown-toggle {{ Str::startsWith(request()->path(), 'admin/category') || Str::startsWith(request()->path(), 'admin/brand') || Str::startsWith(request()->path(), 'admin/units') || Str::startsWith(request()->path(), 'admin/hsncode') || Str::startsWith(request()->path(), 'admin/product') || Str::startsWith(request()->path(), 'admin/purchase') ? 'active' : '' }}"
                         href="#" data-bs-toggle="dropdown">
                         <iconify-icon icon="mdi:package-variant" class="menu-icon"></iconify-icon>
                         <span>Product Management</span>
@@ -82,14 +104,15 @@
                             <li><a class="dropdown-item" href="{{ route('product.index') }}">Products</a></li>
                         @endcanany
 
+                        @if(auth()->user()->is_purchase_enabled)
                         <li><a class="dropdown-item" href="{{ route('purchase.index') }}">Purchase</a></li>
+                        @endif
                     </ul>
                 </li>
 
                 {{-- Sales & Orders --}}
                 <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle
-                        {{ request()->is('order/*') || request()->is('transaction/*') ? 'active' : '' }}"
+                    <a class="nav-link dropdown-toggle {{ Str::startsWith(request()->path(), 'admin/order') || Str::startsWith(request()->path(), 'admin/get-date-wise-total-payment') ? 'active' : '' }}"
                         href="#" data-bs-toggle="dropdown">
                         <iconify-icon icon="mdi:cart-outline" class="menu-icon"></iconify-icon>
                         <span>Sales & Orders</span>
@@ -106,7 +129,7 @@
                 </li>
 
                 {{-- Stock & Sellers --}}
-                <li class="nav-item dropdown">
+                {{-- <li class="nav-item dropdown">
                     <a class="nav-link dropdown-toggle 
                         {{ request()->is('seatnumber/*') || request()->is('sellers/*') || request()->routeIs('stock.transactions') ? 'active' : '' }}"
                         href="#" data-bs-toggle="dropdown">
@@ -126,23 +149,57 @@
                             <li><a class="dropdown-item" href="{{ route('sellers.index') }}">Sellers</a></li>
                         @endcanany
                     </ul>
-                </li>
+                </li> --}}
 
                 {{-- Reports --}}
                 <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle {{ request()->is('report/*') ? 'active' : '' }}" data-bs-toggle="dropdown">
+                    <a class="nav-link dropdown-toggle {{ Str::startsWith(request()->path(), 'admin/report') ? 'active' : '' }}"
+                    data-bs-toggle="dropdown">
                         <iconify-icon icon="mdi:file-chart-outline" class="menu-icon"></iconify-icon>
                         <span>Reports</span>
                     </a>
+
                     <ul class="dropdown-menu shadow-lg border-0 rounded-3 p-2">
+
+                        <!-- Current Stock -->
                         <li><a class="dropdown-item" href="{{ route('report.stock-report') }}">Current Stock</a></li>
-                        <li><a class="dropdown-item" href="{{ route('report.sale-list') }}">Sales</a></li>
-                        <li><a class="dropdown-item" href="{{ route('report.sale-item') }}">Sales Item</a></li>
-                        <li><a class="dropdown-item" href="{{ route('report.purchase-list') }}">Purchase</a></li>
+
+                        <!-- Sales Submenu -->
+                        <li class="dropdown-submenu">
+                            <a class="dropdown-item submenu-toggle" href="#">
+                                Sales ▸
+                            </a>
+                            <ul class="dropdown-menu shadow border-0 rounded-3 p-2">
+                                <li><a class="dropdown-item" href="{{ route('report.sale-list') }}">Summary</a></li>
+                                <li><a class="dropdown-item" href="{{ route('report.sale-item') }}">Items</a></li>
+                            </ul>
+                        </li>
+
+                        <!-- Purchase Submenu -->
+                        <li class="dropdown-submenu">
+                            <a class="dropdown-item submenu-toggle" href="#">
+                                Purchase ▸
+                            </a>
+                            <ul class="dropdown-menu shadow border-0 rounded-3 p-2">
+                                <li><a class="dropdown-item" href="{{ route('report.purchase-list') }}">Summary</a></li>
+                                <li><a class="dropdown-item" href="{{ route('report.purchase-list') }}">Product</a></li>
+                            </ul>
+                        </li>
+
+                        <!-- Stock Transaction -->
+                        @if(auth()->user()->is_purchase_enabled)
+                        <li><a class="dropdown-item" href="{{ route('stock.transactions') }}">Stock Transaction</a></li>
+                        @endif
+
+                        <!-- Payment -->
                         <li><a class="dropdown-item" href="{{ route('report.payment-list') }}">Payment</a></li>
+
+                        <!-- Expiry -->
                         <li><a class="dropdown-item" href="{{ route('report.expiry-list') }}">Expiry</a></li>
+
                     </ul>
                 </li>
+
 
             </ul>
 

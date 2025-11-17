@@ -108,6 +108,19 @@
                 justify-content: center;
             }
         }
+
+        .dropdown-submenu {
+            position: relative;
+        }
+
+        .dropdown-submenu .dropdown-menu {
+            display: none;
+            position: absolute;
+            top: 0;
+            left: 100%;
+        }
+
+
     </style>
 
 
