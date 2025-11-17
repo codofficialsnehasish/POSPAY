@@ -8,14 +8,26 @@ use App\Models\ProductVariationOption;
 use App\Models\Purchase;
 use App\Models\PurchaseItem;
 use App\Models\SellerMaster;
+use App\Models\User;
 use App\Models\StockTransaction;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class PurchaseController extends Controller
 {
     public function index()
     {
-        $purchases = Purchase::with('items.product')->latest()->get();
+        $user = Auth::user();
+        if ($user->hasRole('Super Admin')) {
+            $purchases = Purchase::with('items.product')->latest()->get();
+        } else if($user->hasRole('Admin')) {
+            $vendors = User::role('Vendor')->where('admin_id',$user->id)->pluck('id')->toArray();
+            $purchases = Purchase::with('items.product')->whereIn('vendor_id',$vendors)->latest()->get();
+        }else if($user->hasRole('Vendor')){
+            $purchases = Purchase::with('items.product')->where('vendor_id',$user->id)->latest()->get();
+        }else{
+            $purchases = collect();
+        }
         return view('admin.purchase.index', compact('purchases'));
     }
 

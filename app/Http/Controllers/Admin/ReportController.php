@@ -69,6 +69,15 @@ class ReportController  extends Controller implements HasMiddleware {
         return view('admin.reports.purchase_list', compact('purchases'));
     }
 
+    public function purchase_products(Request $request)
+    {
+        $purchases = Purchase::with(['vendor','items','items.product'])
+            ->latest()
+            ->get();
+
+        return view('admin.reports.purchase_list_products', compact('purchases'));
+    }
+
     public function stock_report(Request $request)
     {
         $stocks = ProductVariationOption::with(['variation.product' => function($query) {

@@ -31,7 +31,7 @@
                         <th>Date</th>
                         <th>Seller</th>
                         <th>Product</th>
-                        <th>Quantity</th>
+                        {{-- <th>Quantity</th> --}}
                         <th>Invoice #</th>
                         <th>Total Amount</th>
                     </tr>

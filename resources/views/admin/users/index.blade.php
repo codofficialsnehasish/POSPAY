@@ -45,7 +45,7 @@
                                 <th>Email</th>
                                 <th>Phone</th>
                                 <th>Role</th>
-                                <th>Vendor</th>
+                                <th>Branch</th>
                                 <th>Registred Date</th>
                                 <th>Status</th>
                                 @canany(['User Edit', 'User Delete'])

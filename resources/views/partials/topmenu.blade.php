@@ -182,7 +182,7 @@
                             </a>
                             <ul class="dropdown-menu shadow border-0 rounded-3 p-2">
                                 <li><a class="dropdown-item" href="{{ route('report.purchase-list') }}">Summary</a></li>
-                                <li><a class="dropdown-item" href="{{ route('report.purchase-list') }}">Product</a></li>
+                                <li><a class="dropdown-item" href="{{ route('report.purchase-products') }}">Product</a></li>
                             </ul>
                         </li>
 
