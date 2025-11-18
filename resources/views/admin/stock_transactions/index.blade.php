@@ -34,9 +34,9 @@
                             <th>Variation</th>
                             <th>Batch No</th>
                             <th>Type</th>
+                            <th>Opening Balance</th>
                             <th>Qty In</th>
                             <th>Qty Out</th>
-                            <th>Opening Balance</th>
                             <th>Closing Balance</th>
                         </tr>
                     </thead>
@@ -49,9 +49,9 @@
                                 <td class="text-wrap">{{ $tx->variationOption->name ?? 'N/A' }}</td>
                                 <td class="text-wrap">{{ $tx->batch_number ?? '-' }}</td>
                                 <td>{{ ucfirst($tx->transaction_type) }}</td>
+                                <td>{{ $tx->opening_balance }}</td>
                                 <td>{{ $tx->quantity_in }}</td>
                                 <td>{{ $tx->quantity_out }}</td>
-                                <td>{{ $tx->opening_balance }}</td>
                                 <td>{{ $tx->closing_balance }}</td>
                             </tr>
                         @endforeach

@@ -58,13 +58,13 @@ class AuthenticationController extends Controller
                     ], 401);
                 }
                 $token = $user->createToken('auth_token')->plainTextToken;
-                $user->load('vendor');
+                // $user->load('vendor');
                 return response()->json([
                     'status' => true,
                     'message' => 'Login successful.',
                     'token' => $token,
                     'user' => $user,
-                    'vendor' => $user->vendor,
+                    'vendor' => $user->vendors,
                 ]);
             }
         }
@@ -353,12 +353,19 @@ class AuthenticationController extends Controller
         $profileImage = $user->getFirstMediaUrl('user-image');
     
         // ✅ Get vendors linked to the user
-        // $vendor = UserVendor::with('vendor')->where('user_id', $user->id)->get();
-        $vendor = User::find($vendorId);
+        //$vendor = UserVendor::with('vendor')->where('user_id', $user->id)->get();
+        $vendor = UserVendor::with('vendor')
+            ->where('user_id', $user->id)
+            ->whereHas('vendor', function($q) use ($vendorId) {
+                $q->where('id', $vendorId);
+            })
+            ->first();
+
+        //$vendor = User::find($vendorId);
         // return $vendor->vendor->getFirstMediaUrl('vendor-image');
     
-        // $vendor->image_url = $vendor->vendor->getFirstMediaUrl('vendor-image');
-        $vendor->image_url = $vendor->getFirstMediaUrl('vendor-image');
+        $vendor->image_url = $vendor->vendor->getFirstMediaUrl('vendor-image');
+        //$vendor->image_url = $vendor->getFirstMediaUrl('vendor-image');
         
         // ✅ Add vendor image URL for each vendor
         // $vendors->each(function ($userVendor) {

@@ -367,10 +367,11 @@
 
 
     if (!function_exists('total_orders_by_user')) {
-        function total_orders_by_user($user_id)
+        function total_orders_by_user($user_id, $vendor_id)
         {
             $query = Order::query();
             $query->where('user_id', $user_id);
+            $query->where('vendor_id', $vendor_id);
             return $query->sum('total_amount');
         }
     }
@@ -378,10 +379,11 @@
 
     
     if (!function_exists('total_orders_period_by_user')) {
-        function total_orders_period_by_user($user_id,$period)
+        function total_orders_period_by_user($user_id,$vendor_id,$period)
         {
             $query = Order::query();
             $query->where('user_id', $user_id);
+            $query->where('vendor_id', $vendor_id);
             
 
             switch ($period) {
@@ -501,7 +503,7 @@
     // }
     
     if (!function_exists('monthly_sales_stats')) {
-        function monthly_sales_stats()
+        function monthly_sales_stats($user_id = null, $vendor_id = null)
         {
             $user = Auth::user();
             $sales = [];
@@ -517,6 +519,9 @@
                 $query = Order::query()
                     ->whereMonth('created_at', $monthNumber)
                     ->whereYear('created_at', now()->year);
+
+                if($user_id){ $query->where('user_id', $user_id); }
+                if($vendor_id){ $query->where('vendor_id', $vendor_id); }
     
                 if ($user && $user->hasRole('Vendor')) {
                     $query->where('vendor_id', $user->id);
@@ -530,7 +535,7 @@
     }
 
     if (!function_exists('yearly_sales_stats')) {
-        function yearly_sales_stats($yearsBack = 5) // optional: how many past years to include
+        function yearly_sales_stats($yearsBack = 5, $user_id = null, $vendor_id = null) // optional: how many past years to include
         {
             $user = Auth::user();
             $sales = [];
@@ -542,6 +547,8 @@
             foreach ($years as $year) {
                 $query = Order::query()
                     ->whereYear('created_at', $year);
+                if($user_id){ $query->where('user_id', $user_id); }
+                if($vendor_id){ $query->where('vendor_id', $vendor_id); }
 
                 if ($user && $user->hasRole('Vendor')) {
                     $query->where('vendor_id', $user->id);
@@ -562,7 +569,7 @@
     
     
     if (!function_exists('daily_order_stats')) {
-        function daily_order_stats($days = 7)
+        function daily_order_stats($days = 7, $user_id = null, $vendor_id = null)
         {
             $user = Auth::user();
             $stats = [];
@@ -574,6 +581,9 @@
 
                 $query = \App\Models\Order::query()
                     ->whereDate('created_at', $date);
+
+                if($user_id){ $query->where('user_id', $user_id); }
+                if($vendor_id){ $query->where('vendor_id', $vendor_id); }                    
 
                 if ($user && $user->hasRole('Vendor')) {
                     $query->where('vendor_id', $user->id);
@@ -592,10 +602,14 @@
 
 
     if (!function_exists('category_sales_stats')) {
-        function category_sales_stats()
+        function category_sales_stats($user_id = null, $vendor_id = null)
         {
             $stats = [];
 
+            $availableProductIds = VendorProduct::where('vendor_id', $vendor_id)
+                    ->where('availability', 1)
+                    ->pluck('product_id');
+                    
             $categories = Category::with(['products'])->get();
 
             foreach ($categories as $category) {

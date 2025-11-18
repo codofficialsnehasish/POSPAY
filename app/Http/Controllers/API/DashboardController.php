@@ -13,16 +13,17 @@ class DashboardController extends Controller
     public function index(Request $request){
 
         $user_id = $request->user()->id;
+        $vendorId = $request->vendorId;
         
-        $total_orders= total_orders_by_user($user_id);
-        $today_orders= total_orders_period_by_user($user_id,'today');
-        $weekly_orders= total_orders_period_by_user($user_id,'weekly');
-        $monthly_orders= total_orders_period_by_user($user_id,'monthly');
-        $last_month_orders= total_orders_period_by_user($user_id,'last_month');
-        $quarterly_orders= total_orders_period_by_user($user_id,'quarterly');
-        $yearly_orders= total_orders_period_by_user($user_id,'yearly');
-        $monthly_sales_orders =monthly_sales_data();
-        $daily_sales_orders =daily_sales_data();
+        $total_orders= total_orders_by_user($user_id, $vendorId);
+        $today_orders= total_orders_period_by_user($user_id,$vendorId,'today');
+        $weekly_orders= total_orders_period_by_user($user_id,$vendorId,'weekly');
+        $monthly_orders= total_orders_period_by_user($user_id,$vendorId,'monthly');
+        $last_month_orders= total_orders_period_by_user($user_id,$vendorId,'last_month');
+        $quarterly_orders= total_orders_period_by_user($user_id,$vendorId,'quarterly');
+        $yearly_orders= total_orders_period_by_user($user_id,$vendorId,'yearly');
+        // $monthly_sales_orders =monthly_sales_data();
+        // $daily_sales_orders =daily_sales_data();
 
         return response()->json([
             'response' => true,
@@ -35,9 +36,9 @@ class DashboardController extends Controller
                 'last_month_orders' => $last_month_orders,
                 'quarterly_orders' => $quarterly_orders,
                 'yearly_orders' => $yearly_orders,
-                'total_yearly_sales_stats'=>yearly_sales_stats(),
-                'total_monthly_sales_stats'=>monthly_sales_stats(),
-                'total_daily_sales_stats'=>daily_order_stats(),
+                'total_yearly_sales_stats'=>yearly_sales_stats(5,$user_id,$vendorId),
+                'total_monthly_sales_stats'=>monthly_sales_stats($user_id,$vendorId),
+                'total_daily_sales_stats'=>daily_order_stats(7,$user_id,$vendorId),
                 'category_wise_sales_stats'=>category_sales_stats(),
                 'all_category_wise'=>category_sales_summary(),
                 'today_sales_by_payment_method'=>today_sales_by_payment_method(),

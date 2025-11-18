@@ -16,6 +16,40 @@
 table.dataTable thead>tr>th.dt-orderable-asc span.dt-column-order, table.dataTable thead>tr>th.dt-orderable-desc span.dt-column-order, table.dataTable thead>tr>th.dt-ordering-asc span.dt-column-order, table.dataTable thead>tr>th.dt-ordering-desc span.dt-column-order{
     right: 0px;
 }
+
+.availability-toggle {
+    display: inline-flex;
+    border: 2px solid #ddd;
+    border-radius: 10px;
+    overflow: hidden;
+    cursor: pointer;
+}
+
+.toggle-option {
+    padding: 8px 16px;
+    font-size: 14px;
+    font-weight: 600;
+    background: #f5f5f5;
+    color: #666;
+    user-select: none;
+    transition: 0.3s;
+}
+
+.toggle-option.active.available {
+    background: #28a745;
+    color: #fff;
+}
+
+.toggle-option.active.unavailable {
+    background: #dc3545;
+    color: #fff;
+}
+
+.toggle-option:hover {
+    background: #e9e9e9;
+}
+
+
         </style>
 @endsection
 
@@ -122,6 +156,8 @@ table.dataTable thead>tr>th.dt-orderable-asc span.dt-column-order, table.dataTab
                                 </div>
                             </th>
                             <th class="text-wrap">Title</th>
+                            <th class="text-wrap">Categories</th>
+                            <th class="text-wrap">Variations</th>
                             {{-- <th class="text-wrap">Description</th> --}}
                             <th class="text-wrap">Image</th>
                             @if(auth()->user()->hasRole('Vendor'))
@@ -153,22 +189,40 @@ table.dataTable thead>tr>th.dt-orderable-asc span.dt-column-order, table.dataTab
                                     <td class="text-wrap">
                                         {{ $prouct->name }}
                                         <!-- Categories -->
-                                        <p class="text-muted mb-1">
+                                        {{-- <p class="text-muted mb-1">
                                             Category:
                                             @if($prouct->categories->count())
                                                 {{ $prouct->categories->pluck('name')->join(', ') }}
                                             @else
                                                 N/A
                                             @endif
-                                        </p>
+                                        </p> --}}
 
                                         <!-- Variations -->
-                                        @foreach($prouct->variations as $variation)
+                                        {{-- @foreach($prouct->variations as $variation)
                                             <strong>{{ $variation->name }}:</strong>
                                             @foreach($variation->options as $option)
                                                 <span class="badge bg-primary">
                                                     {{ $option->name }} - ₹{{ $option->price }}
                                                 </span>
+                                            @endforeach
+                                            <br>
+                                        @endforeach --}}
+                                    </td>
+                                    <td class="text-wrap">
+                                        @if($prouct->categories->count())
+                                            {{ $prouct->categories->pluck('name')->join(', ') }}
+                                        @else
+                                            N/A
+                                        @endif
+                                    </td>
+                                    <td class="text-wrap">
+                                        @foreach($prouct->variations as $variation)
+                                            <strong>{{ $variation->name }}:</strong>
+                                            @foreach($variation->options as $option)
+                                                <span class="badge bg-primary">
+                                                    {{ $option->name }} - ₹{{ $option->price }}
+                                                </span><br>
                                             @endforeach
                                             <br>
                                         @endforeach
@@ -191,13 +245,21 @@ table.dataTable thead>tr>th.dt-orderable-asc span.dt-column-order, table.dataTab
                                         @endphp
 
                                         <td>
-                                            <div class="form-check form-switch">
-                                                <input type="checkbox"
-                                                    class="form-check-input availability-switch"
-                                                    data-id="{{ $prouct->id }}"
-                                                    {{ ($vendorProduct && $vendorProduct->availability) ? 'checked' : '' }}>
+                                            <div class="availability-toggle" data-id="{{ $prouct->id }}">
+                                                <span class="toggle-option available {{ ($vendorProduct && $vendorProduct->availability) ? 'active' : '' }}">
+                                                    Available
+                                                </span>
+
+                                                <span class="toggle-option unavailable {{ (!$vendorProduct || !$vendorProduct->availability) ? 'active' : '' }}">
+                                                    Unavailable
+                                                </span>
+
+                                                <input type="hidden" class="availability-value"
+                                                    value="{{ ($vendorProduct && $vendorProduct->availability) ? 1 : 0 }}">
                                             </div>
                                         </td>
+
+
                                     @else
                                     <td>{!! check_visibility($prouct->is_visible) !!}</td>
                                     @endif
@@ -269,23 +331,21 @@ table.dataTable thead>tr>th.dt-orderable-asc span.dt-column-order, table.dataTab
     <script>
         $(document).ready(function () {
 
-            // When clicking on TR, toggle switch
-            $('.product-row').on('click', function (e) {
+            $(document).on("click", ".toggle-option", function () {
 
-                // If user clicked the switch itself, do nothing
-                if ($(e.target).closest('.availability-switch').length) {
-                    return;
-                }
+                let parent = $(this).closest(".availability-toggle");
+                let productId = parent.data("id");
 
-                let switchBtn = $(this).find('.availability-switch');
-                switchBtn.prop('checked', !switchBtn.prop('checked')).trigger('change');
-            });
+                // Switch UI state
+                parent.find(".toggle-option").removeClass("active");
+                $(this).addClass("active");
 
-            // When switch changes, update DB
-            $('.availability-switch').on('change', function () {
-                let productId = $(this).data('id');
-                let newStatus = $(this).prop('checked') ? 1 : 0;
+                let newStatus = $(this).hasClass("available") ? 1 : 0;
 
+                // Update hidden input (if used)
+                parent.find(".availability-value").val(newStatus);
+
+                // AJAX request to update DB
                 $.ajax({
                     url: "{{ route('products.updateAvailability') }}",
                     method: "POST",
@@ -295,7 +355,7 @@ table.dataTable thead>tr>th.dt-orderable-asc span.dt-column-order, table.dataTab
                         _token: "{{ csrf_token() }}"
                     },
                     success: function(res) {
-                        console.log("Updated");
+                        console.log("Product availability updated.");
                     },
                     error: function() {
                         alert("Something went wrong!");
@@ -304,6 +364,25 @@ table.dataTable thead>tr>th.dt-orderable-asc span.dt-column-order, table.dataTab
             });
 
         });
+
     </script>
+
+    <script>
+        $(document).on("click", ".availability-toggle .toggle-option", function () {
+            let parent = $(this).closest(".availability-toggle");
+            let valueInput = parent.find(".availability-value");
+
+            parent.find(".toggle-option").removeClass("active");
+            $(this).addClass("active");
+
+            if ($(this).hasClass("available")) {
+                valueInput.val(1);
+            } else {
+                valueInput.val(0);
+            }
+        });
+
+    </script>
+    
 
 @endsection
