@@ -83,7 +83,7 @@ class ReportController  extends Controller implements HasMiddleware {
         $stocks = ProductVariationOption::with(['variation.product' => function($query) {
                     $query->where('vendor_id', auth()->user()->id);
                 }])
-                ->select('id', 'variation_id', 'name', 'quantity')
+                ->select('id', 'variation_id', 'name', 'quantity','price')
                 ->whereHas('variation.product', function($query) {
                     $query->where('vendor_id', auth()->user()->id);
                 })

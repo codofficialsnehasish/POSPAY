@@ -30,7 +30,9 @@
                         <th>S.L</th>
                         <th>Product</th>
                         <th>Variation</th>
+                        <th>Product Selling Price</th>
                         <th>Current Quantity</th>
+                        <th>Total amount</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -39,7 +41,9 @@
                         <td>{{ $loop->iteration }}</td>
                         <td>{{ $stock->variation->product->name ?? 'N/A' }}</td>
                         <td>{{ $stock->name ?? 'N/A' }}</td>
+                        <td>{{ $stock->price }}</td>
                         <td>{{ $stock->quantity }}</td>
+                        <td>{{ $stock->price * $stock->quantity}}</td>
                     </tr>
                     @endforeach
                 </tbody>
