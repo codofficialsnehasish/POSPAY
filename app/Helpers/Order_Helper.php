@@ -367,18 +367,22 @@
 
 
     if (!function_exists('total_orders_by_user')) {
-        function total_orders_by_user($user_id, $vendor_id)
+        function total_orders_by_user($user_id, $vendor_id, $from, $to)
         {
             $query = Order::query();
             $query->where('user_id', $user_id);
             $query->where('vendor_id', $vendor_id);
+            $query->whereDate('created_at', '>=', $from);
+            $query->whereDate('created_at', '<=', $to);
+
             return $query->sum('total_amount');
+
         }
     }
 
 
     
-    if (!function_exists('total_orders_period_by_user')) {
+    /*if (!function_exists('total_orders_period_by_user')) {
         function total_orders_period_by_user($user_id,$vendor_id,$period)
         {
             $query = Order::query();
@@ -426,6 +430,17 @@
             }
 
             return $query->sum('total_amount');
+        }
+    }*/
+
+    if (!function_exists('total_orders_period_by_user')) {
+        function total_orders_period_by_user($user_id, $vendor_id, $from, $to)
+        {
+            return Order::where('user_id', $user_id)
+                ->where('vendor_id', $vendor_id)
+                ->whereDate('created_at', '>=', $from)
+                ->whereDate('created_at', '<=', $to)
+                ->sum('total_amount');
         }
     }
 
@@ -503,59 +518,84 @@
     // }
     
     if (!function_exists('monthly_sales_stats')) {
-        function monthly_sales_stats($user_id = null, $vendor_id = null)
+        function monthly_sales_stats($user_id = null, $vendor_id = null, $from, $to)
         {
             $user = Auth::user();
             $sales = [];
-    
+
             // List of months for labeling
             $months = [
                 1 => 'January', 2 => 'February', 3 => 'March', 4 => 'April',
                 5 => 'May', 6 => 'June', 7 => 'July', 8 => 'August',
                 9 => 'September', 10 => 'October', 11 => 'November', 12 => 'December',
             ];
-    
+
             foreach ($months as $monthNumber => $monthName) {
                 $query = Order::query()
                     ->whereMonth('created_at', $monthNumber)
-                    ->whereYear('created_at', now()->year);
+                    ->whereYear('created_at', \Carbon\Carbon::now()->year);
 
-                if($user_id){ $query->where('user_id', $user_id); }
-                if($vendor_id){ $query->where('vendor_id', $vendor_id); }
-    
+                if ($user_id) { $query->where('user_id', $user_id); }
+                if ($vendor_id) { $query->where('vendor_id', $vendor_id); }
+
                 if ($user && $user->hasRole('Vendor')) {
                     $query->where('vendor_id', $user->id);
                 }
-    
+
                 $sales[$monthName] = $query->sum('total_amount');
             }
-    
+
             return $sales;
         }
     }
 
+
     if (!function_exists('yearly_sales_stats')) {
-        function yearly_sales_stats($yearsBack = 5, $user_id = null, $vendor_id = null) // optional: how many past years to include
+        function yearly_sales_stats($user_id = null, $vendor_id = null,$from, $to)
         {
             $user = Auth::user();
+
+            // Validate date format Y-m-d using Carbon's createFromFormat
+            if (!Carbon::createFromFormat('Y-m-d', $from) ||
+                !Carbon::createFromFormat('Y-m-d', $to)) {
+
+                return []; // return empty list instead of 1970
+            }
+
+            // Now safe to parse
+            $start = Carbon::parse($from)->startOfDay();
+            $end   = Carbon::parse($to)->endOfDay();
+
+            // If FROM > TO, return empty
+            if ($start->gt($end)) {
+                return [];
+            }
+
             $sales = [];
 
-            // Generate a list of years to display, e.g., last 5 years
-            $currentYear = now()->year;
-            $years = range($currentYear - $yearsBack + 1, $currentYear);
+            $startYear = $start->year;
+            $endYear   = $end->year;
 
-            foreach ($years as $year) {
+            for ($year = $startYear; $year <= $endYear; $year++) {
+
                 $query = Order::query()
                     ->whereYear('created_at', $year);
-                if($user_id){ $query->where('user_id', $user_id); }
-                if($vendor_id){ $query->where('vendor_id', $vendor_id); }
+                    // ->whereBetween('created_at', [$start, $end]);
+
+                if ($user_id) {
+                    $query->where('user_id', $user_id);
+                }
+
+                if ($vendor_id) {
+                    $query->where('vendor_id', $vendor_id);
+                }
 
                 if ($user && $user->hasRole('Vendor')) {
                     $query->where('vendor_id', $user->id);
                 }
 
                 $sales[] = [
-                    'year' => $year,
+                    'year'  => $year,
                     'total' => $query->sum('total_amount'),
                 ];
             }
@@ -563,6 +603,9 @@
             return $sales;
         }
     }
+
+
+
 
 
     
@@ -601,8 +644,8 @@
     }
 
 
-    if (!function_exists('category_sales_stats')) {
-        function category_sales_stats($user_id = null, $vendor_id = null)
+    /*if (!function_exists('category_sales_stats')) {
+        function category_sales_stats($user_id = null, $vendor_id = null, $from, $to)
         {
             $stats = [];
 
@@ -632,36 +675,142 @@
 
             return $stats;
         }
-    }
-    
-    if (!function_exists('category_sales_summary')) {
-    function category_sales_summary()
-    {
-        $allStats = category_sales_stats(); // re-use the detailed function
+    }*/
 
-        $totalSales = 0;
-        $totalQuantity = 0;
-        $totalOrders = 0;
-        $topCategories = collect($allStats)->sortByDesc('total_sales')->values();
+    /*if (!function_exists('category_sales_stats')) {
+        function category_sales_stats($from, $to, $user_id = null, $vendor_id = null)
+        {
+            // Validate date format (prevents 1970 bug)
+            if (
+                !Carbon::createFromFormat('Y-m-d', $from) ||
+                !Carbon::createFromFormat('Y-m-d', $to)
+            ) {
+                return [];
+            }
 
-        foreach ($allStats as $stat) {
-            $totalSales += $stat['total_sales'];
-            $totalQuantity += $stat['total_quantity'];
-            $totalOrders += $stat['total_orders'];
+            // Parse date range safely
+            $start = Carbon::parse($from)->startOfDay();
+            $end   = Carbon::parse($to)->endOfDay();
+
+            $stats = [];
+
+            // Get vendor products (only available)
+            $vendorProductIds = VendorProduct::where('vendor_id', $vendor_id)
+                ->where('availability', 1)
+                ->pluck('product_id')
+                ->toArray();
+
+            // Load categories + products
+            $categories = Category::with('products')->get();
+
+            foreach ($categories as $category) {
+
+                // Get product IDs under this category which also belong to vendor
+                $productIds = $category->products
+                    ->whereIn('id', $vendorProductIds)
+                    ->pluck('id');
+
+                if ($productIds->isEmpty()) {
+                    continue; // Skip if vendor has no products in this category
+                }
+
+                $query = OrderItems::whereIn('product_id', $productIds)
+                    ->whereBetween('created_at', [$start, $end]);
+
+                // Optional user filter
+                if ($user_id) {
+                    $query->whereHas('order', function ($q) use ($user_id) {
+                        $q->where('user_id', $user_id);
+                    });
+                }
+
+                // Optional vendor filter
+                if ($vendor_id) {
+                    $query->whereHas('order', function ($q) use ($vendor_id) {
+                        $q->where('vendor_id', $vendor_id);
+                    });
+                }
+
+                $stats[] = [
+                    'category_id'   => $category->id,
+                    'category_name' => $category->name,
+                    'total_sales'   => round($query->sum('subtotal'), 2),
+                    'total_quantity'=> $query->sum('quantity'),
+                    'total_orders'  => $query->distinct('order_id')->count('order_id'),
+                ];
+            }
+
+            return $stats;
         }
+    }*/
 
-        return [
-            'total_sales' => round($totalSales, 2),
-            'total_quantity' => $totalQuantity,
-            'total_orders' => $totalOrders,
-            'top_category_by_sales' => $topCategories->first(),
-            'top_5_categories' => $topCategories->take(5),
-        ];
+    
+    if (!function_exists('category_sales_stats')) {
+        function category_sales_stats($user_id = null, $vendor_id = null,$from, $to)
+        {
+            // return 0;
+            // SAFE DATE PARSING (never throws error)
+            try {
+                $start = Carbon::parse($from)->startOfDay();
+                $end   = Carbon::parse($to)->endOfDay();
+            } catch (\Exception $e) {
+                return []; // invalid date → return empty result safely
+            }
+
+            $stats = [];
+
+            // Vendor products
+            $vendorProductIds = VendorProduct::where('vendor_id', $vendor_id)
+                ->where('availability', 1)
+                ->pluck('product_id')
+                ->toArray();
+
+            // Categories + products
+            $categories = Category::with('products')->get();
+
+            foreach ($categories as $category) {
+
+                $productIds = $category->products
+                    ->whereIn('id', $vendorProductIds)
+                    ->pluck('id');
+
+                if ($productIds->isEmpty()) {
+                    continue;
+                }
+
+                $query = OrderItems::whereIn('product_id', $productIds)
+                    ->whereBetween('created_at', [$start, $end]);
+
+                // User filter
+                if ($user_id) {
+                    $query->whereHas('order', function ($q) use ($user_id) {
+                        $q->where('user_id', $user_id);
+                    });
+                }
+
+                // Vendor filter
+                if ($vendor_id) {
+                    $query->whereHas('order', function ($q) use ($vendor_id) {
+                        $q->where('vendor_id', $vendor_id);
+                    });
+                }
+
+                $stats[] = [
+                    'category_id'    => $category->id,
+                    'category_name'  => $category->name,
+                    'total_sales'    => round($query->sum('subtotal'), 2),
+                    'total_quantity' => $query->sum('quantity'),
+                    'total_orders'   => $query->distinct('order_id')->count('order_id'),
+                ];
+            }
+
+            return $stats;
+        }
     }
-}
 
-    if (!function_exists('today_sales_by_payment_method')) {
-        function today_sales_by_payment_method()
+
+    /*if (!function_exists('today_sales_by_payment_method')) {
+        function today_sales_by_payment_method($user_id = null, $vendor_id = null, $from, $to)
         {
             // $paymentMethods = ['Cash On Delevery', 'Online', 'UPI', 'Card'];
             $paymentMethods = ['Cash', 'UPI', 'Card'];
@@ -696,7 +845,57 @@
 
             return $stats;
         }
+    }*/
+
+    if (!function_exists('today_sales_by_payment_method')) {
+        function today_sales_by_payment_method($user_id = null, $vendor_id = null, $from, $to)
+        {
+            $paymentMethods = ['Cash', 'UPI', 'Card'];
+            $stats = [];
+
+            // Build query using from + to
+            $ordersQuery = Order::query();
+
+            if ($user_id) {
+                $ordersQuery->where('user_id', $user_id);
+            }
+
+            if ($vendor_id) {
+                $ordersQuery->where('vendor_id', $vendor_id);
+            }
+
+            $ordersQuery->whereDate('created_at', '>=', $from);
+            $ordersQuery->whereDate('created_at', '<=', $to);
+
+            $orders = $ordersQuery->get();
+
+            $totalSales = $orders->sum('total_amount');
+
+            foreach ($paymentMethods as $method) {
+                $methodSales = $orders->where('payment_method', $method)->sum('total_amount');
+
+                $percentage = $totalSales > 0
+                    ? round(($methodSales / $totalSales) * 100, 2)
+                    : 0;
+
+                $stats[] = [
+                    'payment_method' => $method,
+                    'total_sales' => $methodSales,
+                    'percentage' => $percentage
+                ];
+            }
+
+            // Add total row
+            $stats[] = [
+                'payment_method' => 'All',
+                'total_sales' => $totalSales,
+                'percentage' => 100
+            ];
+
+            return $stats;
+        }
     }
+
 
 
 

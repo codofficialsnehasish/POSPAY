@@ -514,7 +514,7 @@
                         <div class="table-responsive" style="max-height: 280px; overflow-y: auto;">
                             <table class="table table-borderless align-middle mb-0">
                                 <tbody>
-                                    @foreach(top_selling_products(5) as $prod)
+                                    @foreach(top_selling_products(20) as $prod)
                                         <tr>
                                             <td width="20">
                                                 <img src="{{ $prod['image_url'] }}" alt="{{ $prod['name'] }}"
@@ -548,7 +548,7 @@
                         <div class="table-responsive" style="max-height: 280px; overflow-y: auto;">
                             <table class="table table-borderless align-middle mb-0">
                                 <tbody>
-                                    @foreach(low_stock_products(5) as $prod)
+                                    @foreach(low_stock_products(20) as $prod)
                                         <tr>
                                             <td width="20">
                                                 <img src="{{ $prod['image_url'] }}" alt="{{ $prod['name'] }}"
@@ -575,7 +575,7 @@
             </div>
 
             @php
-                $recentSales = recent_sales(5);
+                $recentSales = recent_sales(20);
             @endphp
 
             {{-- === Recent Sales === --}}

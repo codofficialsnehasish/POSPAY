@@ -5,8 +5,9 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\SellerMaster;
+use App\Models\User;
 use Illuminate\Support\Facades\Validator;
-
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Routing\Controllers\HasMiddleware;
 use Illuminate\Routing\Controllers\Middleware;
 
@@ -32,7 +33,25 @@ class SellerMasterController extends Controller implements HasMiddleware
     // Show form to create a seller
     public function create()
     {
-        return view('admin.seller_master.create');
+        $user = Auth::guard('web')->user();
+
+        $admins = collect();
+        $branches = collect();
+        if ($user->hasRole('Super Admin')) {
+            $admins = User::role('Admin')->get();
+        } else if($user->hasRole('Admin')){
+            $branches = User::role('Vendor')->where('admin_id',$user->id)->latest()->get();
+        }
+        return view('admin.seller_master.create',compact('admins','branches','user'));
+    }
+
+    public function get_branches(Request $request, $id){
+        $branches = User::role('Vendor')->where('admin_id',$id)->latest()->get();
+
+        return response()->json([
+            'status' => true,
+            'branches' => $branches
+        ]);
     }
 
     // Store new seller

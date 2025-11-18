@@ -68,6 +68,32 @@
 
         <div class="col-md-3">
             <div class="card p-0 mb-3">
+                <div class="card-header border-bottom bg-base py-16 px-24">
+                    <h6 class="text-lg fw-semibold mb-0">Admin</h6>
+                </div>
+                <div class="row mb-24 gy-3 align-items-center">
+                    <div class="card-body">
+                        <div class="mb-3">
+                            <label class="form-label mb-3 d-flex">Admin</label>
+                            @if ($user->hasRole('Super Admin'))
+                                <select name="admin_id" class="form-select select"
+                                    data-placeholder="Choose Admin" required>
+                                    @foreach ($admins as $admin)
+                                        <option value="{{ $admin->id }}"
+                                            {{ old('admin_id') == $admin->id ? 'selected' : '' }}>
+                                            {{ $admin->name }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                            @else
+                                <input type="hidden" name="admin_id" value="{{ $user->id }}">
+                                <input type="text" class="form-control" value="{{ $user->name }}" disabled>
+                            @endif
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="card p-0 mb-3">
                 <div class="card-header">Publish</div>
                 <div class="card-body">
                     <div class="mb-3">

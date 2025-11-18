@@ -176,6 +176,7 @@ Route::middleware(['auth', 'verified'])->group(function(){
         Route::resource('category', CategoryController::class);
         Route::resource('units', UnitController::class);
         Route::resource('sellers', SellerMasterController::class);
+        Route::get('get-branches/{id}',[SellerMasterController::class,'get_branches'])->name('get-branches');
 
         Route::controller(ProductController::class)->group( function () {
             Route::prefix('product')->group( function () {
