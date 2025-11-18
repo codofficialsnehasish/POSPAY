@@ -24,10 +24,12 @@
         <div class="card basic-data-table">
             <div class="card-header border-bottom bg-base py-16 px-24 d-flex align-items-center flex-wrap gap-3 justify-content-between">
                 <h5 class="card-title mb-0">All Sellers</h5>
+                @can('Seller Master Create')
                 <a href="{{ route('sellers.create') }}" class="btn btn-primary text-sm btn-sm px-12 py-12 radius-8 d-flex align-items-center gap-2">
                     <iconify-icon icon="ic:baseline-plus" class="icon text-xl line-height-1"></iconify-icon>
                     Add New
                 </a>
+                @endcan
             </div>
             <div class="card-body table-responsive">
                 <table class="table bordered-table mb-0" id="dataTable" data-page-length='10'>
@@ -47,7 +49,9 @@
                             {{-- <th>Address</th> --}}
                             <th>Status</th>
                             <th>Created At</th>
+                            @canany(['Seller Master Edit','Seller Master Delete'])
                             <th>Action</th>
+                            @endcanany
                         </tr>
                     </thead>
                     <tbody>
@@ -67,10 +71,14 @@
                             {{-- <td class="text-wrap">{{ $seller->address }}, {{ $seller->city }}, {{ $seller->state }}, {{ $seller->country }}</td> --}}
                             <td>{!! check_visibility($seller->status) !!}</td>
                             <td class="text-wrap">{{ $seller->created_at->format('d-m-Y H:i A') }}</td>
+                            @canany(['Seller Master Edit','Seller Master Delete'])
                             <td>
+                                @can('Seller Master Edit')
                                 <a href="{{ route('sellers.edit', $seller->id) }}" class="w-32-px h-32-px bg-success-focus text-success-main rounded-circle d-inline-flex align-items-center justify-content-center">
                                     <iconify-icon icon="lucide:edit"></iconify-icon>
                                 </a>
+                                @endcan
+                                @can('Seller Master Delete')
                                 <form action="{{ route('sellers.destroy', $seller->id) }}" method="POST" onsubmit="return confirm('Are you sure?')" style="display:inline;">
                                     @csrf
                                     @method('DELETE')
@@ -78,7 +86,9 @@
                                         <iconify-icon icon="mingcute:delete-2-line"></iconify-icon>
                                     </button>
                                 </form>
+                                @endcan
                             </td>
+                            @endcanany
                         </tr>
                         @endforeach
                     </tbody>
