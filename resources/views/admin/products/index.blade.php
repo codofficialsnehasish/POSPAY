@@ -155,20 +155,21 @@ table.dataTable thead>tr>th.dt-orderable-asc span.dt-column-order, table.dataTab
                                     </label>
                                 </div>
                             </th>
-                            <th class="text-wrap">Title</th>
-                            <th class="text-wrap">Categories</th>
-                            <th class="text-wrap">Variations</th>
-                            {{-- <th class="text-wrap">Description</th> --}}
+                            @if(!auth()->user()->hasRole('Vendor'))
+                            <th class="text-wrap" style="width: 150px;">Date</th>
+                            @endauth
                             <th class="text-wrap">Image</th>
+                            <th class="text-wrap">Categories</th>
+                            <th class="text-wrap">Title</th>
+                            <th class="text-wrap">Variations</th>
+                            <th class="text-wrap">Amount</th>
+                            {{-- <th class="text-wrap">Description</th> --}}
                             @if(auth()->user()->hasRole('Vendor'))
                             <th class="text-wrap">Availability</th>
                             @else
                             <th class="text-wrap">Status</th>
                             @endif
                             {{-- <th class="text-wrap">Barcode</th> --}}
-                            @if(!auth()->user()->hasRole('Vendor'))
-                            <th class="text-wrap" style="width: 150px;">Created At</th>
-                            @endauth
                             @canany(['Product Basic Info Edit','Product Delete'])
                             <th class="text-wrap">Action</th>
                             @endcanany
@@ -185,6 +186,25 @@ table.dataTable thead>tr>th.dt-orderable-asc span.dt-column-order, table.dataTab
                                                 {{ $loop->iteration }}
                                             </label>
                                         </div>
+                                    </td>
+                                    @if(!auth()->user()->hasRole('Vendor'))
+                                    <td class="text-wrap" style="width: 150px;">{{ format_datetime($prouct->created_at) }}</td>
+                                    @endif
+                                    <td style="max-height: 100px;">
+                                        @if(getProductMainImage($prouct->id))
+                                            <img class="img-thumbnail rounded me-2"
+                                                style="object-fit: contain;height: 100px;"
+                                                src="{{ getProductMainImage($prouct->id) }}"
+                                                width="100"
+                                                alt="">
+                                        @endif
+                                    </td>
+                                    <td class="text-wrap">
+                                        @if($prouct->categories->count())
+                                            {{ $prouct->categories->pluck('name')->join(', ') }}
+                                        @else
+                                            N/A
+                                        @endif
                                     </td>
                                     <td class="text-wrap">
                                         {{ $prouct->name }}
@@ -210,14 +230,7 @@ table.dataTable thead>tr>th.dt-orderable-asc span.dt-column-order, table.dataTab
                                         @endforeach --}}
                                     </td>
                                     <td class="text-wrap">
-                                        @if($prouct->categories->count())
-                                            {{ $prouct->categories->pluck('name')->join(', ') }}
-                                        @else
-                                            N/A
-                                        @endif
-                                    </td>
-                                    <td class="text-wrap">
-                                        @foreach($prouct->variations as $variation)
+                                        {{-- @foreach($prouct->variations as $variation)
                                             <strong>{{ $variation->name }}:</strong>
                                             @foreach($variation->options as $option)
                                                 <span class="badge bg-primary">
@@ -225,18 +238,25 @@ table.dataTable thead>tr>th.dt-orderable-asc span.dt-column-order, table.dataTab
                                                 </span><br>
                                             @endforeach
                                             <br>
+                                        @endforeach --}}
+                                        @foreach($prouct->variations as $variation)
+                                            @foreach($variation->options as $option)
+                                                {{ $option->name }}
+                                                <br>
+                                            @endforeach
+                                            <br>
+                                        @endforeach
+                                    </td>
+                                    <td>
+                                        @foreach($prouct->variations as $variation)
+                                            @foreach($variation->options as $option)
+                                                ₹{{ $option->price }}
+                                                <br>
+                                            @endforeach
+                                            <br>
                                         @endforeach
                                     </td>
                                     {{-- <td class="text-wrap">{!! $prouct->sort_description !!}</td> --}}
-                                    <td style="max-height: 100px;">
-                                        @if(getProductMainImage($prouct->id))
-                                            <img class="img-thumbnail rounded me-2"
-                                                style="object-fit: contain;height: 100px;"
-                                                src="{{ getProductMainImage($prouct->id) }}"
-                                                width="100"
-                                                alt="">
-                                        @endif
-                                    </td>
                                     @if(auth()->user()->hasRole('Vendor'))
                                         @php
                                             $vendorProduct = \App\Models\VendorProduct::where('vendor_id', auth()->id())
@@ -264,9 +284,6 @@ table.dataTable thead>tr>th.dt-orderable-asc span.dt-column-order, table.dataTab
                                     <td>{!! check_visibility($prouct->is_visible) !!}</td>
                                     @endif
                                     {{-- <td class="text-wrap">{{ $prouct->barcode }}</td> --}}
-                                    @if(!auth()->user()->hasRole('Vendor'))
-                                    <td class="text-wrap" style="width: 150px;">{{ format_datetime($prouct->created_at) }}</td>
-                                    @endif
                                     @canany(['Product Basic Info Edit','Product Delete'])
                                     <td>
                                         @can('Product Basic Info Edit')
