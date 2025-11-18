@@ -26,7 +26,16 @@ class SellerMasterController extends Controller implements HasMiddleware
     // List all seller masters
     public function index()
     {
-        $seller_masters = SellerMaster::where('vendor_id', auth()->user()->id)->get();
+        $user = Auth::guard('web')->user();
+        if ($user->hasRole('Super Admin')) {
+            $seller_masters = SellerMaster::all();
+        }else if($user->hasRole('Admin')){
+            $seller_masters = SellerMaster::where('admin_id', auth()->user()->id)->get();
+        }else if($user->hasRole('Vendor')){
+            $seller_masters = SellerMaster::where('vendor_id', auth()->user()->id)->get();
+        }else{
+            $seller_masters = collect();
+        }
         return view('admin.seller_master.index', compact('seller_masters'));
     }
 
@@ -67,6 +76,8 @@ class SellerMasterController extends Controller implements HasMiddleware
             'country' => 'nullable|string|max:100',
             'gst_number' => 'nullable|string|max:50',
             'status' => 'required|in:0,1',
+            'admin_id' => 'required',
+            'vendor_id' => 'required',
         ]);
 
         if ($validator->fails()) {
@@ -75,7 +86,8 @@ class SellerMasterController extends Controller implements HasMiddleware
 
         $seller = new SellerMaster();
         $seller->seller_name = $request->seller_name;
-        $seller->vendor_id = auth()->user()->id;
+        $seller->vendor_id = $request->vendor_id;
+        $seller->admin_id = $request->admin_id;
         $seller->email = $request->email;
         $seller->phone = $request->phone;
         $seller->address = $request->address;
@@ -104,8 +116,18 @@ class SellerMasterController extends Controller implements HasMiddleware
     // Show form to edit seller
     public function edit(string $id)
     {
+        $user = Auth::guard('web')->user();
+
+        $admins = collect();
+        $branches = collect();
+        if ($user->hasRole('Super Admin')) {
+            $admins = User::role('Admin')->get();
+        } else if($user->hasRole('Admin')){
+            $branches = User::role('Vendor')->where('admin_id',$user->id)->latest()->get();
+        }
+
         $seller = SellerMaster::findOrFail($id);
-        return view('admin.seller_master.edit', compact('seller'));
+        return view('admin.seller_master.edit', compact('seller','admins','branches','user'));
     }
 
     // Update seller
@@ -121,6 +143,8 @@ class SellerMasterController extends Controller implements HasMiddleware
             'country' => 'nullable|string|max:100',
             'gst_number' => 'nullable|string|max:50',
             'status' => 'required|in:0,1',
+            'admin_id' => 'required',
+            'vendor_id' => 'required',
         ]);
 
         if ($validator->fails()) {
@@ -128,6 +152,8 @@ class SellerMasterController extends Controller implements HasMiddleware
         }
 
         $seller = SellerMaster::findOrFail($id);
+        $seller->vendor_id = $request->vendor_id;
+        $seller->admin_id = $request->admin_id;
         $seller->seller_name = $request->seller_name;
         $seller->email = $request->email;
         $seller->phone = $request->phone;

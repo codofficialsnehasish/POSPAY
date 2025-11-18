@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 use Carbon\Carbon;
 
 use App\Models\User;
+use App\Models\LoginLog;
 
 use Illuminate\Support\Facades\Hash;
 
@@ -58,6 +59,16 @@ class AuthenticationController extends Controller
                     ], 401);
                 }
                 $token = $user->createToken('auth_token')->plainTextToken;
+
+                LoginLog::create([
+                    'user_id'       => $user->id,
+                    'vendor_id'     => null,
+                    'device_type'   => $request->deviceType,
+                    'model'         => $request->model,
+                    'serial_number' => $request->serialNumber,
+                    'login_time'    => now(),
+                ]);
+
                 // $user->load('vendor');
                 return response()->json([
                     'status' => true,
@@ -69,6 +80,27 @@ class AuthenticationController extends Controller
             }
         }
     }
+
+    public function logout(Request $request)
+    {
+        $log = LoginLog::where('user_id', $request->user()->id)
+                        ->whereNull('logout_time')   // still active session
+                        ->latest()
+                        ->first();
+        if ($log) {
+            $log->update([
+                'logout_time' => now(),
+            ]);
+        }
+        // Delete current access token
+        $request->user()->currentAccessToken()->delete();
+
+        return response()->json([
+            'status' => true,
+            'message' => 'Logout successful.'
+        ]);
+    }
+
 
     protected function verifyOTP(Request $request)
     {
@@ -409,6 +441,21 @@ class AuthenticationController extends Controller
     }
     
     public function update_vendor(Request $request){
+        $log = LoginLog::where('user_id', $request->user()->id)
+                        ->whereNull('vendor_id')
+                        ->whereNull('logout_time')   // still active session
+                        ->latest()
+                        ->first();
+        if ($log) {
+            $log->update([
+                'vendor_id' => $request->vendor_id,
+            ]);
+        }else{
+            return response()->json([
+                'status' => 'false',
+                'message' => 'Please logout from the previous branch to access a new branch.',
+            ],401);
+        }
         $user= $request->user();
         $user->vendor_id =  $request->vendor_id;
         $user->save();

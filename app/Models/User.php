@@ -108,4 +108,9 @@ class User extends Authenticatable implements HasMedia
         );
     }
 
+    public function loginLogs()
+    {
+        return $this->hasMany(LoginLog::class, 'user_id');
+    }
+
 }

@@ -518,7 +518,7 @@
     // }
     
     if (!function_exists('monthly_sales_stats')) {
-        function monthly_sales_stats($user_id = null, $vendor_id = null, $from, $to)
+        function monthly_sales_stats($user_id = null, $vendor_id = null, $from=null, $to=null)
         {
             $user = Auth::user();
             $sales = [];
@@ -551,7 +551,7 @@
 
 
     if (!function_exists('yearly_sales_stats')) {
-        function yearly_sales_stats($user_id = null, $vendor_id = null,$from, $to)
+        function yearly_sales_stats($user_id = null, $vendor_id = null,$from=null, $to=null)
         {
             $user = Auth::user();
 
@@ -746,7 +746,7 @@
 
     
     if (!function_exists('category_sales_stats')) {
-        function category_sales_stats($user_id = null, $vendor_id = null,$from, $to)
+        function category_sales_stats($user_id = null, $vendor_id = null,$from=null, $to=null)
         {
             // return 0;
             // SAFE DATE PARSING (never throws error)
@@ -848,7 +848,7 @@
     }*/
 
     if (!function_exists('today_sales_by_payment_method')) {
-        function today_sales_by_payment_method($user_id = null, $vendor_id = null, $from, $to)
+        function today_sales_by_payment_method($user_id = null, $vendor_id = null, $from=null, $to=null)
         {
             $paymentMethods = ['Cash', 'UPI', 'Card'];
             $stats = [];

@@ -69,15 +69,16 @@
         <div class="col-md-3">
             <div class="card p-0 mb-3">
                 <div class="card-header border-bottom bg-base py-16 px-24">
-                    <h6 class="text-lg fw-semibold mb-0">Admin</h6>
+                    <h6 class="text-lg fw-semibold mb-0">Assign</h6>
                 </div>
                 <div class="row mb-24 gy-3 align-items-center">
                     <div class="card-body">
                         <div class="mb-3">
-                            <label class="form-label mb-3 d-flex">Admin</label>
                             @if ($user->hasRole('Super Admin'))
-                                <select name="admin_id" class="form-select select"
+                                <label class="form-label mb-3 d-flex">Admin</label>
+                                <select name="admin_id" id="adminSelect" class="form-select select"
                                     data-placeholder="Choose Admin" required>
+                                    <option value="" selected disabled>Select Admin</option>
                                     @foreach ($admins as $admin)
                                         <option value="{{ $admin->id }}"
                                             {{ old('admin_id') == $admin->id ? 'selected' : '' }}>
@@ -85,9 +86,27 @@
                                         </option>
                                     @endforeach
                                 </select>
+
+                                <label class="form-label mb-3 mt-3 d-flex">Branch</label>
+                                <select name="vendor_id" id="branchSelect" class="form-select select"
+                                    data-placeholder="Choose Branch" required>
+                                    <option value="" selected disabled>Select Branch</option>
+                                </select>
                             @else
                                 <input type="hidden" name="admin_id" value="{{ $user->id }}">
-                                <input type="text" class="form-control" value="{{ $user->name }}" disabled>
+                                {{-- <input type="text" class="form-control" value="{{ $user->name }}" disabled> --}}
+                            @endif
+                            @if($user->hasRole('Admin'))
+                                <label class="form-label mb-3 d-flex">Branch</label>
+                                <select name="vendor_id" class="form-select select"
+                                    data-placeholder="Choose Branch" required>
+                                    @foreach ($branches as $branch)
+                                        <option value="{{ $branch->id }}"
+                                            {{ old('vendor_id') == $branch->id ? 'selected' : '' }}>
+                                            {{ $branch->name }} ({{ $branch->store_number }})
+                                        </option>
+                                    @endforeach
+                                </select>
                             @endif
                         </div>
                     </div>
@@ -118,4 +137,43 @@
     </form>
 
 </div>
+@endsection
+
+@section('script')
+<script>
+    $(document).ready(function () {
+
+        $('#adminSelect').on('change', function () {
+            let admin_id = $(this).val();
+            $("#branchSelect").html('<option value="">Loading...</option>');
+
+            if (admin_id) {
+                $.ajax({
+                    url: "{{ url('admin/get-branches') }}/" + admin_id,
+                    type: "GET",
+                    success: function (res) {
+                        if (res.status) {
+                            $("#branchSelect").empty();
+                            $("#branchSelect").append('<option value="">Select Branch</option>');
+
+                            $.each(res.branches, function (key, branch) {
+                                $("#branchSelect").append(
+                                    `<option value="${branch.id}">${branch.name} (${branch.store_number})</option>`
+                                );
+                            });
+                        } else {
+                            $("#branchSelect").html('<option value="">No Branch Found</option>');
+                        }
+                    },
+                    error: function () {
+                        $("#branchSelect").html('<option value="">Error Loading Branches</option>');
+                    }
+                });
+            } else {
+                $("#branchSelect").html('<option value="">Select Branch</option>');
+            }
+        });
+    });
+</script>
+
 @endsection
