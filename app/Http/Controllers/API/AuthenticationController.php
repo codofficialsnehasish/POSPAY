@@ -347,15 +347,18 @@ class AuthenticationController extends Controller
     public function get_user_data(Request $request)
     {
         $user = $request->user();
+        $vendorId = $request->vendorId;
     
         // ✅ User profile image
         $profileImage = $user->getFirstMediaUrl('user-image');
     
         // ✅ Get vendors linked to the user
-        $vendor = UserVendor::with('vendor')->where('user_id', $user->id)->first();
+        // $vendor = UserVendor::with('vendor')->where('user_id', $user->id)->get();
+        $vendor = User::find($vendorId);
         // return $vendor->vendor->getFirstMediaUrl('vendor-image');
     
-        $vendor->image_url = $vendor->vendor->getFirstMediaUrl('vendor-image');
+        // $vendor->image_url = $vendor->vendor->getFirstMediaUrl('vendor-image');
+        $vendor->image_url = $vendor->getFirstMediaUrl('vendor-image');
         
         // ✅ Add vendor image URL for each vendor
         // $vendors->each(function ($userVendor) {

@@ -218,7 +218,7 @@
                         <div class="col-lg-4 float-end">
                             <div class="row mb-0">
                                 <label for="example-text-input" class="col-sm-4 col-form-label float-end">Subtotal</label>
-                                <div class="col-sm-8"><strong class="float-end">{{ $subtotal }}</strong></div>
+                                <div class="col-sm-8"><strong class="float-end">{{ number_format($subtotal, 2) }}</strong></div>
                             </div>
                             <div class="row mb-0">
                                 <label for="example-text-input" class="col-sm-4 col-form-label float-end">GST</label>

@@ -41,7 +41,7 @@
                     @foreach($payments as $payment)
                     <tr>
                         <td>{{ $loop->iteration }}</td>
-                        <td>{{ $payment->transaction_number }}</td>
+                        <td>{{ $payment->gateway_transaction_id }}</td>
                         <td>{{ $payment->user->name ?? 'N/A' }}</td>
                         <td>{{ $payment->order->order_number ?? 'N/A' }}</td>
                         <td>{{ number_format($payment->amount,2) }}</td>

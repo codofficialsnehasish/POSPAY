@@ -27,6 +27,7 @@
                 <thead>
                     <tr>
                         <th>S.L</th>
+                        <th class="text-wrap">Date</th>
                         <th>Order #</th>
                         <th>Product</th>
                         <th>Variation</th>
@@ -39,6 +40,7 @@
                     @foreach($orderItems as $item)
                     <tr>
                         <td>{{ $loop->iteration }}</td>
+                        <td class="text-wrap">{{ format_datetime_excel($item->order->created_at) }}</td>
                         <td>{{ $item->order->order_number ?? 'N/A' }}</td>
                         <td>{{ $item->product->name ?? $item->product_name }}</td>
                         <td>{{ $item->option->name ?? 'N/A' }}</td>

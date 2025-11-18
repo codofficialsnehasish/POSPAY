@@ -270,7 +270,20 @@
     <script src="{{ asset('assets/dashboard-assets/plugins/select2/js/select2-custom.js') }}"></script>
     <script src="{{ asset('assets/dashboard-assets/vendors/flatpickr/flatpickr.min.js') }}"></script>
     <script>
-        let table = new DataTable("#dataTable");
+        // let table = new DataTable("#dataTable");
+        $(document).ready(function () {
+            $("#dataTable").DataTable({
+                dom: 'Bfrtip', // Show buttons
+                buttons: [
+                    {
+                        extend: 'excelHtml5',
+                        text: 'Export to Excel',
+                        className: 'btn btn-success',
+                        title: 'Data Export' // optional
+                    }
+                ]
+            });
+        });
     </script>
 
     <script>

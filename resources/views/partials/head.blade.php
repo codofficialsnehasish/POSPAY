@@ -11,7 +11,9 @@
     <!-- Apex Chart css -->
     <link rel="stylesheet" href="{{ asset('assets/dashboard-assets/css/lib/apexcharts.css') }}">
     <!-- Data Table css -->
-    <link rel="stylesheet" href="{{ asset('assets/dashboard-assets/css/lib/dataTables.min.css') }}">
+    {{-- <link rel="stylesheet" href="{{ asset('assets/dashboard-assets/css/lib/dataTables.min.css') }}"> --}}
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css">
+<link rel="stylesheet" href="https://cdn.datatables.net/buttons/2.4.1/css/buttons.dataTables.min.css">
     <!-- Text Editor css -->
     <link rel="stylesheet" href="{{ asset('assets/dashboard-assets/css/lib/editor-katex.min.css') }}">
     <link rel="stylesheet" href="{{ asset('assets/dashboard-assets/css/lib/editor.atom-one-dark.min.css') }}">

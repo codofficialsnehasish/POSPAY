@@ -139,9 +139,7 @@ class OrderAPI extends Controller
                 }
             } else {
                 // COD / Online(Card without Razorpay integration here)
-                $payment_status = ($request->payment_method == 'Cash')
-                    ? 'Awaiting Payment'
-                    : 'Payment Received';
+                $payment_status = ($request->payment_method == 'Cash') ? 'Payment Received' : 'Payment Received'; //Awaiting Payment
             }
 
             // 🔹 If POS CARD (from POS machine)
