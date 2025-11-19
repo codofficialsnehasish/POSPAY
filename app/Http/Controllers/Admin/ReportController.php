@@ -14,6 +14,7 @@ use App\Models\ProductVariationOption;
 use App\Models\Order;
 use App\Models\Brand;
 use App\Models\Purchase;
+use App\Models\PurchaseItem;
 use App\Models\OrderItems;
 use App\Models\Transaction;
 use App\Models\StockTransaction;
@@ -64,21 +65,124 @@ class ReportController  extends Controller implements HasMiddleware {
 
     public function purchase_list(Request $request)
     {
+        $vendorId = auth()->user()->id;
         $purchases = Purchase::with(['vendor','items','items.product'])
+            ->where('vendor_id',$vendorId)
             ->latest()
             ->get();
 
         return view('admin.reports.purchase_list', compact('purchases'));
     }
 
+    /*public function purchase_list(Request $request)
+    {
+        $vendorId = auth()->user()->id;
+
+        // Products allowed for this vendor
+        $vendorProducts = VendorProduct::where('vendor_id', $vendorId)
+            ->where('availability', 1)
+            ->pluck('product_id');
+
+        // Load all purchases WITH relationships
+        $purchases = Purchase::with([
+                'seller',
+                'items.product',
+                'items.variation'
+            ])
+            ->latest()
+            ->get();
+
+        // Filter purchase->items so only vendor products remain
+        foreach ($purchases as $purchase) {
+            $purchase->items = $purchase->items->filter(function ($item) use ($vendorProducts) {
+                return $vendorProducts->contains($item->product_id);
+            });
+
+            // Recalculate total amount based on filtered items
+            $purchase->total_amount = $purchase->items->sum(function ($i) {
+                return $i->quantity * $i->price;
+            });
+        }
+
+        return view('admin.reports.purchase_list', compact('purchases'));
+    }*/
+
+
+
+
     public function purchase_products(Request $request)
     {
+        $vendorId = auth()->user()->id;
         $purchases = Purchase::with(['vendor','items','items.product'])
+            ->where('vendor_id',$vendorId)
             ->latest()
             ->get();
 
         return view('admin.reports.purchase_list_products', compact('purchases'));
     }
+
+    /*public function purchase_products(Request $request)
+    {
+        $vendorId = auth()->user()->id;
+
+        $vendorProducts = VendorProduct::where('vendor_id', $vendorId)
+            ->where('availability', 1)
+            ->pluck('product_id');
+
+        $purchases = Purchase::with([
+                'vendor',
+                'items',
+                'items.product',
+                'items.variation'
+            ])
+            ->latest()
+            ->get();
+
+        $rows = $purchases->flatMap(function ($purchase) use ($vendorProducts, $vendorId) {
+
+            return $purchase->items
+                ->filter(function ($item) use ($vendorProducts) {
+                    return $vendorProducts->contains($item->product_id);
+                })
+                ->map(function ($item) use ($purchase, $vendorId) {
+
+                    $vendorProductId = VendorProduct::where('vendor_id', $vendorId)
+                        ->where('product_id', $item->product_id)
+                        ->value('id');
+
+                    $stock = VendorProductStock::where('vendor_product_id', $vendorProductId)
+                        ->where('variation_id', $item->variation->variation_id ?? null)
+                        ->where('option_id', $item->veriation_option_id)
+                        ->first();
+
+                    return [
+                        'date'          => $purchase->purchase_date,
+                        'seller'        => $purchase->seller->seller_name ?? 'N/A',
+                        'invoice'       => $purchase->invoice_number,
+                        'product'       => $item->product->name ?? '',
+                        'variation'     => $item->variation->name ?? '',
+                        'price'         => $item->price,
+                        'qty'           => $item->quantity,
+                        'discount'      => $item->discount ?? 0,
+                        'batch'         => $item->batch_number,
+                        'expiry'        => $item->expiry_date,
+                        'cgst'          => $item->cgst_amount ?? 0,
+                        'sgst'          => $item->sgst_amount ?? 0,
+                        'line_total'    => ($item->quantity * $item->price),
+                        'final_total'   => ($item->quantity * $item->price) - ($item->discount ?? 0) + ($item->cgst_amount ?? 0) + ($item->sgst_amount ?? 0),
+                        'stock'         => $stock->stock ?? 0,
+                    ];
+                });
+        });
+
+        return view('admin.reports.purchase_list_products', [
+            'rows' => $rows
+        ]);
+    }*/
+
+
+
+
 
     /*public function stock_report(Request $request)
     {
@@ -96,7 +200,7 @@ class ReportController  extends Controller implements HasMiddleware {
     public function stock_report(Request $request)
     {
         // vendor id: prefer vendor relation if available, fallback to user id
-        $vendorId = auth()->user()->vendor->id ?? auth()->user()->id;
+        $vendorId = auth()->user()->id;
 
         // 1) Build a map of product_id => vendor_product_model for this vendor
         $vendorProductsMap = VendorProduct::where('vendor_id', $vendorId)

@@ -167,7 +167,7 @@ class TransactionApi extends Controller
                 'bill_no' => $order->order_number ?? $order->id,
                 'amount' => $order->total_amount,
                 'mode' => $order->payment_method,
-                'transaction_dtls' => $order->transactions->first()->gateway_transaction_id ?? '-', 
+                'transaction_dtls' => $order->transactions?->first()->gateway_transaction_id ?? '-', 
             ];
         });
 
