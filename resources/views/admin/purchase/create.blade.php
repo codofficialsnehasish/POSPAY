@@ -222,6 +222,10 @@ $(document).ready(function() {
         }
     });
 
+    function is_numeric_barcode(value) {
+        return /^[0-9]{6,}$/.test(value); 
+    }
+
     // Trigger search on typing
     $('#searchProduct').on('keyup', function() {
         let query = $(this).val();
@@ -252,7 +256,7 @@ $(document).ready(function() {
                     $('#productResults').html(html).show();
 
                     // 🔥 if only one product, auto trigger its click
-                    if (res.data.length === 1) {
+                    if (res.data.length === 1 && is_numeric_barcode(query)) {
                         // wait for DOM to render first
                         setTimeout(() => {
                             $('#productResults .suggestion-item').first().trigger('click');
@@ -415,6 +419,7 @@ $(document).ready(function() {
 
         var productModal = bootstrap.Modal.getInstance(document.getElementById('productModal'));
         productModal.hide();
+        $('.modal-backdrop').remove();
         updateOrderSummary();
     });
 
