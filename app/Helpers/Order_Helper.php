@@ -953,8 +953,9 @@
             ]);
     }*/
 
-    function top_selling_products(int $limit = 5)
+    /*function top_selling_products(int $limit = 5, $user_id = null, $vendor_id = null, $from=null, $to=null)
     {
+        $vendorID = $vendor_id ? $vendor_id : auth()->id();
         return OrderItems::with([
                 'product.categories',
                 'variation',
@@ -997,7 +998,68 @@
                                         : asset('images/default-product.png'),
                 ];
             });
+    }*/
+
+    function top_selling_products(int $limit = 5, $user_id = null, $vendor_id = null, $from = null, $to = null)
+    {
+        $vendorID = $vendor_id ?: auth()->id();
+
+        return OrderItems::with(['product.categories', 'variation', 'option'])
+            ->select(
+                'product_id',
+                'variation_id',
+                'option_id',
+                DB::raw('SUM(quantity) as total_sold'),
+                DB::raw('COUNT(DISTINCT(order_id)) as total_orders')
+            )
+            ->whereHas('order', function ($query) use ($vendorID, $user_id, $from, $to) {
+
+                // Filter by vendor
+                $query->where('vendor_id', $vendorID);
+
+                // Filter by user_id (customer)
+                if (!empty($user_id)) {
+                    $query->where('user_id', $user_id);
+                }
+
+                // Date range filters
+                if (!empty($from)) {
+                    $query->whereDate('created_at', '>=', $from);
+                }
+                if (!empty($to)) {
+                    $query->whereDate('created_at', '<=', $to);
+                }
+            })
+            ->groupBy('product_id', 'variation_id', 'option_id')
+            ->orderByDesc('total_sold')
+            ->take($limit)
+            ->get()
+            ->map(function ($item) {
+
+                $product   = $item->product;
+                $option    = $item->option;
+                $variation = $item->variation;
+
+                // Build product name “Product - Option”
+                $fullName = $product?->name ?? 'Unknown Product';
+                if ($option?->name) {
+                    $fullName .= ' - ' . $option->name;
+                }
+
+                return [
+                    'id'            => $item->product_id,
+                    'name'          => $fullName,
+                    'category'      => $product?->categories?->first()?->name ?? '',
+                    'price'         => $option?->price ?? $product?->price ?? 0,
+                    'sold'          => $item->total_sold,
+                    'total_orders'  => $item->total_orders,
+                    'image_url'     => getProductMainImage($product?->id)
+                                        ? getProductMainImage($product->id)
+                                        : asset('images/default-product.png'),
+                ];
+            });
     }
+
     
 }
 
@@ -1112,10 +1174,11 @@ if (!function_exists('top_customers')) {
  * TOP CATEGORIES (for Doughnut chart)
  */
 if (!function_exists('top_categories')) {
-    function top_categories(int $limit = 5)
+    /*function top_categories(int $limit = 5, $user_id = null, $vendor_id = null, $from = null, $to = null)
     {
+        $vendorID = $vendor_id ?: auth()->id();
         return OrderItems::with('product.categories')
-            ->whereHas('order', fn($q) => $q->where('vendor_id', auth()->id()))
+            ->whereHas('order', fn($q) => $q->where('vendor_id', $vendorID))
             ->select('product_id', DB::raw('SUM(quantity) as total_sold'))
             ->groupBy('product_id')
             ->get()
@@ -1136,7 +1199,61 @@ if (!function_exists('top_categories')) {
             ->sortByDesc('count')
             ->take($limit)
             ->values();
+    }*/
+
+    function top_categories(int $limit = 5, $user_id = null, $vendor_id = null, $from = null, $to = null)
+    {
+        $vendorID = $vendor_id ?: auth()->id();
+
+        return OrderItems::with('product.categories')
+            ->whereHas('order', function ($q) use ($vendorID, $user_id, $from, $to) {
+
+                // Filter by vendor
+                $q->where('vendor_id', $vendorID);
+
+                // Filter by user_id
+                if (!empty($user_id)) {
+                    $q->where('user_id', $user_id);
+                }
+
+                // Date filters
+                if (!empty($from)) {
+                    $q->whereDate('created_at', '>=', $from);
+                }
+                if (!empty($to)) {
+                    $q->whereDate('created_at', '<=', $to);
+                }
+            })
+            ->select('product_id', DB::raw('SUM(quantity) as total_sold'))
+            ->groupBy('product_id')
+            ->get()
+
+            // Expand product → categories
+            ->flatMap(function ($item) {
+                return $item->product->categories->map(function ($cat) use ($item) {
+                    return [
+                        'name'  => $cat->name,
+                        'count' => $item->total_sold,
+                    ];
+                });
+            })
+
+            // Group by category name
+            ->groupBy('name')
+            ->map(fn($g) => [
+                'name'  => $g->first()['name'],
+                'count' => $g->sum('count'),
+                'color' => sprintf('#%06X', mt_rand(0, 0xFFFFFF)), // random color
+            ])
+
+            // Sorting
+            ->sortByDesc('count')
+
+            // Limit
+            ->take($limit)
+            ->values();
     }
+
 }
 
 

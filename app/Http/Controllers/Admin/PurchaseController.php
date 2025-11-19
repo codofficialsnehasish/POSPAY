@@ -40,37 +40,8 @@ class PurchaseController extends Controller
     }
 
     // AJAX search for products
-    public function searchProducts(Request $request)
+    /*public function searchProducts(Request $request)
     {
-        // return $request;
-        // $search = $request->input('search');
-
-        // $products = Product::with('variations.options')
-        //     ->where('is_visible', 1)
-        //     ->where(function($q) use ($search) {
-        //         $q->where('name', 'like', "%{$search}%")
-        //           ->orWhereHas('variations.options', function($q2) use ($search) {
-        //               $q2->where('barcode', $search);
-        //           });
-        //     })
-        //     ->get();
-
-        // $data = $products->flatMap(function ($product) {
-        //     return $product->variations->flatMap(function ($variation) use ($product) {
-        //         return $variation->options->map(function ($option) use ($product, $variation) {
-        //             return [
-        //                 'id' => $option->id,
-        //                 'product_name' => $product->name . ' - ' . $option->name,
-        //                 'price' => $option->price ?? $variation->price ?? $product->price,
-        //                 'stock' => $option->quantity,
-        //                 'barcode' => $option->barcode,
-        //                 'product_image' => getProductMainImage($product->id),
-        //             ];
-        //         });
-        //     });
-        // });
-
-        // return response()->json($data->values());
 
         $vendorId = $request->user()->id;
         $search = $request->input('search');
@@ -155,7 +126,115 @@ class PurchaseController extends Controller
             'status' => true,
             'data'   => $data->values()
         ]);
+    }*/
+    public function searchProducts(Request $request)
+    {
+        $vendorId = $request->user()->id;
+        $search = $request->input('search');
+
+        // 1) Get allowed products for this vendor
+        $availableProductIds = VendorProduct::where('vendor_id', $vendorId)
+            ->where('availability', 1)
+            ->pluck('product_id');
+
+        // 2) Query products with variations + options
+        $productsQuery = Product::with(['variations.options', 'hsncode'])
+            ->where('is_visible', 1)
+            ->whereIn('id', $availableProductIds);
+
+        // SEARCH CONDITIONS
+        if ($search) {
+            $productsQuery->where(function($query) use ($search) {
+                $query->where('name', 'like', '%' . $search . '%')
+                    ->orWhereHas('variations.options', function($q) use ($search) {
+                        $q->where('barcode', $search);
+                    });
+            });
+        }
+
+        $products = $productsQuery->get();
+
+        // 3) Flatten & add vendor wise stock
+        $data = $products->flatMap(function ($product) use ($search, $vendorId) {
+            return $product->variations->flatMap(function ($variation) use ($product, $search, $vendorId) {
+                return $variation->options
+                    ->when($search, function ($options) use ($search) {
+
+                        // Barcode match → pick exact option
+                        if (is_numeric($search)) {
+                            return $options->where('barcode', $search);
+                        }
+
+                        return $options;
+                    })
+                    ->map(function ($option) use ($product, $variation, $vendorId) {
+
+                        // ----------------------------------------------------
+                        // ✅ GET VENDOR PRODUCT ID
+                        // ----------------------------------------------------
+                        $vendorProduct = VendorProduct::where('vendor_id', $vendorId)
+                            ->where('product_id', $product->id)
+                            ->first();
+
+                        // Prevent errors if product not assigned
+                        if (!$vendorProduct) {
+                            $stock = 0;
+                        } else {
+
+                            // ----------------------------------------------------
+                            // ✅ GET STOCK FROM vendor_product_stocks
+                            // ----------------------------------------------------
+                            $stockRow = VendorProductStock::where('vendor_product_id', $vendorProduct->id)
+                                ->where('variation_id', $variation->id)
+                                ->where('option_id', $option->id)
+                                ->first();
+
+                            $stock = $stockRow->stock ?? 0;
+                        }
+
+                        // GST Calculations
+                        $price = $option->price ?? $variation->price ?? $product->price;
+                        $gstRate = $product->hsncode->gst_rate ?? 0;
+                        $isGstIncluded = $product->is_gst_included ?? 0;
+
+                        $cgstRate = $gstRate / 2;
+                        $sgstRate = $gstRate / 2;
+
+                        if ($isGstIncluded) {
+                            $basePrice = $price / (1 + ($gstRate / 100));
+                            $cgstAmount = $basePrice * ($cgstRate / 100);
+                            $sgstAmount = $basePrice * ($sgstRate / 100);
+                        } else {
+                            $cgstAmount = $price * ($cgstRate / 100);
+                            $sgstAmount = $price * ($sgstRate / 100);
+                        }
+
+                        return [
+                            'product_id'           => $product->id,
+                            'variation_id'         => $variation->id,
+                            'variation_option_id'  => $option->id,
+                            'product_name'         => $product->name . ' - ' . $option->name,
+                            'product_price'        => $price,
+                            'gst_rate'             => $gstRate,
+                            'is_gst_included'      => $isGstIncluded,
+                            'cgst_rate'            => $cgstRate,
+                            'sgst_rate'            => $sgstRate,
+                            'cgst_amount'          => round($cgstAmount, 2),
+                            'sgst_amount'          => round($sgstAmount, 2),
+                            'stock'                => $stock,  // ✅ VENDOR-WISE STOCK
+                            'barcode'              => $option->barcode,
+                            'product_image'        => getProductMainImage($product->id),
+                        ];
+                    });
+            });
+        });
+
+        return response()->json([
+            'status' => true,
+            'data' => $data->values(),
+        ]);
     }
+
 
     /*public function store(Request $request)
     {
