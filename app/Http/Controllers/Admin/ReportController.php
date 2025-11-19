@@ -22,6 +22,7 @@ use App\Models\VendorProduct;
 use App\Models\VendorProductStock;
 use App\Models\Hsncode;
 use App\Models\Unit;
+use App\Models\LoginLog;
 use Illuminate\Routing\Controllers\HasMiddleware;
 use Illuminate\Routing\Controllers\Middleware;
 
@@ -120,6 +121,7 @@ class ReportController  extends Controller implements HasMiddleware {
 
         return view('admin.reports.purchase_list_products', compact('purchases'));
     }
+    
 
     /*public function purchase_products(Request $request)
     {
@@ -254,14 +256,16 @@ class ReportController  extends Controller implements HasMiddleware {
 
     public function payment_list(Request $request)
     {
+        $vendorId = auth()->user()->id;
         $payments = Transaction::with(['order','user','vendor'])
+            ->where('vendor_id',$vendorId)
             ->latest()
             ->get();
 
         return view('admin.reports.payment_list', compact('payments'));
     }
 
-    public function expiry_list(Request $request)
+    /*public function expiry_list(Request $request)
     {
         $expiryItems = StockTransaction::with(['product','variationOption'])
             ->whereHas('product', function ($query){
@@ -273,6 +277,44 @@ class ReportController  extends Controller implements HasMiddleware {
             ->get();
 
         return view('admin.reports.expiry_list', compact('expiryItems'));
+    }*/
+
+    public function expiry_list(Request $request)
+    {
+        $vendorId = auth()->user()->id;
+
+        // Get only vendor's available products
+        $vendorProducts = VendorProduct::where('vendor_id', $vendorId)
+            ->where('availability', 1)
+            ->pluck('product_id');
+
+        // Fetch expiry items from PurchaseItem
+        $expiryItems = PurchaseItem::with(['purchase','product', 'variation'])
+            ->whereIn('product_id', $vendorProducts)
+            ->whereNotNull('expiry_date')
+            ->where('expiry_date', '<=', now()->addDays(30))
+            ->orderBy('expiry_date')
+            ->get();
+
+            // dd($expiryItems);
+
+        return view('admin.reports.expiry_list', compact('expiryItems'));
     }
+
+    public function login_logs()
+    {
+        $vendorId = auth()->id(); // If you want vendor-wise logs
+
+        $logs = LoginLog::with(['user','vendor'])
+            ->when($vendorId, function ($q) use ($vendorId) {
+                $q->where('vendor_id', $vendorId);
+            })
+            ->orderBy('login_time', 'desc')
+            ->get();
+
+        return view('admin.reports.login_logs', compact('logs'));
+    }
+
+
 
 }

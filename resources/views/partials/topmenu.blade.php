@@ -28,7 +28,7 @@
                 </li>
 
                 {{-- Entry --}}
-                @if(auth()->user()->is_purchase_enabled || auth()->user()->admin?->is_purchase_enabled)
+                @if(auth()->user()->admin?->is_purchase_enabled)
                 <li class="nav-item dropdown">
                     <a class="nav-link dropdown-toggle {{ Str::startsWith(request()->path(),'admin/purchase') ? 'active' : '' }}"
                         href="#" data-bs-toggle="dropdown">
@@ -36,7 +36,7 @@
                         <span>Entry</span>
                     </a>
                     <ul class="dropdown-menu shadow-lg border-0 rounded-3 p-2">
-                        @if(auth()->user()->is_purchase_enabled || auth()->user()->admin?->is_purchase_enabled)
+                        @if(auth()->user()->admin?->is_purchase_enabled)
                         <li><a class="dropdown-item" href="{{ route('purchase.index') }}">Purchase</a></li>
                         @endif
                     </ul>
@@ -196,6 +196,8 @@
 
                         <!-- Expiry -->
                         <li><a class="dropdown-item" href="{{ route('report.expiry-list') }}">Expiry</a></li>
+
+                        <li><a class="dropdown-item" href="{{ route('report.login-logs') }}">Login Logs</a></li>
 
                     </ul>
                 </li>

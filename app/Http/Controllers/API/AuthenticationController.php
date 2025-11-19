@@ -481,7 +481,9 @@ class AuthenticationController extends Controller
                 ],401);
             }
         }
+        $vendordata = User::find($request->vendor_id);
         $user= $request->user();
+        $user->vendor->is_purchase_enabled = $vendordata->admin?->is_purchase_enabled;
         $user->vendor_id =  $request->vendor_id;
         $user->save();
         $profileImage = $user->getFirstMediaUrl('user-image');

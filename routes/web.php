@@ -285,6 +285,7 @@ Route::middleware(['auth', 'verified'])->group(function(){
             Route::get('report/stock-report','stock_report')->name('report.stock-report');
             Route::get('report/payment-list','payment_list')->name('report.payment-list');
             Route::get('report/expiry-list','expiry_list')->name('report.expiry-list');
+            Route::get('report/login-logs','login_logs')->name('report.login-logs');
         });
 
         Route::get('purchase/search-products', [PurchaseController::class, 'searchProducts'])->name('purchases.search-products');
