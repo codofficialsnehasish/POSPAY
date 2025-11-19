@@ -49,9 +49,9 @@
                             @if (auth()->user()->hasRole('Super Admin'))
                             <th>Admin</th>
                             @endif
-                            @if(auth()->user()->hasRole('Admin'))
+                            {{-- @if(auth()->user()->hasRole('Admin'))
                             <th>Vendor</th>
-                            @endif
+                            @endif --}}
                             {{-- <th>Address</th> --}}
                             <th>Status</th>
                             <th>Created At</th>
@@ -77,9 +77,9 @@
                             @if (auth()->user()->hasRole('Super Admin'))
                             <td class="text-wrap">{{ $seller->admin?->name }}</td>
                             @endif
-                            @if(auth()->user()->hasRole('Admin'))
+                            {{-- @if(auth()->user()->hasRole('Admin'))
                             <td class="text-wrap">{{ $seller->vendor?->name }} ({{ $seller->vendor?->store_number }})</td>
-                            @endif
+                            @endif --}}
                             {{-- <td class="text-wrap">{{ $seller->address }}, {{ $seller->city }}, {{ $seller->state }}, {{ $seller->country }}</td> --}}
                             <td>{!! check_visibility($seller->status) !!}</td>
                             <td class="text-wrap">{{ $seller->created_at->format('d-m-Y H:i A') }}</td>

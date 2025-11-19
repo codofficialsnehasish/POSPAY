@@ -32,7 +32,7 @@ class SellerMasterController extends Controller implements HasMiddleware
         }else if($user->hasRole('Admin')){
             $seller_masters = SellerMaster::where('admin_id', auth()->user()->id)->get();
         }else if($user->hasRole('Vendor')){
-            $seller_masters = SellerMaster::where('vendor_id', auth()->user()->id)->get();
+            $seller_masters = SellerMaster::where('admin_id', auth()->user()->admin_id)->where('status',1)->get();
         }else{
             $seller_masters = collect();
         }
@@ -68,7 +68,7 @@ class SellerMasterController extends Controller implements HasMiddleware
     {
         $validator = Validator::make($request->all(), [
             'seller_name' => 'required|max:255',
-            'email' => 'nullable|email|max:255',
+            'email' => 'nullable|email|max:255|unique:seller_masters,email',
             'phone' => 'nullable|string|max:20',
             'address' => 'nullable|string|max:500',
             'city' => 'nullable|string|max:100',
@@ -77,7 +77,7 @@ class SellerMasterController extends Controller implements HasMiddleware
             'gst_number' => 'nullable|string|max:50',
             'status' => 'required|in:0,1',
             'admin_id' => 'required',
-            'vendor_id' => 'required',
+            'vendor_id' => 'nullable',
         ]);
 
         if ($validator->fails()) {
@@ -86,7 +86,7 @@ class SellerMasterController extends Controller implements HasMiddleware
 
         $seller = new SellerMaster();
         $seller->seller_name = $request->seller_name;
-        $seller->vendor_id = $request->vendor_id;
+        $seller->vendor_id = $request->vendor_id ?? null;
         $seller->admin_id = $request->admin_id;
         $seller->email = $request->email;
         $seller->phone = $request->phone;
@@ -133,9 +133,10 @@ class SellerMasterController extends Controller implements HasMiddleware
     // Update seller
     public function update(Request $request, string $id)
     {
+        $seller = SellerMaster::findOrFail($id);
         $validator = Validator::make($request->all(), [
             'seller_name' => 'required|max:255',
-            'email' => 'nullable|email|max:255',
+            'email' => 'nullable|email|max:255|unique:seller_masters,email,'.$seller->id,
             'phone' => 'nullable|string|max:20',
             'address' => 'nullable|string|max:500',
             'city' => 'nullable|string|max:100',
@@ -144,15 +145,14 @@ class SellerMasterController extends Controller implements HasMiddleware
             'gst_number' => 'nullable|string|max:50',
             'status' => 'required|in:0,1',
             'admin_id' => 'required',
-            'vendor_id' => 'required',
+            'vendor_id' => 'nullable',
         ]);
 
         if ($validator->fails()) {
             return redirect()->back()->withErrors($validator)->withInput();
         }
 
-        $seller = SellerMaster::findOrFail($id);
-        $seller->vendor_id = $request->vendor_id;
+        $seller->vendor_id = $request->vendor_id ?? null;
         $seller->admin_id = $request->admin_id;
         $seller->seller_name = $request->seller_name;
         $seller->email = $request->email;

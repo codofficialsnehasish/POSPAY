@@ -67,7 +67,7 @@
         </div>
 
         <div class="col-md-3">
-            <div class="card p-0 mb-3">
+            <div class="card p-0 mb-3 @if (!$user->hasRole('Super Admin')) d-none @endif">
                 <div class="card-header border-bottom bg-base py-16 px-24">
                     <h6 class="text-lg fw-semibold mb-0">Assign</h6>
                 </div>
@@ -87,16 +87,16 @@
                                     @endforeach
                                 </select>
 
-                                <label class="form-label mb-3 mt-3 d-flex">Branch</label>
+                                {{-- <label class="form-label mb-3 mt-3 d-flex">Branch</label>
                                 <select name="vendor_id" id="branchSelect" class="form-select select"
                                     data-placeholder="Choose Branch" required>
                                     <option value="" selected disabled>Select Branch</option>
-                                </select>
+                                </select> --}}
                             @else
                                 <input type="hidden" name="admin_id" value="{{ $user->id }}">
                                 {{-- <input type="text" class="form-control" value="{{ $user->name }}" disabled> --}}
                             @endif
-                            @if($user->hasRole('Admin'))
+                            {{-- @if($user->hasRole('Admin'))
                                 <label class="form-label mb-3 d-flex">Branch</label>
                                 <select name="vendor_id" class="form-select select"
                                     data-placeholder="Choose Branch" required>
@@ -107,7 +107,7 @@
                                         </option>
                                     @endforeach
                                 </select>
-                            @endif
+                            @endif --}}
                         </div>
                     </div>
                 </div>
@@ -140,7 +140,7 @@
 @endsection
 
 @section('script')
-<script>
+{{-- <script>
     $(document).ready(function () {
 
         $('#adminSelect').on('change', function () {
@@ -174,6 +174,6 @@
             }
         });
     });
-</script>
+</script> --}}
 
 @endsection

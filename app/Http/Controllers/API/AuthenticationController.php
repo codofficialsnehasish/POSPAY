@@ -451,10 +451,17 @@ class AuthenticationController extends Controller
                 'vendor_id' => $request->vendor_id,
             ]);
         }else{
-            return response()->json([
-                'status' => 'false',
-                'message' => 'Please logout from the previous branch to access a new branch.',
-            ],401);
+            $log = LoginLog::where('user_id', $request->user()->id)
+                        ->where('vendor_id',$request->vendor_id)
+                        ->whereNull('logout_time')   // still active session
+                        ->latest()
+                        ->first();
+            if(!$log){
+                return response()->json([
+                    'status' => 'false',
+                    'message' => 'Please logout from the previous branch to access a new branch.',
+                ],401);
+            }
         }
         $user= $request->user();
         $user->vendor_id =  $request->vendor_id;
