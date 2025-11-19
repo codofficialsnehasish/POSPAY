@@ -148,7 +148,7 @@ class DashboardController extends Controller
                 // 'all_category_wise' => category_sales_summary(),
                 'today_sales_by_payment_method' => today_sales_by_payment_method($user_id, $vendorId, $from, $to),
                 'top_selling_products' => top_selling_products(20, $user_id, $vendorId, $from, $to),
-                'top_categories' => top_categories($user_id, $vendorId, $from, $to)
+                'top_categories' => top_categories(5,$user_id, $vendorId, $from, $to)
             ],
         ]);
     }
