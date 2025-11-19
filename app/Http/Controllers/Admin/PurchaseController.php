@@ -10,6 +10,7 @@ use App\Models\PurchaseItem;
 use App\Models\SellerMaster;
 use App\Models\User;
 use App\Models\StockTransaction;
+use App\Models\VendorProduct;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -72,11 +73,16 @@ class PurchaseController extends Controller
 
         $vendorId = $request->user()->id;
         $search = $request->input('search');
+
+        $availableProductIds = VendorProduct::where('vendor_id', $vendorId)
+            ->where('availability', 1)
+            ->pluck('product_id');
     
         // Query products visible and belong to vendor
         $productsQuery = Product::with(['variations.options', 'hsncode']) // make sure you eager load hsncode
             ->where('is_visible', 1)
-            ->where('vendor_id', $vendorId);
+            ->where('vendor_id', $vendorId)
+            ->whereIn('id', $availableProductIds);
     
         if ($search) {
             $productsQuery->where(function($query) use ($search) {
