@@ -31,4 +31,10 @@ class ProductVariation extends Model
         return $this->hasMany(ProductVariationOption::class, 'variation_id','id');
 
     }
+
+    public function vendorStocks()
+    {
+        return $this->hasMany(VendorProductStock::class, 'variation_id');
+    }
+
 }

@@ -53,7 +53,8 @@ class TransactionApi extends Controller
     // }
 
     public function get_date_wise_total_payment(Request $request){
-        $vendorIds = $request->user()->vendors->pluck('id');
+        // $vendorIds = $request->user()->vendors->pluck('id');
+        $vendorIds = collect([$request->vendorId]);
     
 
         // Parse start and end dates
@@ -144,7 +145,8 @@ class TransactionApi extends Controller
             ], 400);
         }
 
-        $vendorIds = $request->user()->vendors->pluck('id');
+        // $vendorIds = $request->user()->vendors->pluck('id');
+        $vendorIds = collect([$request->vendorId]);
         // Fetch orders created on that date
         if ($paymentFilter && $paymentFilter !== 'All') {
             $orders = Order::whereDate('created_at', $date)
@@ -169,10 +171,15 @@ class TransactionApi extends Controller
             ];
         });
 
-        $excelLink = route('transaction.details.excel', [
-            'date' => $request->date,
-            'payment_method' => $paymentFilter
-        ]);
+        if ($data->isNotEmpty()) {
+            $excelLink = route('transaction.details.excel', [
+                'date' => $request->date,
+                'payment_method' => $paymentFilter,
+                'vendorId' => $request->vendorId
+            ]);
+        }else{
+            $excelLink = null;
+        }
 
         return response()->json([
             'success' => true,
@@ -196,7 +203,8 @@ class TransactionApi extends Controller
             abort(400, 'Invalid date format. Use dd-mm-yyyy format.');
         }
 
-        $vendorIds = $request->user()->vendors->pluck('id');
+        // $vendorIds = $request->user()->vendors->pluck('id');
+        $vendorIds = collect([$request->vendorId]);
 
         $ordersQuery = \App\Models\Order::whereDate('created_at', $date)
             ->whereIn('vendor_id', $vendorIds)
@@ -225,7 +233,8 @@ class TransactionApi extends Controller
     public function get_order_by_id(string $id, Request $request)
     {
         // Get all vendor IDs for the logged-in user
-        $vendorIds = $request->user()->vendors->pluck('id');
+        // $vendorIds = $request->user()->vendors->pluck('id');
+        $vendorIds = collect([$request->vendorId]);
 
         // Fetch order with items relation
         $order = Order::with('items') // eager-load items

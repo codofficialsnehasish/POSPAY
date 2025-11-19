@@ -103,6 +103,7 @@ class OrderAPI extends Controller
         }
 
         $vendorId = $request->vendorId;
+        $branch = User::find($vendorId);
         $cart_items = Cart::where('user_id', $request->user()->id)->get();
         $totalGst =0;
         if($cart_items){
@@ -208,31 +209,34 @@ class OrderAPI extends Controller
                         'subtotal'=>$cart_item->options->price * $cart_item->quantity,
                     ]);
 
-                    // Stock transaction logic (reduce stock)
-                    $lastStock = StockTransaction::where('product_id', $cart_item->product_id)
-                                                    ->where('veriation_option_id', $cart_item->option_id)
-                                                    ->latest('id')->first();
-                    if($lastStock){
-                        $openingBalance = $lastStock->closing_balance ?? 0;
-                        $closingBalance = $openingBalance - $cart_item->quantity; // minus for order
-    
-                        StockTransaction::create([
-                            'product_id' => $cart_item->product_id,
-                            'veriation_option_id' => $cart_item->option_id,
-                            'batch_number' => $lastStock->batch_number ?? null,
-                            'transaction_type' => 'sale',
-                            'transaction_date' => now(),
-                            'quantity_in' => 0,
-                            'quantity_out' => $cart_item->quantity,
-                            'opening_balance' => $openingBalance,
-                            'closing_balance' => $closingBalance,
-                            'expiry_date' => null,
-                        ]);
-                    }
+                    // if avaliable purchase module
+                    if($branch && $branch->admin?->is_purchase_enabled){
+                        // Stock transaction logic (reduce stock)
+                        $lastStock = StockTransaction::where('product_id', $cart_item->product_id)
+                                                        ->where('veriation_option_id', $cart_item->option_id)
+                                                        ->latest('id')->first();
+                        if($lastStock){
+                            $openingBalance = $lastStock->closing_balance ?? 0;
+                            $closingBalance = $openingBalance - $cart_item->quantity; // minus for order
+        
+                            StockTransaction::create([
+                                'product_id' => $cart_item->product_id,
+                                'veriation_option_id' => $cart_item->option_id,
+                                'batch_number' => $lastStock->batch_number ?? null,
+                                'transaction_type' => 'sale',
+                                'transaction_date' => now(),
+                                'quantity_in' => 0,
+                                'quantity_out' => $cart_item->quantity,
+                                'opening_balance' => $openingBalance,
+                                'closing_balance' => $closingBalance,
+                                'expiry_date' => null,
+                            ]);
+                        }
 
-                    $ProductVariationOption = ProductVariationOption::find($cart_item->option_id);
-                    $ProductVariationOption->quantity -= $cart_item->quantity;
-                    $ProductVariationOption->update();
+                        $ProductVariationOption = ProductVariationOption::find($cart_item->option_id);
+                        $ProductVariationOption->quantity -= $cart_item->quantity;
+                        $ProductVariationOption->update();
+                    }
                 }else{
                     $price = get_product_price($cart_item->product_id, $cart_item->option_id);
                     OrderItems::create([

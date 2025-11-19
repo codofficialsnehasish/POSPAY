@@ -11,6 +11,7 @@ use App\Models\SellerMaster;
 use App\Models\User;
 use App\Models\StockTransaction;
 use App\Models\VendorProduct;
+use App\Models\VendorProductStock;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -34,7 +35,7 @@ class PurchaseController extends Controller
 
     public function create()
     {
-        $sellers = SellerMaster::where('vendor_id', auth()->user()->id)->get();;
+        $sellers = SellerMaster::where('admin_id', auth()->user()->admin?->id)->where('status',1)->get();
         return view('admin.purchase.create', compact('sellers'));
     }
 
@@ -156,7 +157,7 @@ class PurchaseController extends Controller
         ]);
     }
 
-    public function store(Request $request)
+    /*public function store(Request $request)
     {
         $request->validate([
             'seller_id' => 'required|exists:seller_masters,id',
@@ -225,7 +226,124 @@ class PurchaseController extends Controller
             'message' => 'Purchase created successfully!',
             'purchase_id' => $purchase->id
         ], 201);
+    }*/
+
+    public function store(Request $request)
+    {
+        $request->validate([
+            'seller_id' => 'required|exists:seller_masters,id',
+            'invoice_no' => 'required|string|',
+            'products' => 'required|array|min:1',
+            'products.*.option_id' => 'required|integer|exists:product_variation_options,id',
+            'products.*.mrp' => 'required|numeric|min:0',
+            'products.*.quantity' => 'required|integer|min:1',
+            'products.*.discount' => 'nullable|numeric|min:0',
+            'products.*.batch_no' => 'nullable|string',
+            'products.*.expiry_date' => 'nullable|date',
+        ]);
+
+        $vendorId = auth()->user()->id ?? null;
+
+        $purchase = Purchase::create([
+            'seller_name' => $request->seller_id,
+            'invoice_number' => $request->invoice_no,
+            'vendor_id' => $vendorId,
+            'purchase_date' => now(),
+            'total_amount' => 0,
+            'notes' => $request->notes,
+        ]);
+
+        $totalAmount = 0;
+
+        foreach ($request->products as $prod) {
+
+            // Get option and product
+            $option = ProductVariationOption::findOrFail($prod['option_id']);
+            $variation = $option->variation;
+            $productId = $variation->product_id;
+
+            // Line total
+            $lineTotal = $prod['quantity'] * $prod['mrp'];
+            $totalAmount += $lineTotal;
+
+            // Create purchase item
+            $item = PurchaseItem::create([
+                'purchase_id' => $purchase->id,
+                'product_id' => $productId,
+                'veriation_option_id' => $prod['option_id'],
+                'batch_number' => $prod['batch_no'],
+                'expiry_date' => $prod['expiry_date'] ?? null,
+                'quantity' => $prod['quantity'],
+                'price' => $prod['mrp'],
+                'discount' => $prod['discount'] ?? 0,
+                'total' => $lineTotal,
+            ]);
+
+            // ----------------------------------------------
+            // ✅ UPDATE VENDOR STOCK IN vendor_product_stocks
+            // ----------------------------------------------
+
+            // Get vendor_product_id for this vendor + product
+            $vendorProduct = VendorProduct::where('vendor_id', $vendorId)
+                ->where('product_id', $productId)
+                ->first();
+
+            if (!$vendorProduct) {
+                return response()->json([
+                    'status' => false,
+                    'message' => "Product not assigned to vendor (Product ID: $productId)"
+                ], 422);
+            }
+
+            // Get vendor stock record for this variation option
+            $stock = VendorProductStock::firstOrNew([
+                'vendor_product_id' => $vendorProduct->id,
+                'variation_id' => $variation->id,
+                'option_id' => $option->id,
+            ]);
+
+            // If new, opening stock = 0 or existing
+            $openingBalance = $stock->stock ?? 0;
+
+            // Update stock
+            $stock->stock = $openingBalance + $prod['quantity'];
+            $stock->save();
+
+            // ----------------------------------------------
+            // ✅ STOCK TRANSACTION ENTRY (per variation option)
+            // ----------------------------------------------
+            $lastStockTx = StockTransaction::where('product_id', $productId)
+                ->where('veriation_option_id', $option->id)
+                ->latest('id')
+                ->first();
+
+            $opening = $lastStockTx->closing_balance ?? 0;
+            $closing = $opening + $prod['quantity'];
+
+            StockTransaction::create([
+                'product_id' => $productId,
+                'veriation_option_id' => $option->id,
+                'batch_number' => $item->batch_number,
+                'transaction_type' => 'purchase',
+                'transaction_date' => now(),
+                'quantity_in' => $prod['quantity'],
+                'quantity_out' => 0,
+                'opening_balance' => $opening,
+                'closing_balance' => $closing,
+            ]);
+
+            // ❌ Removed old: $option->quantity += $prod['quantity'];
+            // Now stock is maintained per vendor!
+        }
+
+        $purchase->update(['total_amount' => $totalAmount]);
+
+        return response()->json([
+            'message' => 'Purchase created successfully!',
+            'purchase_id' => $purchase->id
+        ], 201);
     }
+
 
     public function show($id)
     {

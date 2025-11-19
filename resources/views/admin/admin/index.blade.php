@@ -46,6 +46,7 @@
                                 <th>Phone</th>
                                 <th>Role</th>
                                 <th>Registred Date</th>
+                                <th>Purchase Enabled</th>
                                 <th>Status</th>
                                 @canany(['Admin Edit', 'Admin Delete'])
                                     <th>Action</th>
@@ -65,6 +66,7 @@
                                     <td>{{ $user->phone }}</td>
                                     <td>{{ $user->getRoleNames()->first() }}</td>
                                     <td>{{ format_datetime($user->created_at) }}</td>
+                                    <td>{!! check_status($user->is_purchase_enabled) !!}</td>
                                     <td>{!! check_status($user->status) !!}</td>
                                     <td>
 

@@ -62,8 +62,7 @@ class AdminController extends Controller  implements HasMiddleware
                 'password' => Hash::make($request->password),
                 'status'=>$request->status,
                 'address'=>$request->address,
-               
-
+                'is_purchase_enabled' => $request->is_purchase_enabled,
             ]);
     
        
@@ -113,6 +112,7 @@ class AdminController extends Controller  implements HasMiddleware
             $admin->phone = $request->phone;
             $admin->address = $request->address;
             $admin->status = $request->status;
+            $admin->is_purchase_enabled = $request->is_purchase_enabled;
 
             if(isset($request->password)){
                 $admin->password = bcrypt($request->password);
@@ -120,8 +120,8 @@ class AdminController extends Controller  implements HasMiddleware
 
 
             if ($request->hasFile('image')) {
-                $vendor->clearMediaCollection('admin-image');
-                $vendor->addMedia($request->file('image'))->toMediaCollection('admin-image');
+                $admin->clearMediaCollection('admin-image');
+                $admin->addMedia($request->file('image'))->toMediaCollection('admin-image');
             }
        
             if( $admin->save()){

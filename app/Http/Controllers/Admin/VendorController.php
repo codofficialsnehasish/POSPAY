@@ -127,7 +127,7 @@ class VendorController extends Controller  implements HasMiddleware
                 'store_location'=>$request->store_location,
                 'gst_no'=>$request->gst_no,
                 'admin_id'=>$request->admin_id,
-                'is_purchase_enabled' => $request->is_purchase_enabled,
+                'is_purchase_enabled' => $request->is_purchase_enabled ?? 0,
             ]);
             if ($user) {
         
@@ -207,7 +207,7 @@ class VendorController extends Controller  implements HasMiddleware
             $vendor->gst_no = $request->gst_no;
             $vendor->status = $request->status;
             $vendor->admin_id = $request->admin_id;
-            $vendor->is_purchase_enabled = $request->is_purchase_enabled;
+            $vendor->is_purchase_enabled = $request->is_purchase_enabled ?? 0;
 
             if(isset($request->password)){
                 $vendor->password = bcrypt($request->password);
