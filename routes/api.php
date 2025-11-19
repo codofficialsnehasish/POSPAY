@@ -33,6 +33,7 @@ Route::middleware('auth:sanctum')->group( function () {
     Route::post('/update-profile', [AuthenticationController::class, 'update_profile']);
     Route::get('/get-user-data', [AuthenticationController::class, 'get_user_data']);
     Route::post('/logout', [AuthenticationController::class, 'logout']);
+    Route::get('/get-login-logs', [AuthenticationController::class, 'login_log']);
    
     Route::get('sliders', [SliderAPI::class, 'index']);
     

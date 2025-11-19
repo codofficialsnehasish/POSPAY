@@ -22,8 +22,6 @@ class AuthenticationController extends Controller
 
     public function login(Request $request)
     {
-
-       
         $validator = Validator::make($request->all(), [
             'phone_number' => 'required|digits:10|regex:/^[6789]/',
             'password' => 'required',
@@ -79,6 +77,26 @@ class AuthenticationController extends Controller
                 ]);
             }
         }
+    }
+
+    public function login_log(Request $request)
+    {
+        $user = $request->user();        // logged-in user
+        $vendorId = $request->vendorId;  // vendor ID from request
+
+        $logs = LoginLog::with(['user', 'vendor'])
+            ->where('user_id', $user->id)
+            ->when($vendorId, function ($q) use ($vendorId) {
+                $q->where('vendor_id', $vendorId);
+            })
+            ->orderBy('id', 'DESC')
+            ->get();
+
+        return response()->json([
+            'status'  => true,
+            'message' => 'Login logs fetched successfully',
+            'data'    => $logs,
+        ]);
     }
 
     public function logout(Request $request)
