@@ -53,6 +53,18 @@
                                     </div>
                                 </div>
                             </div>
+                            <div class="row mb-24 gy-3 align-items-center">
+                                <label class="form-label mb-0 col-sm-2">GSTIN No.</label>
+                                <div class="col-sm-10">
+                                    <div class="icon-field">
+                                        <span class="icon">
+                                            <iconify-icon icon="f7:card"></iconify-icon>
+                                        </span>
+                                        <input type="text" class="form-control" placeholder="Enter GSTIN"
+                                            name="gst_no" id="gst_no" value="{{ old('gst_no') }}" required>
+                                    </div>
+                                </div>
+                            </div>
 
 
 

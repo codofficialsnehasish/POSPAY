@@ -105,6 +105,7 @@ class VendorController extends Controller  implements HasMiddleware
         $validator = Validator::make($request->all(), [
             'name' => 'required|regex:/^[a-zA-Z\s]+$/|max:255',
             'email' => 'required|email|unique:users,email',
+            'gst_no' => 'required|unique:users,gst_no',
             'phone' => 'required|digits:10|regex:/^[6789]/|unique:users,phone',
             'password' => 'required|min:8',
             'store_id'=>'required',
@@ -119,6 +120,7 @@ class VendorController extends Controller  implements HasMiddleware
             $user = User::create([
                 'name' => $request->name,
                 'email' => $request->email,
+                'gst_no' => $request->gst_no,
                 'phone'=>$request->phone,
                 'password' => Hash::make($request->password),
                 'status'=>$request->status,
@@ -187,6 +189,7 @@ class VendorController extends Controller  implements HasMiddleware
         $validator = Validator::make($request->all(), [
             'name' => 'required|regex:/^[a-zA-Z\s]+$/|max:255',
             'email' => 'required|email|unique:users,email,'. $vendor->id,
+            'gst_no' => 'required|unique:users,gst_no,'. $vendor->id,
             'phone' => 'required|digits:10|regex:/^[6789]/|unique:users,phone,'. $vendor->id,
             'store_id'=>'required',
             'store_location'=>'required',
@@ -200,6 +203,7 @@ class VendorController extends Controller  implements HasMiddleware
    
             $vendor->name = $request->name;
             $vendor->email = $request->email;
+            $vendor->gst_no = $request->gst_no;
             $vendor->phone = $request->phone;
             $vendor->address = $request->address;
             $vendor->store_number = $request->store_id;
