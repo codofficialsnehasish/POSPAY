@@ -177,11 +177,11 @@ table.dataTable thead>tr>th.dt-orderable-asc span.dt-column-order, table.dataTab
                     </thead>
                     <tbody>
                         @if ($products->isNotEmpty())
-                            @foreach ($products as $prouct)
+                            {{-- @foreach ($products as $prouct)
                                 <tr class="product-row" data-id="{{ $prouct->id }}">
                                     <td>
                                         <div class="form-check style-check d-flex align-items-center">
-                                            {{-- <input class="form-check-input" type="checkbox"> --}}
+                                            <!-- <input class="form-check-input" type="checkbox"> -->
                                             <label class="form-check-label">
                                                 {{ $loop->iteration }}
                                             </label>
@@ -208,37 +208,8 @@ table.dataTable thead>tr>th.dt-orderable-asc span.dt-column-order, table.dataTab
                                     </td>
                                     <td class="text-wrap">
                                         {{ $prouct->name }}
-                                        <!-- Categories -->
-                                        {{-- <p class="text-muted mb-1">
-                                            Category:
-                                            @if($prouct->categories->count())
-                                                {{ $prouct->categories->pluck('name')->join(', ') }}
-                                            @else
-                                                N/A
-                                            @endif
-                                        </p> --}}
-
-                                        <!-- Variations -->
-                                        {{-- @foreach($prouct->variations as $variation)
-                                            <strong>{{ $variation->name }}:</strong>
-                                            @foreach($variation->options as $option)
-                                                <span class="badge bg-primary">
-                                                    {{ $option->name }} - ₹{{ $option->price }}
-                                                </span>
-                                            @endforeach
-                                            <br>
-                                        @endforeach --}}
                                     </td>
                                     <td class="text-wrap">
-                                        {{-- @foreach($prouct->variations as $variation)
-                                            <strong>{{ $variation->name }}:</strong>
-                                            @foreach($variation->options as $option)
-                                                <span class="badge bg-primary">
-                                                    {{ $option->name }} - ₹{{ $option->price }}
-                                                </span><br>
-                                            @endforeach
-                                            <br>
-                                        @endforeach --}}
                                         @foreach($prouct->variations as $variation)
                                             @foreach($variation->options as $option)
                                                 {{ $option->name }}
@@ -256,7 +227,6 @@ table.dataTable thead>tr>th.dt-orderable-asc span.dt-column-order, table.dataTab
                                             <br>
                                         @endforeach
                                     </td>
-                                    {{-- <td class="text-wrap">{!! $prouct->sort_description !!}</td> --}}
                                     @if(auth()->user()->hasRole('Vendor'))
                                         @php
                                             $vendorProduct = \App\Models\VendorProduct::where('vendor_id', auth()->id())
@@ -283,7 +253,6 @@ table.dataTable thead>tr>th.dt-orderable-asc span.dt-column-order, table.dataTab
                                     @else
                                     <td>{!! check_visibility($prouct->is_visible) !!}</td>
                                     @endif
-                                    {{-- <td class="text-wrap">{{ $prouct->barcode }}</td> --}}
                                     @canany(['Product Basic Info Edit','Product Delete'])
                                     <td>
                                         @can('Product Basic Info Edit')
@@ -307,7 +276,100 @@ table.dataTable thead>tr>th.dt-orderable-asc span.dt-column-order, table.dataTab
                                     </td>
                                     @endcanany
                                 </tr>
+                            @endforeach --}}
+
+                            @foreach ($products as $product)
+                                @foreach ($product->variations as $variation)
+                                    @foreach ($variation->options as $option)
+                                        <tr class="product-row" data-id="{{ $product->id }}">
+
+                                            {{-- S.L (use loop index or custom counter) --}}
+                                            <td>{{ $loop->parent->parent->iteration }}.{{ $loop->iteration }}</td>
+
+                                            @if(!auth()->user()->hasRole('Vendor'))
+                                                <td>{{ format_datetime($product->created_at) }}</td>
+                                            @endif
+
+                                            {{-- Image --}}
+                                            <td>
+                                                @if(getProductMainImage($product->id))
+                                                    <img class="img-thumbnail rounded"
+                                                        style="object-fit: contain;height: 100px;"
+                                                        src="{{ getProductMainImage($product->id) }}" width="100">
+                                                @endif
+                                            </td>
+
+                                            {{-- Categories --}}
+                                            <td>
+                                                {{ $product->categories->pluck('name')->join(', ') ?: 'N/A' }}
+                                            </td>
+
+                                            {{-- Product Title --}}
+                                            <td>{{ $product->name }}</td>
+
+                                            {{-- Single Variation Name + Option --}}
+                                            <td>
+                                                <strong>{{ $variation->name }}:</strong>  
+                                                {{ $option->name }}
+                                            </td>
+
+                                            {{-- Price --}}
+                                            <td>₹{{ $option->price }}</td>
+
+                                            {{-- Status / Availability --}}
+                                            @if(auth()->user()->hasRole('Vendor'))
+                                                @php
+                                                    $vendorProduct = \App\Models\VendorProduct::where('vendor_id', auth()->id())
+                                                                    ->where('product_id', $product->id)
+                                                                    ->first();
+                                                @endphp
+                                                <td>
+                                                    <div class="availability-toggle" data-id="{{ $product->id }}">
+                                                        <span class="toggle-option available {{ ($vendorProduct && $vendorProduct->availability) ? 'active' : '' }}">
+                                                            Available
+                                                        </span>
+
+                                                        <span class="toggle-option unavailable {{ (!$vendorProduct || !$vendorProduct->availability) ? 'active' : '' }}">
+                                                            Unavailable
+                                                        </span>
+
+                                                        <input type="hidden" class="availability-value"
+                                                            value="{{ ($vendorProduct && $vendorProduct->availability) ? 1 : 0 }}">
+                                                    </div>
+                                                </td>
+                                            @else
+                                                <td>{!! check_visibility($product->is_visible) !!}</td>
+                                            @endif
+
+                                            {{-- Action --}}
+                                            @canany(['Product Basic Info Edit','Product Delete'])
+                                            <td>
+                                                @can('Product Basic Info Edit')
+                                                <a href="{{ route('products.basic-info-edit', $product->id) }}"
+                                                class="w-32-px h-32-px bg-success-focus text-success-main rounded-circle d-inline-flex align-items-center justify-content-center">
+                                                    <iconify-icon icon="lucide:edit"></iconify-icon>
+                                                </a>
+                                                @endcan
+
+                                                @can('Product Delete')
+                                                <form action="{{ route('products.delete', $product->id) }}"
+                                                    onsubmit="return confirm('Are you sure?')" method="POST" style="display:inline;">
+                                                    @csrf
+                                                    @method('DELETE')
+                                                    <button class="w-32-px h-32-ppx bg-danger-focus text-danger-main rounded-circle d-inline-flex align-items-center justify-content-center"
+                                                            type="submit">
+                                                        <iconify-icon icon="mingcute:delete-2-line"></iconify-icon>
+                                                    </button>
+                                                </form>
+                                                @endcan
+                                            </td>
+                                            @endcanany
+
+                                        </tr>
+                                    @endforeach
+                                @endforeach
                             @endforeach
+
                         @endif
                     </tbody>
                 </table>
