@@ -354,7 +354,7 @@ class OrderAPI extends Controller
         // $vendorIds = $request->user()->vendors->pluck('id');
         $vendorIds = collect([$request->vendorId]);
 
-        $query = Order::with('items.product.media')
+        $query = Order::with('items.product.media','transactions')
          ->where('is_darft', 0) 
          ->where('user_id',$request->user()->id)
          ->whereIn('vendor_id', $vendorIds)
