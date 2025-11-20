@@ -49,9 +49,9 @@
                                         <label class="btn btn-danger btn-sm waves-effect">{{ ucfirst($order->order_status) }}</label>
                                     @else
                                         <label class="btn btn-secondary btn-sm waves-effect">{{ ucfirst($order->order_status) }}</label>
-                                        @if($order->order_status == 'Order Placed' || $order->order_status == 'Order Confirmed' || $order->order_status == 'Preparing' || $order->order_status == 'Ready for Pickup') {{-- || ($order->order_type == 'takeaway' && $order->order_status == 'Ready for Pickup') --}}
+                                        {{-- @if($order->order_status == 'Order Placed' || $order->order_status == 'Order Confirmed' || $order->order_status == 'Preparing' || $order->order_status == 'Ready for Pickup')
                                         <a href="#" class="btn btn-primary" data-bs-placement="top"  title="Edit this Item" data-bs-toggle="modal" data-bs-target="#updateStatusModal_<?= $order->id; ?>"><i class="fa fa-edit option-icon"></i>Update order Status</a>
-                                        @endif
+                                        @endif --}}
 
                                     @endif
                                     </div>
@@ -215,7 +215,7 @@
                                 @endforeach
                             </tbody>
                         </table>
-                        <div class="col-lg-4 float-end">
+                        <div class="col-lg-4 float-end" style="margin-right: 60px;">
                             <div class="row mb-0">
                                 <label for="example-text-input" class="col-sm-4 col-form-label float-end">Subtotal</label>
                                 <div class="col-sm-8"><strong class="float-end">{{ number_format($subtotal, 2) }}</strong></div>

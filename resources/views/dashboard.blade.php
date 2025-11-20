@@ -480,7 +480,7 @@
             </div>
 
             {{-- === FILTER SECTION === --}}
-            <div class="filter-section">
+            {{-- <div class="filter-section">
                 <div class="row align-items-center">
                     <div class="col-md-6">
                         <h6 class="fw-bold mb-3">📅 Filter Dashboard Data</h6>
@@ -513,7 +513,7 @@
                         </div>
                     </div>
                 </div>
-            </div>
+            </div> --}}
 
             {{-- === Sales Statistics (Year Filter) === --}}
             <div class="col-xl-6 col-md-12">

@@ -210,12 +210,13 @@
                                 </div>
                             </th> --}}
                             <th>Date</th>
-                            <th>Order Number</th>
-                            <th>Order Type</th>
-                            <th>Total Amount</th>
                             <th>Oder Taken </th>
+                            <th>Order Number</th>
+                            {{-- <th>Order Type</th> --}}
                             <th>Order Status</th>
-                            <th>Payment</th>
+                            <th>Total Amount</th>
+                            <th>Mode</th>
+                            <th>Transaction No.</th>
                             <th>Action</th>
                         </tr>
                     </thead>
@@ -231,14 +232,15 @@
                                 </div>
                             </td> --}}
                                 <td class="text-wrap">{{ format_datetime($order->created_at) }}</td>
+                                <td class="text-wrap">{{ $order->user->name }}</td>
                                 <td class="text-wrap"><a
                                         href="{{ route('order.details', $order->id) }}">{{ $order->order_number }}</a>
                                 </td>
-                                <td class="text-wrap">{{ ucfirst($order->order_type) }}</td>
-                                <td class="text-wrap">{{ $order->total_amount }}</td>
-                                <td class="text-wrap">{{ $order->user->name }}</td>
+                                {{-- <td class="text-wrap">{{ ucfirst($order->order_type) }}</td> --}}
                                 <td class="text-wrap">{{ $order->order_status }}</td>
-                                <td class="text-wrap">{{ $order->payment_method }} ({{ $order->payment_status }}) </td>
+                                <td class="text-wrap">{{ $order->total_amount }}</td>
+                                <td class="text-wrap">{{ $order->payment_method }} {{--(  $order->payment_status )--}} </td>
+                                <td class="text-wrap">{{ $order->transactions->gateway_transaction_id ?? '-' }}</td>
                                 <td>
                                     <a href="{{ route('order.details', $order->id) }}"
                                         class="w-32-px h-32-px bg-success-focus text-success-main rounded-circle d-inline-flex align-items-center justify-content-center">

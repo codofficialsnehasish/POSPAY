@@ -319,7 +319,8 @@ class OrderAPI extends Controller
             
             $order->load([
                 'items.product.media',  
-                'seats'
+                'seats',
+                'transactions'
             ]);
             
              $user = $request->user();
@@ -612,7 +613,7 @@ class OrderAPI extends Controller
         
         if ($id != null) {
 
-            $order = Order::with('items.product.media','seats')->where('id', $id)->where('user_id',$request->user()->id)->first();
+            $order = Order::with('items.product.media','seats','transactions')->where('id', $id)->where('user_id',$request->user()->id)->first();
 
             if (!$order) {
                 return response()->json([

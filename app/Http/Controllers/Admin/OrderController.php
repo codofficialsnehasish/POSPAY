@@ -35,21 +35,19 @@ class OrderController extends Controller implements HasMiddleware
         $user = Auth::user();
 
         if ($user->hasRole('Super Admin')) {
-            $orders = Order::whereMonth('created_at', now()->month)
-                    ->whereYear('created_at', now()->year)
-                    ->latest()->get();
+            $orders = Order::with('transactions')->latest()->get();
         }elseif ($user->hasRole('Admin')) {
             $vendorIds = User::role('Vendor')
                         ->where('admin_id', $user->id)
                         ->pluck('id');
 
-            $orders = Order::whereIn('vendor_id', $vendorIds)
+            $orders = Order::with('transactions')->whereIn('vendor_id', $vendorIds)
                 ->latest()
                 ->get();
 
             
         } elseif ($user->hasRole('Vendor')) {
-            $orders = Order::where('vendor_id', $user->id) ->latest()->get();
+            $orders = Order::with('transactions')->where('vendor_id', $user->id) ->latest()->get();
         } else {
             $orders = collect(); 
         }

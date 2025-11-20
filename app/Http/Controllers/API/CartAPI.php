@@ -198,6 +198,12 @@ class CartAPI extends Controller
             // Load product image
             $cartItem->product->image_url = getProductMainImage($cartItem->product_id);
 
+            // foreach ($cartItem->product->variations as $variation) {
+            //     foreach ($variation->options as $option) {
+            //         $option->quantity = $product->vendorStock($request->vendorId, $option->id);
+            //     }
+            // }
+
             // Calculate correct price based on option_id
             if ($cartItem->option_id) {
                 $cartItem->price = get_product_price($cartItem->product_id, $cartItem->option_id);
