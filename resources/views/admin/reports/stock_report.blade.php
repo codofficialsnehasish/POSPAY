@@ -6,7 +6,7 @@
 <div class="dashboard-main-body">
 
     <div class="d-flex flex-wrap align-items-center justify-content-between gap-3 mb-24">
-        <h6 class="fw-semibold mb-0">Stock Report</h6>
+        <h6 class="fw-semibold mb-0">Current Stock Report</h6>
         <ul class="d-flex align-items-center gap-2">
             <li class="fw-medium">
                 <a href="{{ route('dashboard') }}" class="d-flex align-items-center gap-1 hover-text-primary">
@@ -20,9 +20,9 @@
     </div>
 
     <div class="card basic-data-table">
-        <div class="card-header border-bottom bg-base py-16 px-24">
+        {{-- <div class="card-header border-bottom bg-base py-16 px-24">
             <h5 class="card-title mb-0">Current Stock</h5>
-        </div>
+        </div> --}}
         <div class="card-body table-responsive">
             <table class="table bordered-table mb-0" id="dataTable" data-page-length='10'>
                 <thead>
@@ -30,9 +30,9 @@
                         <th>S.L</th>
                         <th>Product</th>
                         <th>Variation</th>
-                        <th>Selling Price</th>
+                        <th>Sale Price</th>
                         <th>Current Qty</th>
-                        <th>Total Amount</th>
+                        <th>Total Stock Amount</th>
                     </tr>
                 </thead>
                 <tbody>

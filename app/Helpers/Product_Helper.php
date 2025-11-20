@@ -43,8 +43,8 @@
                 $total += $cartItem->quantity * $price;
             }
 
-            // return $total;
-            return number_format($total, 2, '.', '');
+            return $total;
+            // return number_format($total, 2, '.', '');
         }
     }
 

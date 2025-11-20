@@ -161,9 +161,11 @@
 
                     <ul class="dropdown-menu shadow-lg border-0 rounded-3 p-2">
 
+                        @if(auth()->user()->admin?->is_purchase_enabled)
                         <!-- Current Stock -->
                         <li><a class="dropdown-item" href="{{ route('report.stock-report') }}">Current Stock</a></li>
-
+                        @endif
+                        
                         <!-- Sales Submenu -->
                         <li class="dropdown-submenu">
                             <a class="dropdown-item submenu-toggle" href="#">
@@ -175,6 +177,7 @@
                             </ul>
                         </li>
 
+                        @if(auth()->user()->admin?->is_purchase_enabled)
                         <!-- Purchase Submenu -->
                         <li class="dropdown-submenu">
                             <a class="dropdown-item submenu-toggle" href="#">
@@ -185,9 +188,10 @@
                                 <li><a class="dropdown-item" href="{{ route('report.purchase-products') }}">Product</a></li>
                             </ul>
                         </li>
+                        @endif
 
                         <!-- Stock Transaction -->
-                        @if(auth()->user()->is_purchase_enabled)
+                        @if(auth()->user()->admin?->is_purchase_enabled)
                         <li><a class="dropdown-item" href="{{ route('stock.transactions') }}">Stock Transaction</a></li>
                         @endif
 
@@ -214,7 +218,18 @@
                 <li class="nav-item dropdown">
                     <a class="nav-link dropdown-toggle d-flex align-items-center gap-2" href="#" id="userMenu" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                         <img src="{{ asset('assets/dashboard-assets/images/user.png') }}" class="rounded-circle" width="32" height="32" alt="User">
-                        <span>{{ Auth::user()->name }}</span>
+                        <span class="text-center" style="font-size: 12px;">
+                            {{ Auth::user()->name }}<br>
+                            @if(Auth::user()->hasRole('Super Admin'))
+                            <span class="badge text-bg-primary text-center">Super Admin</span>
+                            @elseif(Auth::user()->hasRole('Super Admin'))
+                            <span class="badge text-bg-primary text-center">Admin</span>
+                            @elseif(Auth::user()->hasRole('Vendor'))
+                            <span class="badge text-bg-primary text-center">Branch</span>
+                            @else
+                            <span class="badge text-bg-primary text-center">{{ Auth::user()->getRoleNames()->first(); }}</span>
+                            @endif
+                        </span>
                     </a>
                     <ul class="dropdown-menu dropdown-menu-end shadow border-0 rounded-3" aria-labelledby="userMenu">
                         <li><a class="dropdown-item" href="{{ route('profile.edit') }}">My Profile</a></li>

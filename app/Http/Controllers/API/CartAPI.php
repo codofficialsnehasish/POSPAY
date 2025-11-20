@@ -193,15 +193,16 @@ class CartAPI extends Controller
     {
         $vendorId = $request->vendorId;
         $cart_items = Cart::with(['product', 'variationOption'])->where('user_id', $request->user()->id)->where('vendor_id',$vendorId)->get();
-
-        $cart_items->each(function ($cartItem) {
+        
+        $cart_items->each(function ($cartItem) use ($request) {
             // Load product image
             $cartItem->product->image_url = getProductMainImage($cartItem->product_id);
-
-            // foreach ($cartItem->product->variations as $variation) {
-            //     foreach ($variation->options as $option) {
-            //         $option->quantity = $product->vendorStock($request->vendorId, $option->id);
-            //     }
+            
+            $cartItem->variationOption->quantity = $cartItem->product->vendorStock($request->vendorId, $cartItem->variationOption->id);
+            // foreach ($cartItem->variationOption as $option) {
+            //     dd($option->id);
+            //     $option->quantity = $cartItem->product->vendorStock($request->vendorId, $option->id);
+            //     // $option->quantity = 3000;
             // }
 
             // Calculate correct price based on option_id
@@ -211,8 +212,8 @@ class CartAPI extends Controller
                 $cartItem->price = get_product_price($cartItem->product_id);
             }
 
-            // $cartItem->subtotal = $cartItem->price * $cartItem->quantity;
-            $cartItem->subtotal = number_format($cartItem->price * $cartItem->quantity, 2, '.', '');
+            $cartItem->subtotal = $cartItem->price * $cartItem->quantity;
+            // $cartItem->subtotal = number_format($cartItem->price * $cartItem->quantity, 2, '.', '');
         });
 
         $gst = calculate_cart_gst_by_userId($request->user()->id);

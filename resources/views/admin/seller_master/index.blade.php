@@ -22,15 +22,16 @@
         </div>
 
         <div class="card basic-data-table">
+            @can('Seller Master Create')
             <div class="card-header border-bottom bg-base py-16 px-24 d-flex align-items-center flex-wrap gap-3 justify-content-between">
                 <h5 class="card-title mb-0">All Sellers</h5>
-                @can('Seller Master Create')
+                
                 <a href="{{ route('sellers.create') }}" class="btn btn-primary text-sm btn-sm px-12 py-12 radius-8 d-flex align-items-center gap-2">
                     <iconify-icon icon="ic:baseline-plus" class="icon text-xl line-height-1"></iconify-icon>
                     Add New
                 </a>
-                @endcan
             </div>
+            @endcan
             <div class="card-body table-responsive">
                 <table class="table bordered-table mb-0" id="dataTable" data-page-length='10'>
                     <thead>

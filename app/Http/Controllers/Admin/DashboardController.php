@@ -26,5 +26,13 @@ class DashboardController extends Controller implements HasMiddleware
         $data['total_payment_amount_cash'] = total_payment_amount('Cash');
         $data['total_payment_amount_card'] = total_payment_amount('Card');
         $data['total_payment_amount_upi'] = total_payment_amount('UPI');
+        $data['top_selling_products'] = top_selling_products(10);
+        $data['low_stock_products'] = low_stock_products(10);
+        $data['recent_sales'] = recent_sales(10);
+        $data['top_categories'] = top_categories(10);
+        $data['order_heatmap_data'] = order_heatmap_data();
+        $data['category_heatmap_data'] = category_heatmap_data();
+
+        return view('dashboard')->with($data);
     }
 }

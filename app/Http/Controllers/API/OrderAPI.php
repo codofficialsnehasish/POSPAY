@@ -779,11 +779,18 @@ class OrderAPI extends Controller
         $orderItems->each(function ($orderItem) {
    
             $orderItem->product->image_url = getProductMainImage($orderItem->product_id);
+            $orderItem->subtotal = (int) $orderItem->subtotal;
         });
 
         return response()->json([
             'status' => true,
-            'order_total' => calculate_orderItems_total_by_orderId($order->id),
+            'item_total' => (int) calculate_orderItems_total_by_orderId($order->id),
+            'discount' => 0,
+            'compelementary' => 0,
+            'sgst' => (int) $order->sgst_amount ?? 0.00,
+            'cgst' => (int) $order->cgst_amount ?? 0.00,
+            // 'order_total' => calculate_orderItems_total_by_orderId($order->id),
+            'grand_total' => (int) calculate_orderItems_total_by_orderId($order->id) + ($gst['total_gst'] ?? 0.00),
             'data' => $orderItems,
         ], 200);
     }

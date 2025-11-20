@@ -34,6 +34,10 @@ class OrderController extends Controller implements HasMiddleware
     {
         $user = Auth::user();
 
+        $total_amount = Order::whereMonth('created_at', now()->month)
+            ->whereYear('created_at', now()->year)
+            ->sum('total_amount');
+            
         if ($user->hasRole('Super Admin')) {
             $orders = Order::with('transactions')->latest()->get();
         }elseif ($user->hasRole('Admin')) {
@@ -48,12 +52,10 @@ class OrderController extends Controller implements HasMiddleware
             
         } elseif ($user->hasRole('Vendor')) {
             $orders = Order::with('transactions')->where('vendor_id', $user->id) ->latest()->get();
+            $total_amount = Order::where('vendor_id', $user->id)->sum('total_amount');
         } else {
             $orders = collect(); 
         }
-        $total_amount = Order::whereMonth('created_at', now()->month)
-            ->whereYear('created_at', now()->year)
-            ->sum('total_amount');
 
         $brands=  Brand::where('is_visible',1)->get();  
         $categories = Category::where('is_visible',1)->get();

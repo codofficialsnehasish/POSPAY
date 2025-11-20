@@ -48,7 +48,7 @@ class HsncodeController extends Controller implements HasMiddleware
     {
         
         $validator = Validator::make($request->all(), [
-            'hsncode' => 'required',
+            'hsncode' => 'required|unique:hsncodes,hsncode',
             'gst_rate' => 'required',
             'is_visible' => 'required|in:0,1'
         ]);

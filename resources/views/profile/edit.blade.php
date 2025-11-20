@@ -18,6 +18,7 @@
                     <div style="margin-left: 30px;">
                         <h3 class="h3 fw-bold mb-1">{{ $user->name }}</h3>
                         <p class="mb-0 opacity-75">{{ $user->email }}</p>
+                        <p class="mb-0 opacity-75">{{ $user->phone }}</p>
                         <span class="badge bg-light text-primary mt-2">Member since {{ $user->created_at->format('M Y') }}</span>
                     </div>
                 </div>

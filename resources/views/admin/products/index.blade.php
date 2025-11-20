@@ -97,7 +97,7 @@ table.dataTable thead>tr>th.dt-orderable-asc span.dt-column-order, table.dataTab
                 </div>
             </div>
 
-            <form action="{{ route('products.multiple.filter') }}" class="mb-2 p-3" method="GET" id="filterForm">
+            {{-- <form action="{{ route('products.multiple.filter') }}" class="mb-2 p-3" method="GET" id="filterForm">
 
                 <div class="row">
                     <div class="col-lg-3">
@@ -141,7 +141,7 @@ table.dataTable thead>tr>th.dt-orderable-asc span.dt-column-order, table.dataTab
                     </div>
 
                 </div>
-            </form>
+            </form> --}}
 
             <div class="card-body table-responsive">
                 <table class="table bordered-table mb-0" id="dataTable" data-page-length='10'>

@@ -20,9 +20,9 @@
     </div>
 
     <div class="card basic-data-table">
-        <div class="card-header border-bottom bg-base py-16 px-24">
+        {{-- <div class="card-header border-bottom bg-base py-16 px-24">
             <h5 class="card-title mb-0">Expiring Products</h5>
-        </div>
+        </div> --}}
         <div class="card-body table-responsive">
             <table class="table bordered-table mb-0" id="dataTable" data-page-length='10'>
                 <thead>
