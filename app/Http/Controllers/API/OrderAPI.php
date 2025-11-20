@@ -10,6 +10,8 @@ use App\Models\OrderItems;
 use App\Models\Cart;
 use App\Models\ProductVariationOption;
 use App\Models\OrderSeat;
+use App\Models\VendorProductStock;
+use App\Models\VendorProduct;
 use App\Models\Product;
 use App\Models\Coach;
 use App\Models\User;
@@ -236,6 +238,23 @@ class OrderAPI extends Controller
                         $ProductVariationOption = ProductVariationOption::find($cart_item->option_id);
                         $ProductVariationOption->quantity -= $cart_item->quantity;
                         $ProductVariationOption->update();
+
+                        $vendorProduct = VendorProduct::where('vendor_id', $vendorId)
+                            ->where('product_id', $cart_item->product_id)
+                            ->first();
+
+                        if ($vendorProduct) {
+
+                            $stock = $vendorProduct->stocks()
+                                ->where('variation_id', $cart_item->variation_id ?? null)
+                                ->where('option_id', $cart_item->option_id)
+                                ->first();
+
+                            if ($stock) {
+                                $stock->stock = max(0, $stock->stock - $cart_item->quantity);
+                                $stock->save();
+                            }
+                        }
                     }
                 }else{
                     $price = get_product_price($cart_item->product_id, $cart_item->option_id);
