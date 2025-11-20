@@ -38,7 +38,7 @@ class ProductAPI extends Controller
 
 
 
-        
+       
     /*public function get_products_by_category(string $id)
     {
         $category = Category::find($id);
@@ -193,8 +193,15 @@ class ProductAPI extends Controller
 
         // 7. Get products
         $products = $query->get();
-        $products->each(function ($product) {
+        $products->each(function ($product) use ($request) {
             $product->image_url = getProductMainImage($product->id);
+            foreach ($product->variations as $variation) {
+
+                foreach ($variation->options as $option) {
+
+                    $option->quantity = $product->vendorStock($request->vendorId, $option->id);
+                }
+            }
         });
 
         return response()->json([
@@ -258,7 +265,6 @@ class ProductAPI extends Controller
         // get all vendor IDs linked to the logged-in user
         // $vendorIds = $request->user()->vendors->pluck('id');
         $vendorIds = collect([$request->vendorId]);
-    
         if ($vendorIds->isEmpty()) {
             return response()->json([
                 'status' => false,
@@ -300,8 +306,14 @@ class ProductAPI extends Controller
             $products = $query->get();
 
             // attach image URLs
-            $products->each(function ($product) {
+            $products->each(function ($product) use ($request) {
                 $product->image_url = getProductMainImage($product->id);
+                foreach ($product->variations as $variation) {
+
+                    foreach ($variation->options as $option) {
+                        $option->quantity = $product->vendorStock($request->vendorId, $option->id);
+                    }
+                }
             });
 
             return response()->json([
@@ -340,8 +352,13 @@ class ProductAPI extends Controller
     
             if ($products->isNotEmpty()) {
                 // attach image URLs
-                $products->each(function ($product) {
+                $products->each(function ($product) use ($request) {
                     $product->image_url = getProductMainImage($product->id);
+                    foreach ($product->variations as $variation) {
+                        foreach ($variation->options as $option) {
+                            $option->quantity = $product->vendorStock($request->vendorId, $option->id);
+                        }
+                    }
                 });
     
                 // add to response only if products exist
@@ -440,8 +457,13 @@ class ProductAPI extends Controller
 
         $products = $query->get();
 
-        $products->each(function ($product) {
+        $products->each(function ($product) use ($request) {
             $product->image_url = getProductMainImage($product->id);
+            foreach ($product->variations as $variation) {
+                foreach ($variation->options as $option) {
+                    $option->quantity = $product->vendorStock($request->vendorId, $option->id);
+                }
+            }
         });
 
         return response()->json([

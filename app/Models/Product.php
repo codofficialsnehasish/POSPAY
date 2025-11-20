@@ -89,4 +89,35 @@ class Product extends Model implements HasMedia
     {
         return $this->belongsTo(Hsncode::class, 'hsncode_id', 'id');
     }
+
+    public function vendorProducts()
+    {
+        return $this->hasMany(VendorProduct::class);
+    }
+
+    public function vendorStocks()
+    {
+        return $this->hasManyThrough(
+            VendorProductStock::class,
+            VendorProduct::class,
+            'product_id',       // Foreign key on VendorProduct table
+            'vendor_product_id' // Foreign key on VendorProductStock table
+        );
+    }
+
+    public function vendorStock($vendorId, $option_id)
+    {
+        $stock = $this->vendorProducts()
+            ->where('vendor_id', $vendorId)
+            ->with(['stocks' => function ($q) use ($option_id) {
+                $q->where('option_id', $option_id);
+            }])
+            ->first()
+            ?->stocks
+            ->first();
+
+        return $stock->stock ?? 0;
+    }
+
+
 }
