@@ -6,9 +6,12 @@ use App\Http\Controllers\Controller;
 use App\Models\Purchase;
 use App\Models\PurchaseItem;
 use App\Models\Product;
+use App\Models\User;
 use App\Models\ProductVariationOption;
 use App\Models\StockTransaction;
 use App\Models\SellerMaster;
+use App\Models\VendorProduct;
+use App\Models\VendorProductStock;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 
@@ -39,7 +42,8 @@ class PurchaseController extends Controller
 
     public function get_products(Request $request)
     {
-        $vendorIds = $request->user()->vendors->pluck('id');
+        // $vendorIds = $request->user()->vendors->pluck('id');
+        $vendorIds = collect([$request->vendorId]);
 
         // Load products with variations and their options
         $products = Product::with('variations.options')
@@ -120,13 +124,19 @@ class PurchaseController extends Controller
     
     public function search_products(Request $request)
     {
-        $vendorIds = $request->user()->vendors->pluck('id');
+        // $vendorIds = $request->user()->vendors->pluck('id');
+        $vendorIds = collect([$request->vendorId]);
         $search = $request->input('search');
     
+        $availableProductIds = VendorProduct::where('vendor_id', $request->vendorId)
+            ->where('availability', 1)
+            ->pluck('product_id');
+
         // Query products visible and belong to vendor
         $productsQuery = Product::with(['variations.options', 'hsncode']) // make sure you eager load hsncode
             ->where('is_visible', 1)
-            ->whereIn('vendor_id', $vendorIds);
+            // ->whereIn('vendor_id', $vendorIds);
+            ->whereIn('id', $availableProductIds);
     
         if ($search) {
             $productsQuery->where(function($query) use ($search) {
@@ -140,6 +150,14 @@ class PurchaseController extends Controller
         }
     
         $products = $productsQuery->get();
+
+        $products->each(function ($product) use ($request) {
+            foreach ($product->variations as $variation) {
+                foreach ($variation->options as $option) {
+                    $option->quantity = $product->vendorStock($request->vendorId, $option->id);
+                }
+            }
+        });
     
         // Flatten data for API (only matched options)
         $data = $products->flatMap(function ($product) use ($search) {
@@ -201,8 +219,11 @@ class PurchaseController extends Controller
     }
 
     public function get_seller(Request $request){
-        $vendorIds = $request->user()->vendors->pluck('id');
-        $sellers = SellerMaster::whereIn('vendor_id', $vendorIds)->get();
+        // $vendorIds = $request->user()->vendors->pluck('id');
+        $vendorIds = collect([$request->vendorId]);
+        // $sellers = SellerMaster::whereIn('vendor_id', $vendorIds)->get();
+        $vendor = User::find($request->vendorId);
+        $sellers = SellerMaster::where('admin_id', $vendor->admin?->id)->get();
 
         return response()->json([
             'status' => true,
@@ -234,7 +255,8 @@ class PurchaseController extends Controller
 
         $validated = $validator->validated();
 
-        $vendorId = $request->user()->vendor->id;
+        // $vendorId = $request->user()->vendor->id;
+        $vendorId = $request->vendorId;
 
         // 2️⃣ Create purchase header
         $purchase = Purchase::create([
@@ -250,6 +272,11 @@ class PurchaseController extends Controller
 
         // 3️⃣ Loop through products
         foreach ($validated['products'] as $product) {
+
+            $option = ProductVariationOption::findOrFail($product['veriation_option_id']);
+            $variation = $option->variation;
+            $productId = $variation->product_id;
+
             $lineTotal = $product['quantity'] * $product['mrp'];
             $totalAmount += $lineTotal;
 
@@ -264,27 +291,62 @@ class PurchaseController extends Controller
                 'total' => $lineTotal,
             ]);
 
-            // 4️⃣ Stock transaction logic
-            $lastStock = StockTransaction::where('product_id', $product['product_id'])->latest('id')->first();
-            $openingBalance = $lastStock->closing_balance ?? 0;
-            $closingBalance = $openingBalance + $product['quantity'];
+            // ----------------------------------------------
+            // ✅ UPDATE VENDOR STOCK IN vendor_product_stocks
+            // ----------------------------------------------
+
+            // Get vendor_product_id for this vendor + product
+            $vendorProduct = VendorProduct::where('vendor_id', $vendorId)
+                ->where('product_id', $productId)
+                ->first();
+
+            if (!$vendorProduct) {
+                return response()->json([
+                    'status' => false,
+                    'message' => "Product not assigned to vendor (Product ID: $productId)"
+                ], 422);
+            }
+
+            // Get vendor stock record for this variation option
+            $stock = VendorProductStock::firstOrNew([
+                'vendor_product_id' => $vendorProduct->id,
+                'variation_id' => $variation->id,
+                'option_id' => $option->id,
+            ]);
+
+            // If new, opening stock = 0 or existing
+            $openingBalance = $stock->stock ?? 0;
+
+            // Update stock
+            $stock->stock = $openingBalance + $product['quantity'];
+            $stock->save();
+
+            // ----------------------------------------------
+            // ✅ STOCK TRANSACTION ENTRY (per variation option)
+            // ----------------------------------------------
+            $lastStockTx = StockTransaction::where('product_id', $productId)
+                ->where('veriation_option_id', $option->id)
+                ->latest('id')
+                ->first();
+
+            $opening = $lastStockTx->closing_balance ?? 0;
+            $closing = $opening + $product['quantity'];
 
             StockTransaction::create([
-                'product_id' => $product['product_id'],
-                'veriation_option_id' =>  $product['veriation_option_id'],
+                'product_id' => $productId,
+                'veriation_option_id' => $option->id,
                 'batch_number' => $purchaseItem->batch_number,
                 'transaction_type' => 'purchase',
                 'transaction_date' => now(),
                 'quantity_in' => $product['quantity'],
                 'quantity_out' => 0,
-                'opening_balance' => $openingBalance,
-                'closing_balance' => $closingBalance,
-                'expiry_date' => null,
+                'opening_balance' => $opening,
+                'closing_balance' => $closing,
             ]);
 
-            $ProductVariationOption = ProductVariationOption::find($product['veriation_option_id']);
-            $ProductVariationOption->quantity += $product['quantity'];
-            $ProductVariationOption->update();
+            // $ProductVariationOption = ProductVariationOption::find($product['veriation_option_id']);
+            // $ProductVariationOption->quantity += $product['quantity'];
+            // $ProductVariationOption->update();
         }
 
         // update total amount in purchase header
