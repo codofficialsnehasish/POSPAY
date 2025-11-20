@@ -24,9 +24,11 @@
     }
 
     if (!function_exists('format_datetime_excel')) {
-        function format_datetime_excel($datetime){
+        function format_datetime_excel($datetime, $is_time_need = 0){
             $carbonDatetime = Carbon::parse($datetime);
-            // return $carbonDatetime->format('d-m-y h:i A');
+            if($is_time_need){
+                return $carbonDatetime->format('d-m-y h:i A');
+            }
             return $carbonDatetime->format('d-m-y');
         }
     }

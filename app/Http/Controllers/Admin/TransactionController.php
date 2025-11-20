@@ -34,18 +34,21 @@ class TransactionController extends Controller implements HasMiddleware
             $date = null;
         }
         $ordersQuery = Order::select(
-            DB::raw("DATE_FORMAT(created_at, '%d-%m-%Y') as order_date"),
-            DB::raw('SUM(total_amount) as total_amount')
+            DB::raw("DATE_FORMAT(orders.created_at, '%d-%m-%Y') as order_date"),
+            DB::raw('SUM(orders.total_amount) as total_amount'),
+            DB::raw('COUNT(orders.id) as total_order'),
+            DB::raw('COUNT(order_items.id) as item_count')
         )
-        ->where('vendor_id', $vendorId);
+        ->leftJoin('order_items', 'orders.id', '=', 'order_items.order_id')
+        ->where('orders.vendor_id', $vendorId);
 
         // Apply date filter only if valid date exists
         if ($date) {
-            $ordersQuery->whereDate('created_at', $date);
+            $ordersQuery->whereDate('orders.created_at', $date);
         }
 
         $orders = $ordersQuery
-            ->groupBy(DB::raw("DATE_FORMAT(created_at, '%d-%m-%Y')"))
+            ->groupBy(DB::raw("DATE_FORMAT(orders.created_at, '%d-%m-%Y')"))
             ->orderBy(DB::raw("STR_TO_DATE(order_date, '%d-%m-%Y')"), 'desc')
             ->get();
 
@@ -78,7 +81,8 @@ class TransactionController extends Controller implements HasMiddleware
                 'bill_no' => $order->order_number ?? $order->id,
                 'amount' => $order->total_amount,
                 'mode' => $order->payment_method,
-                'transaction_dtls' => $order->transactions->first()->gateway_transaction_id ?? '-', 
+                'transaction_dtls' => $order->transactions->gateway_transaction_id ?? '-', 
+                'item_count' => $order->items->count()
             ];
         });
 

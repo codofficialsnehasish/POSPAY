@@ -52,12 +52,12 @@
                         <span>User Management</span>
                     </a>
                     <ul class="dropdown-menu shadow-lg border-0 rounded-3 p-2">
-                        @canany(['Permission View'])
+                        {{-- @canany(['Permission View'])
                             <li><a class="dropdown-item" href="{{ route('permission.index') }}">Permissions</a></li>
                         @endcanany
                         @canany(['Role View'])
                             <li><a class="dropdown-item" href="{{ route('role.index') }}">Roles</a></li>
-                        @endcanany
+                        @endcanany --}}
                         @canany(['Admin View'])
                             <li><a class="dropdown-item" href="{{ route('admin.index') }}">Admins</a></li>
                         @endcanany
@@ -218,6 +218,21 @@
                     </a>
                     <ul class="dropdown-menu dropdown-menu-end shadow border-0 rounded-3" aria-labelledby="userMenu">
                         <li><a class="dropdown-item" href="{{ route('profile.edit') }}">My Profile</a></li>
+                        @canany(['Permission View','Role View'])
+                        <li class="dropdown-submenu">
+                            <a class="dropdown-item submenu-toggle" href="#">
+                                Settings ▸
+                            </a>
+                            <ul class="dropdown-menu shadow border-0 rounded-3 p-2">
+                                @canany(['Permission View'])
+                                    <li><a class="dropdown-item" href="{{ route('permission.index') }}">Permissions</a></li>
+                                @endcanany
+                                @canany(['Role View'])
+                                    <li><a class="dropdown-item" href="{{ route('role.index') }}">Roles</a></li>
+                                @endcanany
+                            </ul>
+                        </li>
+                        @endcanany
                         <li><hr class="dropdown-divider"></li>
                         <li>
                             <form method="POST" action="{{ route('logout') }}" id="logout-form">

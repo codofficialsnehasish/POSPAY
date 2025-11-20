@@ -20,9 +20,9 @@
     </div>
 
     <div class="card basic-data-table">
-        <div class="card-header border-bottom bg-base py-16 px-24 d-flex align-items-center flex-wrap gap-3 justify-content-between">
+        {{-- <div class="card-header border-bottom bg-base py-16 px-24 d-flex align-items-center flex-wrap gap-3 justify-content-between">
             <h5 class="card-title mb-0">All Transaction</h5>
-        </div>
+        </div> --}}
         <div class="card-body table-responsive">
             {{-- <table class="table bordered-table mb-0" id="dataTable" data-page-length='10'> --}}
             <table class="table bordered-table mb-0">
@@ -30,6 +30,8 @@
                     <tr>
                         <th>S.L</th>
                         <th>Order Date</th>
+                        <th>Total Bill Order</th>
+                        <th>Total Item Count</th>
                         <th>Total Amount</th>
                     </tr>
                 </thead>
@@ -38,6 +40,8 @@
                     <tr class="clickable-row" data-href="{{ route('transaction.get-transaction-details', ['date' => $order->order_date]) }}">
                         <td>{{ $loop->iteration }}</td>
                         <td>{{ $order->order_date }}</td>
+                        <td>{{ $order->total_order }}</td>
+                        <td>{{ $order->item_count }}</td>
                         <td>{{ number_format($order->total_amount, 2) }}</td>
                     </tr>
                     @endforeach

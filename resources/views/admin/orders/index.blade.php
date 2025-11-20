@@ -80,7 +80,7 @@
             <form action="{{ route('order.filter') }}" class="mb-2 p-3" method="GET" id="filterForm">
 
                 <div class="row">
-                    <div class="" style="width:220px">
+                    {{-- <div class="" style="width:220px">
                         <select class="form-select single-select-field" id="vendor_id" name="vendor_id">
                             <option value="" selected disabled> Select The Vendor   </option>
                             @if (!empty($vendors))
@@ -92,8 +92,8 @@
                                 @endforeach
                             @endif
                         </select>
-                    </div>
-                         <div class="" style="width:220px">
+                    </div> --}}
+                    {{-- <div class="" style="width:220px">
                         <select class="form-select single-select-field" id="category_id" name="category_id">
                             <option value="" selected disabled> Select Category</option>
                             @if (!empty($categories))
@@ -106,9 +106,9 @@
 
                             @endif
                         </select>
-                    </div>
+                    </div> --}}
 
-                    <div class="" style="width:220px">
+                    {{-- <div class="" style="width:220px">
                         <select class="form-select single-select-field" id="brand_id" name="brand_id">
                             <option value="" selected disabled> Select Brand</option>
                             @if (!empty($brands))
@@ -121,7 +121,7 @@
 
                             @endif
                         </select>
-                    </div>
+                    </div> --}}
 
                     <div class="" style="width:220px">
                         <select class="form-select single-select-field" id="payment_method" name="payment_method">
@@ -134,9 +134,8 @@
                     </div>
 
 
-                    <div class="col-lg-2 col-md-2 col-sm-2 padding-same" id="filterPeriodContainer">
+                    {{-- <div class="col-lg-2 col-md-2 col-sm-2 padding-same" id="filterPeriodContainer">
                         <select class="form-select monthly_design" id="filter_period" name="filter_period" style="width:200px">
-                            {{-- <option value="">Choose period</option> --}}
                             <option value="all" {{ request('filter_period') == 'all' ? 'selected' : '' }}>All
                                 Orders</option>
                             <option value="today" {{ request('filter_period') == 'today' ? 'selected' : '' }}>Today
@@ -159,10 +158,7 @@
                                 Custom Date
                             </option>
                         </select>
-
-
-
-                    </div>
+                    </div> --}}
 
                     <!-- Custom Date Filter Fields (Initially Hidden) -->
                     <div class="col-lg-3 col-md-2 col-sm-2 mt-2 fixing_padding" id="customDateFieldsForm"
@@ -212,6 +208,7 @@
                             <th>Date</th>
                             <th>Oder Taken </th>
                             <th>Order Number</th>
+                            <th>Item Count</th>
                             {{-- <th>Order Type</th> --}}
                             <th>Order Status</th>
                             <th>Total Amount</th>
@@ -231,11 +228,12 @@
                                     </label>
                                 </div>
                             </td> --}}
-                                <td class="text-wrap">{{ format_datetime($order->created_at) }}</td>
+                                <td class="text-wrap">{{ format_datetime_excel($order->created_at,1) }}</td>
                                 <td class="text-wrap">{{ $order->user->name }}</td>
                                 <td class="text-wrap"><a
                                         href="{{ route('order.details', $order->id) }}">{{ $order->order_number }}</a>
                                 </td>
+                                <td class="text-wrap">{{ $order->items->count() }}</td>
                                 {{-- <td class="text-wrap">{{ ucfirst($order->order_type) }}</td> --}}
                                 <td class="text-wrap">{{ $order->order_status }}</td>
                                 <td class="text-wrap">{{ $order->total_amount }}</td>

@@ -33,6 +33,7 @@
                         <th>Amount</th>
                         <th>Mode</th>
                         <th>Transaction ID</th>
+                        <th>Item Count</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -44,6 +45,7 @@
                         <td>{{ number_format($row['amount'],2) }}</td>
                         <td>{{ $row['mode'] }}</td>
                         <td>{{ $row['transaction_dtls'] }}</td>
+                        <td>{{ $row['item_count'] }}</td>
                     </tr>
                     @empty
                     <tr>
