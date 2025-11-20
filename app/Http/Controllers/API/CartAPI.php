@@ -205,7 +205,8 @@ class CartAPI extends Controller
                 $cartItem->price = get_product_price($cartItem->product_id);
             }
 
-            $cartItem->subtotal = $cartItem->price * $cartItem->quantity;
+            // $cartItem->subtotal = $cartItem->price * $cartItem->quantity;
+            $cartItem->subtotal = number_format($cartItem->price * $cartItem->quantity, 2, '.', '');
         });
 
         $gst = calculate_cart_gst_by_userId($request->user()->id);

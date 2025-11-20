@@ -16,6 +16,30 @@
         max-height: 320px;
         margin: 0 auto;
     }
+    .filter-section {
+        background: #f8f9fa;
+        border-radius: 12px;
+        padding: 20px;
+        margin-bottom: 24px;
+        border: 1px solid #e9ecef;
+    }
+    .filter-btn-group .btn {
+        border-radius: 8px;
+        margin: 2px;
+    }
+    .date-range-inputs {
+        border-left: 2px solid #dee2e6;
+        padding-left: 15px;
+    }
+    @media (max-width: 768px) {
+        .date-range-inputs {
+            border-left: none;
+            border-top: 2px solid #dee2e6;
+            padding-left: 0;
+            padding-top: 15px;
+            margin-top: 15px;
+        }
+    }
 </style>
 @endsection
 
@@ -455,6 +479,42 @@
                 </div>
             </div>
 
+            {{-- === FILTER SECTION === --}}
+            <div class="filter-section">
+                <div class="row align-items-center">
+                    <div class="col-md-6">
+                        <h6 class="fw-bold mb-3">📅 Filter Dashboard Data</h6>
+                        <div class="filter-btn-group">
+                            <div class="btn-group flex-wrap" role="group" id="dateRangeButtons">
+                                <button type="button" class="btn btn-outline-primary active" data-range="today">Today</button>
+                                <button type="button" class="btn btn-outline-primary" data-range="yesterday">Yesterday</button>
+                                <button type="button" class="btn btn-outline-primary" data-range="15days">15 Days</button>
+                                <button type="button" class="btn btn-outline-primary" data-range="1month">1 Month</button>
+                                <button type="button" class="btn btn-outline-primary" data-range="3months">3 Months</button>
+                                <button type="button" class="btn btn-outline-primary" data-range="6months">6 Months</button>
+                                <button type="button" class="btn btn-outline-primary" data-range="1year">1 Year</button>
+                                <button type="button" class="btn btn-outline-primary" data-range="custom">Custom Range</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6 date-range-inputs" id="customDateRange" style="display: none;">
+                        <div class="row g-2">
+                            <div class="col-md-5">
+                                <label class="form-label small fw-semibold">From Date</label>
+                                <input type="date" class="form-control form-control-sm" id="startDate">
+                            </div>
+                            <div class="col-md-5">
+                                <label class="form-label small fw-semibold">To Date</label>
+                                <input type="date" class="form-control form-control-sm" id="endDate">
+                            </div>
+                            <div class="col-md-2 d-flex align-items-end">
+                                <button type="button" class="btn btn-primary btn-sm w-100" id="applyCustomRange">Apply</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
             {{-- === Sales Statistics (Year Filter) === --}}
             <div class="col-xl-6 col-md-12">
                 <div class="card shadow radius-12 h-100">
@@ -514,7 +574,7 @@
                         <div class="table-responsive" style="max-height: 280px; overflow-y: auto;">
                             <table class="table table-borderless align-middle mb-0">
                                 <tbody>
-                                    @foreach(top_selling_products(20) as $prod)
+                                    @foreach(top_selling_products(10) as $prod)
                                         <tr>
                                             <td width="20">
                                                 <img src="{{ $prod['image_url'] }}" alt="{{ $prod['name'] }}"
@@ -1278,7 +1338,7 @@
 
     <script>
         // ====== Top Categories Doughnut ======
-        const topCategoryData = @json(top_categories());
+        const topCategoryData = @json(top_categories(10));
         const catLabels = topCategoryData.map(c => c.name);
         const catValues = topCategoryData.map(c => c.count);
         const catColors = topCategoryData.map(c => c.color);

@@ -38,12 +38,18 @@ class OrderController extends Controller implements HasMiddleware
             $orders = Order::whereMonth('created_at', now()->month)
                     ->whereYear('created_at', now()->year)
                     ->latest()->get();
+        }elseif ($user->hasRole('Admin')) {
+            $vendorIds = User::role('Vendor')
+                        ->where('admin_id', $user->id)
+                        ->pluck('id');
+
+            $orders = Order::whereIn('vendor_id', $vendorIds)
+                ->latest()
+                ->get();
+
             
         } elseif ($user->hasRole('Vendor')) {
-            $orders = Order::where('vendor_id', $user->id) 
-            ->whereMonth('created_at', now()->month)
-            ->whereYear('created_at', now()->year)
-            ->latest()->get();
+            $orders = Order::where('vendor_id', $user->id) ->latest()->get();
         } else {
             $orders = collect(); 
         }

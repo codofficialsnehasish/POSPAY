@@ -43,7 +43,8 @@
                 $total += $cartItem->quantity * $price;
             }
 
-            return $total;
+            // return $total;
+            return number_format($total, 2, '.', '');
         }
     }
 
@@ -251,6 +252,7 @@ if (!function_exists('get_product_price')) {
             }
         }
 
-        return $product->product_price;
+        // return $product->product_price;
+        return number_format($product->product_price, 2, '.', '');
     }
 }

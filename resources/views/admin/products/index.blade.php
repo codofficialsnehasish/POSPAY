@@ -383,7 +383,7 @@ table.dataTable thead>tr>th.dt-orderable-asc span.dt-column-order, table.dataTab
                                         <td>{{ $product->name }}</td>
 
                                         <td>
-                                            <strong>{{ $variation->name }}:</strong> {{ $option->name }}
+                                            {{--<strong>{{ $variation->name }}:</strong>--}} {{ $option->name }}
                                         </td>
 
                                         <td>₹{{ $option->price }}</td>
