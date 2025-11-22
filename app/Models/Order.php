@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Builder;
 
 class Order extends Model
 {
@@ -34,6 +35,13 @@ class Order extends Model
         'cgst_amount',
         'sgst_amount',
     ];
+
+    protected static function booted()
+    {
+        static::addGlobalScope('withoutDraft', function (Builder $builder) {
+            $builder->where('is_darft', '!=', 1);
+        });
+    }
 
     public function items()
     {

@@ -8,7 +8,7 @@ use App\Models\Category;
 use Illuminate\Http\Request;
 
 use Illuminate\Support\Facades\Validator;
-
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Routing\Controllers\HasMiddleware;
 use Illuminate\Routing\Controllers\Middleware;
 
@@ -26,14 +26,29 @@ class CategoryController extends Controller implements HasMiddleware
 
     public function index()
     {
+        $user = Auth::guard('web')->user();
+        if ($user->hasRole('Super Admin')) {
+            $categorys = Category::all();
+        }else if($user->hasRole('Admin')){
+            $categorys = Category::where('admin_id',auth()->user()->id)->get();
+        }else{
+            $categorys = collect();
+        }
         // $categorys = Category::all();
-        $categorys = Category::where('vendor_id',auth()->user()->id)->get();
+        // $categorys = Category::where('vendor_id',auth()->user()->id)->get();
         return view('admin.category.index',compact('categorys'));
     }
 
     public function create()
     {
-        $categorys = Category::where('parent_id',null)->where('vendor_id',auth()->user()->id)->get();
+        // $categorys = Category::where('parent_id',null)->where('vendor_id',auth()->user()->id)->get();
+
+        if ($user->hasRole('Super Admin')) {
+            $categorys = Category::all();
+        }else if($user->hasRole('Admin')){
+            $categorys = Category::where('parent_id',null)->where('admin_id',auth()->user()->id)->get();
+        }
+
         return view('admin.category.create',compact('categorys'));
     }
 
@@ -57,6 +72,7 @@ class CategoryController extends Controller implements HasMiddleware
         $category->slug = createSlug($request->name,Category::class);
         $category->parent_id = $request->parent_id;
         $category->vendor_id = auth()->user()->id;
+        $category->admin_id = auth()->user()->id;
         $category->description = $request->description;
 
         if ($request->hasFile('image')) {
@@ -106,6 +122,7 @@ class CategoryController extends Controller implements HasMiddleware
         }
         $category->parent_id = $request->parent_id;
         $category->vendor_id = auth()->user()->id;
+        $category->admin_id = auth()->user()->id;
         $category->description = $request->description;
 
         if ($request->hasFile('image')) {

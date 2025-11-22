@@ -43,8 +43,11 @@
                             </th>
                             <th>Title</th>
                             <th>Parent Category</th>
-                            <th>Description</th>
+                            {{-- <th>Description</th> --}}
                             <th>Image</th>
+                            @if (auth()->user()->hasRole('Super Admin'))
+                            <th>Admin</th>
+                            @endif
                             <th>Status</th>
                             <th>Created At</th>
                             <th>Action</th>
@@ -63,8 +66,11 @@
                             </td>
                             <td class="text-wrap">{{ $category->name }}</td>
                             <td class="text-wrap">{{ $category->parent?->name ?? 'N/A' }}</td>
-                            <td class="text-wrap">{{ $category->description }}</td>
+                            {{-- <td class="text-wrap">{{ \Illuminate\Support\Str::words($category->description, 10, '...') }}</td> --}}
                             <td><img class="img-thumbnail rounded me-2" src="{{ $category->getFirstMediaUrl('category') }}" width="100" alt=""></td>
+                            @if (auth()->user()->hasRole('Super Admin'))
+                            <td class="text-wrap">{{ $category->admin?->name }}</td>
+                            @endif
                             <td>{!! check_visibility($category->is_visible) !!}</td>
                             <td class="text-wrap">{{ format_datetime($category->created_at) }}</td>
                             <td>

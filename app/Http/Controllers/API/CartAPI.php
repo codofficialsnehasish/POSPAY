@@ -192,7 +192,7 @@ class CartAPI extends Controller
     public function cart_items(Request $request)
     {
         $vendorId = $request->vendorId;
-        $cart_items = Cart::with(['product', 'variationOption'])->where('user_id', $request->user()->id)->where('vendor_id',$vendorId)->get();
+        $cart_items = Cart::with(['product', 'product.hsncode', 'variationOption'])->where('user_id', $request->user()->id)->where('vendor_id',$vendorId)->get();
         
         $cart_items->each(function ($cartItem) use ($request) {
             // Load product image

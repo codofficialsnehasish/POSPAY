@@ -11,7 +11,7 @@ class Category extends Model implements HasMedia
 {
     use InteractsWithMedia;
     
-    protected $fillable = ['name', 'slug', 'parent_id', 'vendor_id', 'description', 'is_visible'];
+    protected $fillable = ['name', 'slug', 'parent_id', 'vendor_id', 'admin_id', 'description', 'is_visible'];
 
     public function parent()
     {
@@ -31,5 +31,10 @@ class Category extends Model implements HasMedia
     public function products()
     {
         return $this->belongsToMany(Product::class, 'product_categories', 'category_id', 'product_id');
+    }
+
+    public function admin()
+    {
+        return $this->belongsTo(User::class, 'admin_id', 'id');
     }
 }

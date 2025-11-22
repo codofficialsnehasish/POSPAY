@@ -60,6 +60,14 @@
         .select2-container--default .select2-selection--single .select2-selection__arrow {
             top: 8px !important;
         }
+
+        .dropdown-submenu .dropdown-menu {
+            display: none;
+            position: absolute;
+            left: 0;
+            top: 0;
+          left: -140%;
+        }
     </style>
 
     <style>

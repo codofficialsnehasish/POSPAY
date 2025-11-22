@@ -7,7 +7,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Hsncode;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
-
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Routing\Controllers\HasMiddleware;
 use Illuminate\Routing\Controllers\Middleware;
 
@@ -28,7 +28,15 @@ class HsncodeController extends Controller implements HasMiddleware
      */
     public function index()
     {
-        $hsncodes=  Hsncode::latest()->where('vendor_id',auth()->user()->id)->get();
+        $user = Auth::guard('web')->user();
+        if ($user->hasRole('Super Admin')) {
+            $hsncodes = Hsncode::all();
+        }else if($user->hasRole('Admin')){
+            $hsncodes = Hsncode::latest()->where('admin_id',auth()->user()->id)->get();
+        }else{
+            $hsncodes = collect();
+        }
+        // $hsncodes=  Hsncode::latest()->where('vendor_id',auth()->user()->id)->get();
         return view('admin.hsncode.index',compact('hsncodes'));
     }
 
@@ -59,6 +67,7 @@ class HsncodeController extends Controller implements HasMiddleware
             'hsncode'=>$request->hsncode,
             'gst_rate'=>$request->gst_rate,
             'vendor_id' => auth()->user()->id,
+            'admin_id' => auth()->user()->id,
             'is_visible'=>$request->is_visible,
         ]);
 
@@ -98,6 +107,7 @@ class HsncodeController extends Controller implements HasMiddleware
        $hsncode->hsncode = $request->hsncode ;
        $hsncode->gst_rate = $request->gst_rate ;
        $hsncode->vendor_id = auth()->user()->id;
+       $hsncode->admin_id = auth()->user()->id;
        $hsncode->is_visible = $request->is_visible ;
 
         if ($hsncode->save()) {

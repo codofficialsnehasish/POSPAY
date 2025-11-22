@@ -43,6 +43,9 @@
                             </th>
                             <th>Hsncode</th>
                             <th>GST Rate</th>
+                            @if (auth()->user()->hasRole('Super Admin'))
+                            <th>Admin</th>
+                            @endif
                             <th>Status</th>
                             <th>Created At</th>
                             @canany(['Hsncode Edit', 'Hsncode Delete'])
@@ -61,7 +64,9 @@
                                 </td>
                                 <td class="text-wrap">{{ $hsncode->hsncode }}</td>
                                 <td class="text-wrap">{{ $hsncode->gst_rate }}</td>
-
+                                @if (auth()->user()->hasRole('Super Admin'))
+                                <td class="text-wrap">{{ $hsncode->admin?->name }}</td>
+                                @endif
                                 <td>{!! check_visibility($hsncode->is_visible) !!}</td>
                                 <td class="text-wrap">{{ format_datetime($hsncode->created_at) }}</td>
                                 @canany(['Hsncode Edit', 'Hsncode Delete'])

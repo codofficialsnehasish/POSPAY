@@ -43,7 +43,7 @@
         <div class="card basic-data-table">
 
             <div class="row gy-4 p-3">
-                <div class="col-xxl-3 col-xl-4 col-sm-6">
+                {{-- <div class="col-xxl-3 col-xl-4 col-sm-6">
                     <div
                         class="px-20 py-16 shadow-none radius-8 h-100 gradient-deep-1 left-line line-bg-primary position-relative overflow-hidden">
                         <div class="d-flex flex-wrap align-items-center justify-content-between gap-1 mb-8">
@@ -58,7 +58,7 @@
                         </div>
 
                     </div>
-                </div>
+                </div> --}}
                 {{-- <div class="col-xxl-3 col-xl-4 col-sm-6">
                     <div
                         class="px-20 py-16 shadow-none radius-8 h-100 gradient-deep-2 left-line line-bg-lilac position-relative overflow-hidden">
@@ -77,9 +77,9 @@
                 </div> --}}
 
             </div>
-            <form action="{{ route('order.filter') }}" class="mb-2 p-3" method="GET" id="filterForm">
+            {{-- <form action="{{ route('order.filter') }}" class="mb-2 p-3" method="GET" id="filterForm">
 
-                <div class="row">
+                <div class="row"> --}}
                     {{-- <div class="" style="width:220px">
                         <select class="form-select single-select-field" id="vendor_id" name="vendor_id">
                             <option value="" selected disabled> Select The Vendor   </option>
@@ -123,7 +123,7 @@
                         </select>
                     </div> --}}
 
-                    <div class="" style="width:220px">
+                    {{-- <div class="" style="width:220px">
                         <select class="form-select single-select-field" id="payment_method" name="payment_method">
                             <option value="" selected disabled> Payment Method</option>
                             <option value="Card" {{ request('payment_method') == 'Card' ? 'selected' : '' }}>Card</option>
@@ -131,7 +131,7 @@
                             <option value="Cash" {{ request('payment_method') == 'Cash' ? 'selected' : '' }}>Cash</option>
 
                         </select>
-                    </div>
+                    </div> --}}
 
 
                     {{-- <div class="col-lg-2 col-md-2 col-sm-2 padding-same" id="filterPeriodContainer">
@@ -161,7 +161,7 @@
                     </div> --}}
 
                     <!-- Custom Date Filter Fields (Initially Hidden) -->
-                    <div class="col-lg-3 col-md-2 col-sm-2 mt-2 fixing_padding" id="customDateFieldsForm"
+                    {{-- <div class="col-lg-3 col-md-2 col-sm-2 mt-2 fixing_padding" id="customDateFieldsForm"
                         style="display: none;">
                         <input type="date" class="form-control datetimepicker" id="from_date" placeholder="dd-mm-yyyy"
                             name="custom_from_date" value="{{ request('custom_from_date') }}"
@@ -181,10 +181,10 @@
                         <button type="button" class="btn btn-primary btn-phoenix-secondary me-2 mb-2 mb-sm-0"
                             id="resetButton" style="width:100px;">Reset</button>
 
-                    </div>
+                    </div> --}}
 
-                </div>
-            </form>
+                {{-- </div>
+            </form> --}}
             <div
                 class="card-header border-bottom bg-base py-16 px-24 d-flex align-items-center flex-wrap gap-3 justify-content-between">
                 <h5 class="card-title mb-0">All Orders</h5>

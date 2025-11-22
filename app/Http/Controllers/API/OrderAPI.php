@@ -520,7 +520,7 @@ class OrderAPI extends Controller
     public function draft_order_history(Request $request)
     {
         $vendorId = $request->vendorId;
-        $query = Order::with('items.product.media')
+        $query = Order::with('items.product.media')->withoutGlobalScope('withoutDraft')
         ->where('vendor_id',$vendorId,)
          ->where('user_id',$request->user()->id)
         ->where('is_darft', '1') 
@@ -562,7 +562,7 @@ class OrderAPI extends Controller
     
     public function searchOrder(Request $request)
     {
-        $query = Order::with('items.product.media')->orderBy('id', 'desc');
+        $query = Order::with('items.product.media')->withoutGlobalScope('withoutDraft')->orderBy('id', 'desc');
 
         if ($request->filled('order_number')) {
             $query->where('order_number', 'like', '%' . $request->order_number . '%');
@@ -613,7 +613,7 @@ class OrderAPI extends Controller
         
         if ($id != null) {
 
-            $order = Order::with('items.product.media','seats','transactions')->where('id', $id)->where('user_id',$request->user()->id)->first();
+            $order = Order::with('items.product.media','seats','transactions')->withoutGlobalScope('withoutDraft')->where('id', $id)->where('user_id',$request->user()->id)->first();
 
             if (!$order) {
                 return response()->json([
@@ -765,7 +765,11 @@ class OrderAPI extends Controller
     
     public function order_items(Request $request){
         
-        $order = Order::find($request->order_id);
+        // $order = Order::find($request->order_id)->withoutGlobalScope('withoutDraft');
+        $order = Order::withoutGlobalScope('withoutDraft')
+                ->where('id', $request->order_id)
+                ->first();
+
         // echo "<pre>";
         // print_r($order);
         // die;
@@ -850,6 +854,7 @@ class OrderAPI extends Controller
         }
 
         $order = Order::where('id',$request->order_id)
+        ->withoutGlobalScope('withoutDraft')
         ->where('user_id', $request->user()->id)
         ->first();
 
@@ -933,6 +938,7 @@ class OrderAPI extends Controller
 
 
         $order = Order::where('id',$request->order_id)
+        ->withoutGlobalScope('withoutDraft')
         ->where('user_id', $request->user()->id)
         ->first();
         
@@ -998,7 +1004,7 @@ class OrderAPI extends Controller
         
         if ($id != null) {
 
-            $order = Order::with('items.product.media','seats')
+            $order = Order::with('items.product.media','seats')->withoutGlobalScope('withoutDraft')
             ->where('id', $id)
             ->where('user_id',$request->user()->id)
             ->where('is_darft', '1') 
