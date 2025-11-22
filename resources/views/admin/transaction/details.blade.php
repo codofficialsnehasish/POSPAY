@@ -60,9 +60,9 @@
 @endsection
 
 @section('script')
-<script>
+{{-- <script>
     let table = new DataTable("#dataTable");
-</script>
+</script> --}}
 <script>
     // Make row clickable
     document.querySelectorAll(".clickable-row").forEach(function(row) {

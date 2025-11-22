@@ -325,9 +325,9 @@
 @endsection
 
 @section('script')
-<script>
+{{-- <script>
     let table = new DataTable("#dataTable");
-</script>
+</script> --}}
 <script>
 	const popupCenter = ({url, title, w, h}) => {
         // Fixes dual-screen position                             Most browsers      Firefox

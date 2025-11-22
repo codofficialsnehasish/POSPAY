@@ -269,7 +269,7 @@
     <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
     <script src="{{ asset('assets/dashboard-assets/plugins/select2/js/select2-custom.js') }}"></script>
     <script src="{{ asset('assets/dashboard-assets/vendors/flatpickr/flatpickr.min.js') }}"></script>
-    <script>
+    {{-- <script>
         // let table = new DataTable("#dataTable");
         $(document).ready(function () {
             $("#dataTable").DataTable({
@@ -277,14 +277,14 @@
                 buttons: [
                     {
                         extend: 'excelHtml5',
-                        text: 'Export to Excel',
+                        text: 'Excel',
                         className: 'btn btn-success',
                         title: 'Data Export' // optional
                     }
                 ]
             });
         });
-    </script>
+    </script> --}}
 
     <script>
         document.addEventListener("DOMContentLoaded", function() {

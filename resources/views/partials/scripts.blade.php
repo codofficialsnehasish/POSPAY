@@ -118,5 +118,22 @@
     });
     </script>
 
+    <script>
+        // let table = new DataTable("#dataTable");
+        $(document).ready(function () {
+            $("#dataTable").DataTable({
+                dom: 'Bfrtip', // Show buttons
+                buttons: [
+                    {
+                        extend: 'excelHtml5',
+                        text: 'Excel',
+                        className: 'btn btn-success',
+                        title: 'Data Export' // optional
+                    }
+                ]
+            });
+        });
+    </script>
+
 
     @yield('script')

@@ -93,7 +93,7 @@
 @endsection
 
 @section('script')
-    <script>
+    {{-- <script>
         let table = new DataTable("#dataTable");
-    </script>
+    </script> --}}
 @endsection

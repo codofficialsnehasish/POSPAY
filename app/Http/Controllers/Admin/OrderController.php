@@ -40,6 +40,8 @@ class OrderController extends Controller implements HasMiddleware
             
         if ($user->hasRole('Super Admin')) {
             $orders = Order::with('transactions')->latest()->get();
+            $total_amount = Order::all()->sum('total_amount');
+            $total_order_count = Order::all()->count();
         }elseif ($user->hasRole('Admin')) {
             $vendorIds = User::role('Vendor')
                         ->where('admin_id', $user->id)
@@ -49,19 +51,25 @@ class OrderController extends Controller implements HasMiddleware
                 ->latest()
                 ->get();
 
+            $total_amount = Order::whereIn('vendor_id', $vendorIds)->sum('total_amount');
+            $total_order_count = Order::whereIn('vendor_id', $vendorIds)->count();
+
             
         } elseif ($user->hasRole('Vendor')) {
             $orders = Order::with('transactions')->where('vendor_id', $user->id) ->latest()->get();
             $total_amount = Order::where('vendor_id', $user->id)->sum('total_amount');
+            $total_order_count = Order::where('vendor_id', $user->id)->count();
         } else {
             $orders = collect(); 
+            $total_amount = 0.00;
+            $total_order_count = 0;
         }
 
         $brands=  Brand::where('is_visible',1)->get();  
         $categories = Category::where('is_visible',1)->get();
 
         $vendors = User::role('Vendor')->get();
-        return view('admin.orders.index',compact('orders','brands','categories','vendors','total_amount'));
+        return view('admin.orders.index',compact('orders','brands','categories','vendors','total_amount','total_order_count'));
     }
 
     public function order_filter(Request $request)
