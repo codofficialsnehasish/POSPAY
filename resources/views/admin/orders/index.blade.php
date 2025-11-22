@@ -43,7 +43,7 @@
         <div class="card basic-data-table">
 
             <div class="row gy-4 p-3">
-                {{-- <div class="col-xxl-3 col-xl-4 col-sm-6">
+                <div class="col-xxl-3 col-xl-4 col-sm-6">
                     <div
                         class="px-20 py-16 shadow-none radius-8 h-100 gradient-deep-1 left-line line-bg-primary position-relative overflow-hidden">
                         <div class="d-flex flex-wrap align-items-center justify-content-between gap-1 mb-8">
@@ -58,14 +58,14 @@
                         </div>
 
                     </div>
-                </div> --}}
-                {{-- <div class="col-xxl-3 col-xl-4 col-sm-6">
+                </div>
+                <div class="col-xxl-3 col-xl-4 col-sm-6">
                     <div
                         class="px-20 py-16 shadow-none radius-8 h-100 gradient-deep-2 left-line line-bg-lilac position-relative overflow-hidden">
                         <div class="d-flex flex-wrap align-items-center justify-content-between gap-1 mb-8">
                             <div>
-                                <span class="mb-2 fw-medium text-secondary-light text-md">Total Payment Recevied</span>
-                                <h6 class="fw-semibold mb-1">₹35,000</h6>
+                                <span class="mb-2 fw-medium text-secondary-light text-md">Total Order Count</span>
+                                <h6 class="fw-semibold mb-1">{{ $total_order_count }}</h6>
                             </div>
                             <span
                                 class="w-44-px h-44-px radius-8 d-inline-flex justify-content-center align-items-center text-2xl mb-12 bg-lilac-200 text-lilac-600">
@@ -74,7 +74,7 @@
                         </div>
 
                     </div>
-                </div> --}}
+                </div>
 
             </div>
             {{-- <form action="{{ route('order.filter') }}" class="mb-2 p-3" method="GET" id="filterForm">
@@ -185,14 +185,14 @@
 
                 {{-- </div>
             </form> --}}
-            <div
+            {{-- <div
                 class="card-header border-bottom bg-base py-16 px-24 d-flex align-items-center flex-wrap gap-3 justify-content-between">
-                <h5 class="card-title mb-0">All Orders</h5>
+                <h5 class="card-title mb-0">All Orders</h5> --}}
                 {{-- <a href="{{ route('coupon.create') }}" class="btn btn-primary text-sm btn-sm px-12 py-12 radius-8 d-flex align-items-center gap-2">
                     <iconify-icon icon="ic:baseline-plus" class="icon text-xl line-height-1"></iconify-icon>
                     Add New
                 </a> --}}
-            </div>
+            {{-- </div> --}}
             <div class="card-body table-responsive">
                 <table class="table bordered-table mb-0" id="dataTable" data-page-length='10'>
                     <thead>
