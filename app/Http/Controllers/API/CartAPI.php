@@ -247,6 +247,7 @@ class CartAPI extends Controller
 
     public function cart_items(Request $request)
     {
+        
         $userId   = $request->user()->id;
         $vendorId = $request->vendorId;
 
@@ -289,10 +290,11 @@ class CartAPI extends Controller
 
         // GST same or not
         $allSameGst = count(array_unique($gstRates)) === 1;
-
+        $req_discount = $request->discount ?? 0.00;
+        $req_complementary = $request->complementary ?? 0.00;
         if($allSameGst){
-            $total_discount = ($request->discount + $request->complementary) ?? 0.00;
-            $discount = $request->discount;
+            $total_discount = ($req_discount + $req_complementary) ?? 0.00;
+            $discount = $req_discount;
         }else{
             $discount = $total_discount;
         }
@@ -310,7 +312,7 @@ class CartAPI extends Controller
             'status'        => true,
             'item_total'    => round($item_total, 2),
             'discount'      => round($discount, 2) ?? 0.00,
-            'compelementary'=> $request->complementary ?? 0.00,
+            'compelementary'=> $req_complementary ?? 0.00,
             'discount_subtotal' => round($item_total - $total_discount, 2),
             'sgst'          => $gst['sgst'],
             'cgst'          => $gst['cgst'],
