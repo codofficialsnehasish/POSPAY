@@ -569,8 +569,8 @@
                 'Sunday' => 0,
             ];
 
-            $query = Order::query()
-                ->whereBetween('created_at', [$startDate, $endDate]);
+            $query = Order::query()->whereDate('created_at', '>=', $startDate)->whereDate('created_at', '<=', $endDate);
+
 
             if ($user_id) { $query->where('user_id', $user_id); }
             if ($vendor_id) { $query->where('vendor_id', $vendor_id); }
