@@ -18,6 +18,7 @@ class OrderItems extends Model
         'mrp',
         'discount_rate',
         'discount_amount',
+        'app_discount',
         'subtotal',
     ];
     public function product()

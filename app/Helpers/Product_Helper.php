@@ -48,6 +48,22 @@
         }
     }
 
+    if(!function_exists('calculate_cart_discount_by_userId')){
+        function calculate_cart_discount_by_userId(int $userId, int $vendorId)
+        {
+            $total = 0;
+
+            $cartItems = Cart::where('user_id', $userId)->where('vendor_id', $vendorId)->get();
+
+            foreach ($cartItems as $cartItem) {
+                $total += $cartItem->discount;
+            }
+
+            return $total;
+            // return number_format($total, 2, '.', '');
+        }
+    }
+
     if(!function_exists('calculate_cart_sub_total_by_userId')){
         function calculate_cart_sub_total_by_userId(int $userId)
         {

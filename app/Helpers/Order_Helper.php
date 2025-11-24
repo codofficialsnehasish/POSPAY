@@ -549,6 +549,48 @@
         }
     }
 
+    if (!function_exists('weekly_sales_stats')) {
+        function weekly_sales_stats($user_id = null, $vendor_id = null)
+        {
+            $user = Auth::user();
+
+            // Last 7 days including today
+            $startDate = \Carbon\Carbon::today()->subDays(6);
+            $endDate   = \Carbon\Carbon::today();
+
+            // Prepare days array (Mon → Sun)
+            $days = [
+                'Monday' => 0,
+                'Tuesday' => 0,
+                'Wednesday' => 0,
+                'Thursday' => 0,
+                'Friday' => 0,
+                'Saturday' => 0,
+                'Sunday' => 0,
+            ];
+
+            $query = Order::query()
+                ->whereBetween('created_at', [$startDate, $endDate]);
+
+            if ($user_id) { $query->where('user_id', $user_id); }
+            if ($vendor_id) { $query->where('vendor_id', $vendor_id); }
+
+            if ($user && $user->hasRole('Vendor')) {
+                $query->where('vendor_id', $user->id);
+            }
+
+            $orders = $query->get();
+
+            foreach ($orders as $order) {
+                $dayName = \Carbon\Carbon::parse($order->created_at)->format('l'); // Monday, Tuesday...
+                $days[$dayName] += $order->total_amount;
+            }
+
+            return $days;
+        }
+    }
+
+
 
     if (!function_exists('yearly_sales_stats')) {
         function yearly_sales_stats($user_id = null, $vendor_id = null,$from=null, $to=null)

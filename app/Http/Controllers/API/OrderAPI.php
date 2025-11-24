@@ -187,11 +187,14 @@ class OrderAPI extends Controller
                 // 'payment_status'=>$request->payment_method == 'Online' || $request->payment_method == 'UPI'|| $request->payment_method == 'Card' ? 'Payment Received':'Awaiting Payment',
                 'payment_status'=>$payment_status,
                 'contact_number'=>$request->contact_number,
-                'discount_amount'=>$request->discount_amount,
+                'discount_amount'=>$request->discount_amount ?? calculate_cart_discount_by_userId($request->user()->id, $vendorId),
                 'complimentary_amount'=>$request->complimentary_amount,
             ]);
-            
-            $totalDiscount= $request->discount_amount + $request->complimentary_amount;
+            if($request->is_gst_same){
+                $totalDiscount= $request->discount_amount + $request->complimentary_amount;
+            }else{
+                $totalDiscount=calculate_cart_discount_by_userId($request->user()->id, $vendorId);
+            }
             $discounted_price =  $order->discounted_price - $totalDiscount;
             $order->discounted_price = $discounted_price;
             $order->save();
@@ -216,7 +219,8 @@ class OrderAPI extends Controller
                         'mrp'=>$cart_item->options->mrp,
                         'discount_rate'=>$cart_item->options->discount_rate,
                         'discount_amount'=>$cart_item->options->discount_amount,
-                        'subtotal'=>$cart_item->options->price * $cart_item->quantity,
+                        'app_discount' => $cart_item->discount,
+                        'subtotal'=>($cart_item->options->price * $cart_item->quantity) - $cart_item->discount,
                     ]);
 
                     // if avaliable purchase module
@@ -275,7 +279,8 @@ class OrderAPI extends Controller
                         'mrp'=>$cart_item->product->price,
                         'discount_rate'=>$cart_item->product->discount_rate,
                         'discount_amount'=>$cart_item->product->discount_price,
-                        'subtotal'=>$price * $cart_item->quantity,
+                        'app_discount' => $cart_item->discount,
+                        'subtotal'=>($cart_item->options->price * $cart_item->quantity) - $cart_item->discount,
                     ]);
                 }
                 
@@ -292,6 +297,7 @@ class OrderAPI extends Controller
             // $sgst = $totalGst / 2;
             
             $order->gst_amount = $totalGst;
+            $order->total_amount = ($order->total_amount - $totalDiscount) + $totalGst;
             // $order->cgst_amount = $cgst;
             // $order->sgst_amount = $sgst;
 
@@ -794,21 +800,28 @@ class OrderAPI extends Controller
             ], 404);
         }
         $orderItems =  OrderItems::with('product')->where('order_id', $order->id)->get();
+        $gstRates = [];
         $orderItems->each(function ($orderItem) {
    
             $orderItem->product->image_url = getProductMainImage($orderItem->product_id);
             $orderItem->subtotal = (int) $orderItem->subtotal;
+
+            $gstRates[] = floatval($orderItem->product->hsncode->gst_rate ?? 0);
         });
+
+        $allSameGst = count(array_unique($gstRates)) === 1;
 
         return response()->json([
             'status' => true,
             'item_total' => (int) calculate_orderItems_total_by_orderId($order->id),
             'discount' => 0,
             'compelementary' => 0,
+            'discount_subtotal' => 0,
             'sgst' => (int) $order->sgst_amount ?? 0.00,
             'cgst' => (int) $order->cgst_amount ?? 0.00,
             // 'order_total' => calculate_orderItems_total_by_orderId($order->id),
             'grand_total' => (int) calculate_orderItems_total_by_orderId($order->id) + ($gst['total_gst'] ?? 0.00),
+            'is_gst_same'   => $allSameGst ? 1 : 0,
             'data' => $orderItems,
         ], 200);
     }
