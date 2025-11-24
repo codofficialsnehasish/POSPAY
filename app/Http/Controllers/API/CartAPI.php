@@ -189,21 +189,18 @@ class CartAPI extends Controller
     // }
     
     
-    public function cart_items(Request $request)
+    /*public function cart_items(Request $request)
     {
         $vendorId = $request->vendorId;
+        $gstRates = [];
+
         $cart_items = Cart::with(['product', 'product.hsncode', 'variationOption'])->where('user_id', $request->user()->id)->where('vendor_id',$vendorId)->get();
         
-        $cart_items->each(function ($cartItem) use ($request) {
+        $cart_items->each(function ($cartItem) use ($request, &$gstRates) {
             // Load product image
             $cartItem->product->image_url = getProductMainImage($cartItem->product_id);
             
             $cartItem->variationOption->quantity = $cartItem->product->vendorStock($request->vendorId, $cartItem->variationOption->id);
-            // foreach ($cartItem->variationOption as $option) {
-            //     dd($option->id);
-            //     $option->quantity = $cartItem->product->vendorStock($request->vendorId, $option->id);
-            //     // $option->quantity = 3000;
-            // }
 
             // Calculate correct price based on option_id
             if ($cartItem->option_id) {
@@ -214,21 +211,116 @@ class CartAPI extends Controller
 
             $cartItem->subtotal = $cartItem->price * $cartItem->quantity;
             // $cartItem->subtotal = number_format($cartItem->price * $cartItem->quantity, 2, '.', '');
+
+            // Collect GST rate for checking
+            $gstRates[] = $cartItem->product->hsncode->gst_rate ?? 0;
         });
 
+        // Check if all GST rates are same
+        $allSameGst = count(array_unique($gstRates)) === 1;
+
         $gst = calculate_cart_gst_by_userId($request->user()->id);
+        $total_discount = 0;
+        $item_total = calculate_cart_total_by_userId($request->user()->id, $vendorId);
+        if(!$allSameGst){
+            $cart_items->each(function ($cartItem) {
+                $total_discount = $cartItem->discount;
+            });
+            $item_total -= $total_discount;
+        }
+
+
 
         return response()->json([
             'status' => true,
-            'item_total' => calculate_cart_total_by_userId($request->user()->id),
-            'discount' => 0.00,
+            'item_total' => $item_total,
+            'discount' => $total_discount,
             'compelementary' => 0.00,
             'sgst' => $gst['sgst'] ?? 0.00,
             'cgst' => $gst['cgst'] ?? 0.00,
-            'grand_total' => calculate_cart_total_by_userId($request->user()->id) + ($gst['total_gst'] ?? 0.00),
+            'total_gst' => $gst['total_gst'] ?? 0.00,
+            'grand_total' => $item_total + ($gst['total_gst'] ?? 0.00),
+            'is_gst_same' => $allSameGst ? 1 : 0,
             'data' => $cart_items,
         ], 200);
+    }*/
+
+    public function cart_items(Request $request)
+    {
+        $userId   = $request->user()->id;
+        $vendorId = $request->vendorId;
+
+        $gstRates = [];
+        $total_discount = 0;
+
+        $cart_items = Cart::with(['product', 'product.hsncode', 'variationOption'])
+            ->where('user_id', $userId)
+            ->where('vendor_id', $vendorId)
+            ->get();
+
+        $cart_items->each(function ($cartItem) use ($request, &$gstRates, &$total_discount) {
+
+            // Product Image
+            $cartItem->product->image_url = getProductMainImage($cartItem->product_id);
+
+            // Stock
+            $cartItem->variationOption->quantity =
+                $cartItem->product->vendorStock(
+                    $request->vendorId,
+                    $cartItem->variationOption->id
+                );
+
+            // Price
+            if ($cartItem->option_id) {
+                $cartItem->price = get_product_price($cartItem->product_id, $cartItem->option_id);
+            } else {
+                $cartItem->price = get_product_price($cartItem->product_id);
+            }
+
+            // Subtotal
+            $cartItem->subtotal = $cartItem->price * $cartItem->quantity;
+
+            // Discount
+            $total_discount += floatval($cartItem->discount ?? 0);
+
+            // Collect GST rate
+            $gstRates[] = floatval($cartItem->product->hsncode->gst_rate ?? 0);
+        });
+
+        // GST same or not
+        $allSameGst = count(array_unique($gstRates)) === 1;
+
+        if($allSameGst){
+            $total_discount = ($request->discount + $request->complementary) ?? 0.00;
+            $discount = $request->discount;
+        }else{
+            $discount = $total_discount;
+        }
+
+        // Get GST
+        $gst = calculate_cart_gst_by_userId($userId, $vendorId);
+
+        // Item total BEFORE GST
+        $item_total = calculate_cart_total_by_userId($userId, $vendorId);
+
+        // Apply discount (always)
+        $sub_total = $item_total - $total_discount;
+
+        return response()->json([
+            'status'        => true,
+            'item_total'    => round($item_total, 2),
+            'discount'      => round($discount, 2) ?? 0.00,
+            'compelementary'=> $request->complementary ?? 0.00,
+            'discount_subtotal' => round($item_total - $total_discount, 2),
+            'sgst'          => $gst['sgst'],
+            'cgst'          => $gst['cgst'],
+            'total_gst'     => $gst['total_gst'],
+            'grand_total'   => round($sub_total + $gst['total_gst'], 2),
+            'is_gst_same'   => $allSameGst ? 1 : 0,
+            'data'          => $cart_items,
+        ], 200);
     }
+
 
 
     public function increment_decrement_cart_quantity(Request $request){
@@ -277,6 +369,38 @@ class CartAPI extends Controller
                 'message' => 'Cart Item updated successfully.',
                 'data' => $existingCartItem,
             ], 200);
+        }
+    }
+
+    public function add_cart_item_discount(Request $request){
+
+        $validator = Validator::make($request->all(), [
+            'cart_id' => 'required|integer|exists:carts,id',
+            'discount_amount' => 'required'
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json(['error' => $validator->errors()], 422);
+        }
+
+        // $vendorId = $request->vendorId;
+
+        $existingCartItem = Cart::find($request->cart_id);
+
+
+        if ($existingCartItem) {
+            $existingCartItem->discount = $request->discount_amount;
+            $existingCartItem->save();
+
+            return response()->json([
+                'status' => true,
+                'message' => 'Cart Item updated successfully.',
+            ], 200);
+        }else{
+            return response()->json([
+                'status' => false,
+                'message' => 'Cart Item not found.',
+            ], 200);   
         }
     }
 

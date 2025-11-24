@@ -6,30 +6,31 @@ use Illuminate\Support\Facades\Http;
 
 class SMSService
 {
-    public function sendSMS($phone_number, $otp = 0)
+    public function sendSMS($phone_number, $link)
     {
-        $url = 'https://msg.myctrlbox.com/API/WebSMS/Http/v2.3.6/api.php';
+        $url = "https://sms.cell24x7.in/smsReceiver/sendSMS";
+
+        // Your message
+        $msg_body = "Thanks for shopping at pospay. To view invoice, offers, give feedback, click ".$link." . Team Agiltas";
 
         try {
-            $response = Http::get($url, [
-                'username' => 'SAVEKART',
-                'api_key' => '5e21da7302d31fc78b8ab4358bbba76b',
-                'sender' => 'SVKART',
-                'dlt_template' => '1707160741710488132',
-                'dlt_principal' => '1701160656747132020',
-                'to' => $phone_number,
-                'message' => 'Your OTP is '.$otp.'. Please do not share this OTP with anyone. Thank you, Savekart.',
+            $response = Http::asForm()->post($url, [
+                'user'   => 'agiltas',
+                'pwd'    => 'apiagiltas',
+                'sender' => 'AGILTS',
+                'mobile' => $phone_number,
+                'msg'    => $msg_body,
+                'mt'     => 0,
             ]);
 
-            if ($response->status() == 200) {
-                return $response;
+            if ($response->successful()) {
+                return $response->body(); // API returns plain text
             } else {
-                // return "Failed to send SMS. Status code: " . $response->status();
-                return $response;
+                return $response->body(); // or ->status()
             }
         } catch (\Exception $e) {
-            // return "An error occurred while sending the SMS: " . $e->getMessage();
             return false;
         }
     }
+
 }

@@ -19,9 +19,17 @@ use App\Models\SeatNumber;
 use App\Models\Transaction;
 use App\Models\StockTransaction;
 use Razorpay\Api\Api;
+use App\Services\SMSService;
 
 class OrderAPI extends Controller
 {
+    protected $smsService;
+
+    public function __construct(SMSService $smsService)
+    {
+        $this->smsService = $smsService;
+    }
+
     public function createRazorpayOrder(Request $request)
     {
         $validator = Validator::make($request->all(), [
@@ -111,7 +119,7 @@ class OrderAPI extends Controller
         if($cart_items){
 
             $cart_sub_total = calculate_cart_sub_total_by_userId($request->user()->id);
-            $cart_total = calculate_cart_total_by_userId($request->user()->id);
+            $cart_total = calculate_cart_total_by_userId($request->user()->id, $vendorId);
             // $coupone_discount = !empty($request->coupone_code) ? get_coupone_discount($request->coupone_code,$cart_total) : 0.00;
 
             // 🔹 If UPI → Verify Razorpay payment
@@ -173,8 +181,8 @@ class OrderAPI extends Controller
                 'order_status'=>"Order Confirmed",
                 'price_subtotal'=>$cart_sub_total,
                 'price_gst'=>0.00,
-                'total_amount'=>calculate_cart_total_by_userId($request->user()->id),
-                'discounted_price'=>calculate_cart_total_by_userId($request->user()->id),
+                'total_amount'=>calculate_cart_total_by_userId($request->user()->id, $vendorId),
+                'discounted_price'=>calculate_cart_total_by_userId($request->user()->id, $vendorId),
                 'payment_method'=>$request->payment_method,
                 // 'payment_status'=>$request->payment_method == 'Online' || $request->payment_method == 'UPI'|| $request->payment_method == 'Card' ? 'Payment Received':'Awaiting Payment',
                 'payment_status'=>$payment_status,
@@ -272,7 +280,7 @@ class OrderAPI extends Controller
                 }
                 
                 // $totalGst += $cart_item->product->gst_amount ;
-                $gst = calculate_cart_gst_by_userId($request->user()->id);
+                $gst = calculate_cart_gst_by_userId($request->user()->id, $vendorId);
 
                 
             }
@@ -326,6 +334,12 @@ class OrderAPI extends Controller
              $user = $request->user();
             
             $user->load(['vendor.branch.coach']);
+
+            // call SMS service
+            // if(!empty($request->contact_number)){
+            //     $link = "https://irctc.flexcellents.com/";
+            //     $this->smsService->sendSMS($request->contact_number, $link);
+            // }
 
 
             return response()->json([
@@ -414,7 +428,7 @@ class OrderAPI extends Controller
         if($cart_items){
 
             $cart_sub_total = calculate_cart_sub_total_by_userId($request->user()->id);
-            $cart_total = calculate_cart_total_by_userId($request->user()->id);
+            $cart_total = calculate_cart_total_by_userId($request->user()->id, $vendorId);
             // $coupone_discount = !empty($request->coupone_code) ? get_coupone_discount($request->coupone_code,$cart_total) : 0.00;
 
     
@@ -426,8 +440,8 @@ class OrderAPI extends Controller
                 'order_status'=>"Order Pending",
                 'price_subtotal'=>$cart_sub_total,
                 'price_gst'=>0.00,
-                'total_amount'=>calculate_cart_total_by_userId($request->user()->id),
-                'discounted_price'=>calculate_cart_total_by_userId($request->user()->id),
+                'total_amount'=>calculate_cart_total_by_userId($request->user()->id, $vendorId),
+                'discounted_price'=>calculate_cart_total_by_userId($request->user()->id, $vendorId),
                 'payment_method'=>$request->payment_method,
                 'payment_status'=>$request->payment_method == 'Online' || $request->payment_method == 'UPI'|| $request->payment_method == 'Card' ? 'Payment Received':'Awaiting Payment',
                 'is_darft'=>1,

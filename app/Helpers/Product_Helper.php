@@ -26,11 +26,11 @@
     }
 
     if(!function_exists('calculate_cart_total_by_userId')){
-        function calculate_cart_total_by_userId(int $userId)
+        function calculate_cart_total_by_userId(int $userId, int $vendorId)
         {
             $total = 0;
 
-            $cartItems = Cart::where('user_id', $userId)->get();
+            $cartItems = Cart::where('user_id', $userId)->where('vendor_id', $vendorId)->get();
 
             foreach ($cartItems as $cartItem) {
                 
@@ -128,54 +128,41 @@
     }*/
 
     if (!function_exists('calculate_cart_gst_by_userId')) {
-        function calculate_cart_gst_by_userId(int $userId)
+        function calculate_cart_gst_by_userId(int $userId, int $vendorId)
         {
             $cgst = 0;
             $sgst = 0;
 
-            $cartItems = Cart::where('user_id', $userId)->get();
+            $cartItems = Cart::with(['product.hsncode'])
+                            ->where('user_id', $userId)
+                            ->where('vendor_id', $vendorId)
+                            ->get();
 
             foreach ($cartItems as $cartItem) {
-                // Get base price
-                if ($cartItem->option_id) {
-                    $price = get_product_price($cartItem->product_id, $cartItem->option_id);
-                } else {
-                    $price = get_product_price($cartItem->product_id);
-                }
 
-                $product = Product::find($cartItem->product_id);
+                $price = get_product_price(
+                    $cartItem->product_id,
+                    $cartItem->option_id
+                );
 
-                if (!$product) {
-                    continue;
-                }
+                $product = $cartItem->product;
+                if (!$product) continue;
 
-                // ✅ Safely get gstRate
-                $gstRate = 0;
-                if ($product->hsncode_id) {
-                    $hsncode = Hsncode::find($product->hsncode_id);
-                    if ($hsncode) {
-                        $gstRate = $hsncode->gst_rate;
-                    }
-                }
-
-                $isGstIncluded = $product->is_gst_included; // 1 or 0
+                $gstRate = $product->hsncode->gst_rate ?? 0;
                 $qty = $cartItem->quantity;
-
                 $lineTotal = $price * $qty;
 
-                // ✅ If GST is already included, skip GST calculation
-                if ($isGstIncluded == 1) {
-                    continue; // Do not add GST at all
-                }
-
-                // ✅ Calculate GST only if not included
-                if ($gstRate > 0) {
+                if ($product->is_gst_included == 1) {
+                    // Extract GST
+                    $base = ($lineTotal * 100) / (100 + $gstRate);
+                    $taxAmount = $lineTotal - $base;
+                } else {
+                    // Add GST
                     $taxAmount = ($lineTotal * $gstRate) / 100;
-
-                    // Divide equally into CGST and SGST
-                    $cgst += $taxAmount / 2;
-                    $sgst += $taxAmount / 2;
                 }
+
+                $cgst += $taxAmount / 2;
+                $sgst += $taxAmount / 2;
             }
 
             return [
@@ -185,6 +172,8 @@
             ];
         }
     }
+
+
 
 
 

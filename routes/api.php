@@ -58,6 +58,7 @@ Route::middleware('auth:sanctum')->group( function () {
     });
     Route::post('add-to-cart', [CartAPI::class, 'add_to_cart']);
     Route::post('update-cart-quantity', [CartAPI::class, 'increment_decrement_cart_quantity']);
+    Route::post('add-cart-item-discount', [CartAPI::class, 'add_cart_item_discount']);
     // Route::post('add-to-cart', [CartAPI::class, 'add_to_cart']);
 
     Route::get('cart-items', [CartAPI::class, 'cart_items']);

@@ -28,6 +28,17 @@ class AuthenticatedSessionController extends Controller
 
         $request->session()->regenerate();
 
+        // Check user status
+        if (auth()->user()->status != 1) {
+            auth()->logout();   // logout immediately
+            $request->session()->invalidate();
+            $request->session()->regenerateToken();
+
+            return back()->withErrors([
+                'email' => 'Your account is inactive. Please contact support.',
+            ]);
+        }
+
         return redirect()->intended(route('dashboard', absolute: false));
     }
 
