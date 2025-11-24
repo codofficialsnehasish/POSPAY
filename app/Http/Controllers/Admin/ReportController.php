@@ -22,6 +22,7 @@ use App\Models\VendorProduct;
 use App\Models\VendorProductStock;
 use App\Models\Hsncode;
 use App\Models\Unit;
+use App\Models\User;
 use App\Models\LoginLog;
 use Illuminate\Routing\Controllers\HasMiddleware;
 use Illuminate\Routing\Controllers\Middleware;
@@ -303,14 +304,36 @@ class ReportController  extends Controller implements HasMiddleware {
 
     public function login_logs()
     {
-        $vendorId = auth()->id(); // If you want vendor-wise logs
+        $user = Auth::user();
+        if ($user->hasRole('Super Admin')) {
+            $logs = LoginLog::with(['user','vendor'])
+                            ->orderBy('login_time', 'desc')
+                            ->get();
 
-        $logs = LoginLog::with(['user','vendor'])
-            ->when($vendorId, function ($q) use ($vendorId) {
-                $q->where('vendor_id', $vendorId);
-            })
-            ->orderBy('login_time', 'desc')
-            ->get();
+        }elseif ($user->hasRole('Admin')) {
+            $vendorIds = User::role('Vendor')
+                        ->where('admin_id', $user->id)
+                        ->pluck('id');
+            
+            $logs = LoginLog::with(['user','vendor'])
+                ->when($vendorIds, function ($q) use ($vendorIds) {
+                    $q->whereIn('vendor_id', $vendorIds);
+                })
+                ->orderBy('login_time', 'desc')
+                ->get();
+
+        } elseif ($user->hasRole('Vendor')) {
+
+            $vendorId = auth()->id(); // If you want vendor-wise logs
+
+            $logs = LoginLog::with(['user','vendor'])
+                ->when($vendorId, function ($q) use ($vendorId) {
+                    $q->where('vendor_id', $vendorId);
+                })
+                ->orderBy('login_time', 'desc')
+                ->get();
+
+        }
 
         return view('admin.reports.login_logs', compact('logs'));
     }
