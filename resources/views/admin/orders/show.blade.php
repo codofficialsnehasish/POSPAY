@@ -180,7 +180,7 @@
                                     <th>Product</th>
                                     <th>Unit Price</th>
                                     <th>Quantity</th>
-                                    <th>Gst</th>
+                                    {{-- <th>Gst</th> --}}
                                     <th>Total</th>
                                     <!-- <th class="max-width-120">Options</th> -->
                                 </tr>
@@ -196,7 +196,7 @@
                                     <td>{{ $item->product_name }}</td>
                                     <td>{{ $item->price }}</td>
                                     <td>{{ $item->quantity }}</td>
-                                    <td>{{ 0.00 }}</td>
+                                    {{-- <td>{{ 0.00 }}</td> --}}
                                     @php $subtotal += $item->subtotal @endphp
                                     <td>{{ $item->subtotal }}</td>
                                     <!-- <td>
@@ -218,23 +218,35 @@
                         <div class="col-lg-4 float-end" style="margin-right: 60px;">
                             <div class="row mb-0">
                                 <label for="example-text-input" class="col-sm-4 col-form-label float-end">Subtotal</label>
-                                <div class="col-sm-8"><strong class="float-end">{{ number_format($subtotal, 2) }}</strong></div>
+                                <div class="col-sm-8"><strong class="float-end">₹{{ $order->price_subtotal }}</strong></div>
                             </div>
                             <div class="row mb-0">
-                                <label for="example-text-input" class="col-sm-4 col-form-label float-end">GST</label>
-                                <div class="col-sm-8"><strong class="float-end">{{ $gst }}</strong></div>
+                                <label for="example-text-input" class="col-sm-4 col-form-label float-end">Discount</label>
+                                <div class="col-sm-8"><strong class="float-end">- ₹{{ $order->discount_amount ?? 0.00 }}</strong></div>
                             </div>
                             <div class="row mb-0">
+                                <label for="example-text-input" class="col-sm-4 col-form-label float-end">Complementary</label>
+                                <div class="col-sm-8"><strong class="float-end">- ₹{{ $order->complimentary_amount ?? 0.00 }}</strong></div>
+                            </div>
+                            <div class="row mb-0">
+                                <label for="example-text-input" class="col-sm-4 col-form-label float-end">SGST</label>
+                                <div class="col-sm-8"><strong class="float-end">+ ₹{{ $order->sgst_amount ?? 0.00 }}</strong></div>
+                            </div>
+                            <div class="row mb-0">
+                                <label for="example-text-input" class="col-sm-4 col-form-label float-end">CGST</label>
+                                <div class="col-sm-8"><strong class="float-end">+ ₹{{ $order->cgst_amount ?? 0.00 }}</strong></div>
+                            </div>
+                            {{-- <div class="row mb-0">
                                 <label for="example-text-input" class="col-sm-4 col-form-label float-end">Shipping</label>
                                 <div class="col-sm-8"><strong class="float-end">{{ $shipping }}</strong></div>
-                            </div>
-                            <div class="row mb-0">
+                            </div> --}}
+                            {{-- <div class="row mb-0">
                                 <label for="example-text-input" class="col-sm-4 col-form-label float-end">Coupon Discount</label>
                                 <div class="col-sm-8"><strong class="float-end">{{ $order->coupone_discount }} @if($order->coupone_discount > 0) ( Coupon Code - {{ $order->coupone_code }} ) @endif</strong></div>
-                            </div>
+                            </div> --}}
                             <div class="row mb-0">
                                 <label for="example-text-input" class="col-sm-4 col-form-label float-end">Total</label>
-                                <div class="col-sm-8"><strong class="float-end">{{ $order->total_amount }}</strong></div>
+                                <div class="col-sm-8"><strong class="float-end">₹ {{ $order->total_amount }}</strong></div>
                             </div>
                         </div>
                     </div>
