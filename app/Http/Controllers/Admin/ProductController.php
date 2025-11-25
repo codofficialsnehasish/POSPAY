@@ -225,6 +225,18 @@ class ProductController extends Controller implements HasMiddleware
             $product->categories()->sync($request->categories);
         }
 
+        if(!ProductVariation::where('product_id',$product->id)->exists()){
+            $variation= ProductVariation::create([
+                'product_id'=>$product->id,
+                'name'=> 'Measure',
+                'variation_type'=>'radio_button',
+                'option_display_type'=>'text',
+                'show_images_on_slider'=>NULL,
+                'use_different_price'=>0 ,
+                'is_visible'=>1,
+            ]);
+        }
+
         if($res){
             // return redirect(route('products.price-edit',$product->id))->with(['success'=>'Basic Information Added Successfully']);
             return redirect(route('products.variation',$product->id))->with(['success'=>'Basic Information Added Successfully']);

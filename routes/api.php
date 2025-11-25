@@ -85,6 +85,7 @@ Route::middleware('auth:sanctum')->group( function () {
         Route::get('draft-order-history','draft_order_history');
         Route::post('update-order','orderUpdate');
         Route::get('order-items','order_items');
+        Route::post('add-order-item-discount','add_order_item_discount');
         Route::post('complete-order','complete_order');
         Route::post('order-quantity-update','increment_decrement_order_quantity');
         Route::post('order-item-delete','delete_order_item');

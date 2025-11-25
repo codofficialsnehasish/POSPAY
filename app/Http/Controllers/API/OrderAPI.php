@@ -220,7 +220,7 @@ class OrderAPI extends Controller
                         'discount_rate'=>$cart_item->options->discount_rate,
                         'discount_amount'=>$cart_item->options->discount_amount,
                         'app_discount' => $cart_item->discount,
-                        'subtotal'=>($cart_item->options->price * $cart_item->quantity) - $cart_item->discount,
+                        'subtotal'=>($cart_item->options->price * $cart_item->quantity),
                     ]);
 
                     // if avaliable purchase module
@@ -280,7 +280,7 @@ class OrderAPI extends Controller
                         'discount_rate'=>$cart_item->product->discount_rate,
                         'discount_amount'=>$cart_item->product->discount_price,
                         'app_discount' => $cart_item->discount,
-                        'subtotal'=>($cart_item->options->price * $cart_item->quantity) - $cart_item->discount,
+                        'subtotal'=>($cart_item->options->price * $cart_item->quantity),
                     ]);
                 }
                 
@@ -428,6 +428,7 @@ class OrderAPI extends Controller
         }
 
         $vendorId = $request->vendorId;
+        $branch = User::find($vendorId);
         $totalGst = 0;
 
         $cart_items = Cart::where('user_id', $request->user()->id)->get();
@@ -452,12 +453,16 @@ class OrderAPI extends Controller
                 'payment_status'=>$request->payment_method == 'Online' || $request->payment_method == 'UPI'|| $request->payment_method == 'Card' ? 'Payment Received':'Awaiting Payment',
                 'is_darft'=>1,
                 'contact_number'=>$request->contact_number,
-                'discount_amount'=>$request->discount_amount,
+                'discount_amount'=>$request->discount_amount ?? calculate_cart_discount_by_userId($request->user()->id, $vendorId),
                 'complimentary_amount'=>$request->complimentary_amount,
             ]);
-            $totalDiscount= $request->discount_amount + $request->complimentary_amount;
+            if($request->is_gst_same){
+                $totalDiscount= $request->discount_amount + $request->complimentary_amount;
+            }else{
+                $totalDiscount=calculate_cart_discount_by_userId($request->user()->id, $vendorId);
+            }
             $discounted_price =  $order->discounted_price - $totalDiscount;
-            $order->discounted_price =$discounted_price;
+            $order->discounted_price = $discounted_price;
             $order->save();
             update_order_number($order->id, $order->order_number);
 
@@ -477,7 +482,8 @@ class OrderAPI extends Controller
                         'mrp'=>$cart_item->options->mrp,
                         'discount_rate'=>$cart_item->options->discount_rate,
                         'discount_amount'=>$cart_item->options->discount_amount,
-                        'subtotal'=>$price * $cart_item->quantity,
+                        'app_discount' => $cart_item->discount,
+                        'subtotal'=>($cart_item->options->price * $cart_item->quantity),
                     ]);
 
                 }else{
@@ -491,19 +497,25 @@ class OrderAPI extends Controller
                         'mrp'=>$cart_item->product->price,
                         'discount_rate'=>$cart_item->product->discount_rate,
                         'discount_amount'=>$cart_item->product->discount_price,
-                        'subtotal'=>$price * $cart_item->quantity,
+                        'app_discount' => $cart_item->discount,
+                        'subtotal'=>($cart_item->options->price * $cart_item->quantity),
                     ]);
                 }
-                $totalGst += $cart_item->product->gst_amount ;
+                // $totalGst += $cart_item->product->gst_amount ;
+                $gst = calculate_cart_gst_by_userId($request->user()->id, $vendorId);
                 
             }
             
-            $cgst = $totalGst / 2;
-            $sgst = $totalGst / 2;
+            $order->sgst_amount = $gst['sgst'] ?? 0.00;
+            $order->cgst_amount = $gst['cgst'] ?? 0.00;
+            $totalGst  = $order->sgst_amount + $order->cgst_amount;
+            // $cgst = $totalGst / 2;
+            // $sgst = $totalGst / 2;
             
             $order->gst_amount = $totalGst;
-            $order->cgst_amount = $cgst;
-            $order->sgst_amount = $sgst;
+            $order->total_amount = ($order->total_amount - $totalDiscount) + $totalGst;
+            // $order->cgst_amount = $cgst;
+            // $order->sgst_amount = $sgst;
 
             $order->save();
             
@@ -801,29 +813,80 @@ class OrderAPI extends Controller
         }
         $orderItems =  OrderItems::with('product')->where('order_id', $order->id)->get();
         $gstRates = [];
-        $orderItems->each(function ($orderItem) {
+        $total_app_discount = 0;
+        $orderItems->each(function ($orderItem) use (&$total_app_discount, &$gstRates) {
    
             $orderItem->product->image_url = getProductMainImage($orderItem->product_id);
             $orderItem->subtotal = (int) $orderItem->subtotal;
 
             $gstRates[] = floatval($orderItem->product->hsncode->gst_rate ?? 0);
-        });
 
+            $total_app_discount += $orderItem->app_discount;
+        });
+        // return $total_app_discount;
         $allSameGst = count(array_unique($gstRates)) === 1;
 
+        $req_discount = $request->discount ?: ($order->discount_amount ?: 0.00);
+        $req_complementary = $request->complementary ?: ($order->complimentary_amount ?: 0.00);
+
+        if($allSameGst){
+            $total_app_discount = ($req_discount + $req_complementary) ?? 0.00;
+            $discount = $req_discount;
+        }else{
+            $discount = $total_app_discount;
+        }
+
+        $gst = calculate_gst_by_orderId($order->id);
+
+        $item_total = calculate_orderItems_total_by_orderId($order->id);
+        $sub_total = $item_total - $total_app_discount;
         return response()->json([
             'status' => true,
-            'item_total' => (int) calculate_orderItems_total_by_orderId($order->id),
-            'discount' => 0,
-            'compelementary' => 0,
-            'discount_subtotal' => 0,
-            'sgst' => (int) $order->sgst_amount ?? 0.00,
-            'cgst' => (int) $order->cgst_amount ?? 0.00,
+            'item_total' => (int) $item_total,
+            'discount' => (int) $discount,
+            'compelementary' => (int) $req_complementary,
+            'discount_subtotal' => (int) $item_total - $total_app_discount,
+            'sgst'          => (int) $gst['sgst'] ?? 0.00,
+            'cgst'          => (int) $gst['cgst'] ?? 0.00,
+            'total_gst'     => (int) $gst['total_gst'] ?? 0.00,
             // 'order_total' => calculate_orderItems_total_by_orderId($order->id),
-            'grand_total' => (int) calculate_orderItems_total_by_orderId($order->id) + ($gst['total_gst'] ?? 0.00),
+            // 'grand_total' => (int) calculate_orderItems_total_by_orderId($order->id) + ($gst['total_gst'] ?? 0.00),
+            'grand_total' => (int) $sub_total + $gst['total_gst'],
             'is_gst_same'   => $allSameGst ? 1 : 0,
             'data' => $orderItems,
         ], 200);
+    }
+
+    public function add_order_item_discount(Request $request){
+
+        $validator = Validator::make($request->all(), [
+            'order_items_id' => 'required|integer|exists:order_items,id',
+            'discount_amount' => 'required'
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json(['error' => $validator->errors()], 422);
+        }
+
+        // $vendorId = $request->vendorId;
+
+        $existingOrderItem = OrderItems::find($request->order_items_id);
+
+
+        if ($existingOrderItem) {
+            $existingOrderItem->app_discount = $request->discount_amount;
+            $existingOrderItem->save();
+
+            return response()->json([
+                'status' => true,
+                'message' => 'Order Item updated successfully.',
+            ], 200);
+        }else{
+            return response()->json([
+                'status' => false,
+                'message' => 'Order Item not found.',
+            ], 200);   
+        }
     }
     
     public function complete_order(Request $request){

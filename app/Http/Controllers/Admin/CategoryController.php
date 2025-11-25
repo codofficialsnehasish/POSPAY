@@ -42,7 +42,7 @@ class CategoryController extends Controller implements HasMiddleware
     public function create()
     {
         // $categorys = Category::where('parent_id',null)->where('vendor_id',auth()->user()->id)->get();
-
+        $user = Auth::guard('web')->user();
         if ($user->hasRole('Super Admin')) {
             $categorys = Category::all();
         }else if($user->hasRole('Admin')){

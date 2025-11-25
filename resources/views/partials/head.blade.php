@@ -66,7 +66,7 @@
             position: absolute;
             left: 0;
             top: 0;
-          left: -140%;
+            left: -140% !important;
         }
     </style>
 

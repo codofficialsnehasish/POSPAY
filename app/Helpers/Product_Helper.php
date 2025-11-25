@@ -189,6 +189,49 @@
         }
     }
 
+    if (!function_exists('calculate_gst_by_orderId')) {
+        function calculate_gst_by_orderId(int $orderId)
+        {
+            $cgst = 0;
+            $sgst = 0;
+
+            $orderItems = OrderItems::with(['product.hsncode'])->where('order_id', $orderId)->get();
+
+            foreach ($orderItems as $cartItem) {
+
+                $price = get_product_price(
+                    $cartItem->product_id,
+                    $cartItem->option_id
+                );
+
+                $product = $cartItem->product;
+                if (!$product) continue;
+
+                $gstRate = $product->hsncode->gst_rate ?? 0;
+                $qty = $cartItem->quantity;
+                $lineTotal = $price * $qty;
+
+                if ($product->is_gst_included == 1) {
+                    // Extract GST
+                    $base = ($lineTotal * 100) / (100 + $gstRate);
+                    $taxAmount = $lineTotal - $base;
+                } else {
+                    // Add GST
+                    $taxAmount = ($lineTotal * $gstRate) / 100;
+                }
+
+                $cgst += $taxAmount / 2;
+                $sgst += $taxAmount / 2;
+            }
+
+            return [
+                'cgst' => round($cgst, 2),
+                'sgst' => round($sgst, 2),
+                'total_gst' => round($cgst + $sgst, 2),
+            ];
+        }
+    }
+
 
 
 
