@@ -215,6 +215,7 @@ Route::middleware(['auth', 'verified'])->group(function(){
                 Route::get('variation/{id?}','product_variation')->name('products.variation');
                 Route::post('add-variation','add_product_variation')->name('products.add-variation');
                 Route::get('edit-variation','edit_product_variation')->name('products.edit-variation');
+                Route::post('update-variation/{id}','update_product_variation')->name('products.update-variation');
                 Route::get('create-variation-option','add_variation_option')->name('products.add-variation-option');
                 Route::post('add-variation-option','store_variation_option')->name('products.store-variation-option');
                 Route::get('view-variation-option','view_variation_option')->name('products.view-variation-option');

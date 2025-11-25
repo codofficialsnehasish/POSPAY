@@ -318,14 +318,7 @@ class ProductController extends Controller implements HasMiddleware
 
     
     public function add_product_variation(Request $request){
-       
-
         $product = Product::find($request->product_id);
-
-        // echo "<pre>";
-        // print_r($request->all());
-        // die;
-
          
         $validator = Validator::make($request->all(), [
             'name' => 'required','string','unique:product_variations,name',
@@ -352,7 +345,6 @@ class ProductController extends Controller implements HasMiddleware
 
         }
 
-
         return view('admin.products.product_variations',compact('product','variations'));
     }
 
@@ -367,6 +359,40 @@ class ProductController extends Controller implements HasMiddleware
    
         return response()->json(['html' => $html]);
     }
+
+    public function update_product_variation(Request $request, $id)
+    {
+        $variation = ProductVariation::findOrFail($id);
+        $product = Product::findOrFail($variation->product_id);
+
+        // Validation
+        $validator = Validator::make($request->all(), [
+            'name' => 'required|string'
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'success' => false,
+                'errors'  => $validator->errors()
+            ], 422);
+        }
+
+        // Update variation
+        $variation->update([
+            'name' => $request->name,
+            'variation_type' => $request->variation_type,
+            'option_display_type' => $request->option_display_type,
+            'show_images_on_slider' => $request->show_images_on_slider,
+            'use_different_price' => $request->use_different_price ?? 0,
+            'is_visible' => $request->is_visible,
+        ]);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Variation updated successfully.'
+        ]);
+    }
+
 
     public function add_variation_option(Request $request)
     {

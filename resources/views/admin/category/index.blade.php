@@ -41,8 +41,8 @@
                                     </label>
                                 </div>
                             </th>
-                            <th>Title</th>
-                            <th>Parent Category</th>
+                            <th>Category Name</th>
+                            {{-- <th>Parent Category</th> --}}
                             {{-- <th>Description</th> --}}
                             <th>Image</th>
                             @if (auth()->user()->hasRole('Super Admin'))
@@ -65,7 +65,7 @@
                                 </div>
                             </td>
                             <td class="text-wrap">{{ $category->name }}</td>
-                            <td class="text-wrap">{{ $category->parent?->name ?? 'N/A' }}</td>
+                            {{-- <td class="text-wrap">{{ $category->parent?->name ?? 'N/A' }}</td> --}}
                             {{-- <td class="text-wrap">{{ \Illuminate\Support\Str::words($category->description, 10, '...') }}</td> --}}
                             <td><img class="img-thumbnail rounded me-2" src="{{ $category->getFirstMediaUrl('category') }}" width="100" alt=""></td>
                             @if (auth()->user()->hasRole('Super Admin'))

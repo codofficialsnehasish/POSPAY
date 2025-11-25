@@ -1,7 +1,7 @@
-<form method="post" class="row gy-3 needs-validation" novalidate id="form_edit_product_variation">
+<form class="row gy-3 needs-validation" id="form_edit_product_variation">
     @csrf
 
-  
+    <input type="hidden" name="veriation_id" id="form_edit_product_variation_id" value="{{ $variation->id }}">
     <div class="row">
         <div class="col-12 mb-20">
             <label class="form-label fw-semibold text-primary-light text-sm mb-8">Choose Exsiting
@@ -145,3 +145,54 @@
         </div>
     </div>
 </form>
+
+
+<script>
+    $('#form_edit_product_variation').on('submit', function (e) {
+            // alert('submited');
+            e.preventDefault();
+
+            let formData = new FormData(this);
+            let veriation_id = $('#form_edit_product_variation_id').val();
+
+            $.ajax({
+                url: '{{ route('products.update-variation', $variation->id) }}',  // update route
+                type: 'POST', // If using PUT, Laravel still accepts POST + _method
+                data: formData,
+                processData: false,
+                contentType: false,
+
+                beforeSend: function () {
+                    $('#save_variation').prop('disabled', true).text('Saving...');
+                },
+
+                success: function (response) {
+                    if (response.success) {
+                        toastr.success(response.message);
+
+                        setTimeout(function () {
+                            location.reload();
+                        }, 800);
+                    } else {
+                        toastr.error('Something went wrong!');
+                    }
+                },
+
+                error: function (xhr) {
+                    if (xhr.status === 422) {
+                        let errors = xhr.responseJSON.errors;
+                        $.each(errors, function (key, error) {
+                            toastr.error(error[0]);
+                        });
+                    } else {
+                        toastr.error('An unexpected error occurred!');
+                    }
+                    console.log(xhr.responseText);
+                },
+
+                complete: function () {
+                    $('#save_variation').prop('disabled', false).text('Save');
+                }
+            });
+        });
+</script>
