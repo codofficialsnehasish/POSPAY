@@ -297,7 +297,7 @@ class OrderAPI extends Controller
             // $sgst = $totalGst / 2;
             
             $order->gst_amount = $totalGst;
-            $order->total_amount = ($order->total_amount - $totalDiscount) + $totalGst;
+            $order->total_amount = round(($order->total_amount - $totalDiscount) + $totalGst,2);
             // $order->cgst_amount = $cgst;
             // $order->sgst_amount = $sgst;
 
@@ -317,9 +317,9 @@ class OrderAPI extends Controller
             Transaction::create([
                 'order_id'                => $order->id,
                 'user_id'                 => $request->user()->id,
-                'vendor_id'               => $request->user()->vendor_id,
+                'vendor_id'               => $vendorId,
                 'transaction_number'      => generateTransactionNumber(), // you can write a helper
-                'amount'                  => $order->discounted_price,
+                'amount'                  => $order->total_amount,
                 'payment_method'          => $request->payment_method,
                 'payment_status'          => $payment_status ?? 'Awaiting Payment',
                 'gateway_transaction_id'  => $gateway_transaction_id ?? $request->gateway_transaction_id,
@@ -817,7 +817,7 @@ class OrderAPI extends Controller
         $orderItems->each(function ($orderItem) use (&$total_app_discount, &$gstRates) {
    
             $orderItem->product->image_url = getProductMainImage($orderItem->product_id);
-            $orderItem->subtotal = (int) $orderItem->subtotal;
+            $orderItem->subtotal = $orderItem->subtotal; //(int)
 
             $gstRates[] = floatval($orderItem->product->hsncode->gst_rate ?? 0);
 
@@ -842,16 +842,16 @@ class OrderAPI extends Controller
         $sub_total = $item_total - $total_app_discount;
         return response()->json([
             'status' => true,
-            'item_total' => (int) $item_total,
-            'discount' => (int) $discount,
-            'compelementary' => (int) $req_complementary,
-            'discount_subtotal' => (int) $item_total - $total_app_discount,
-            'sgst'          => (int) $gst['sgst'] ?? 0.00,
-            'cgst'          => (int) $gst['cgst'] ?? 0.00,
-            'total_gst'     => (int) $gst['total_gst'] ?? 0.00,
+            'item_total' => round($item_total,2), //(int)
+            'discount' => round($discount,2), //(int)
+            'compelementary' => round($req_complementary,2), //(int)
+            'discount_subtotal' => round($item_total - $total_app_discount,2), //(int)
+            'sgst'          => round($gst['sgst'],2) ?? 0.00, //(int)
+            'cgst'          => round($gst['cgst'],2) ?? 0.00, //(int)
+            'total_gst'     => round($gst['total_gst'],2) ?? 0.00, //(int)
             // 'order_total' => calculate_orderItems_total_by_orderId($order->id),
             // 'grand_total' => (int) calculate_orderItems_total_by_orderId($order->id) + ($gst['total_gst'] ?? 0.00),
-            'grand_total' => (int) $sub_total + $gst['total_gst'],
+            'grand_total' => round($sub_total + $gst['total_gst'], 2), //(int)
             'is_gst_same'   => $allSameGst ? 1 : 0,
             'data' => $orderItems,
         ], 200);
@@ -901,7 +901,58 @@ class OrderAPI extends Controller
             return response()->json(['error' => $validator->errors()], 422);
         }
 
-        $order= Order::findOrFail($request->order_id);
+        $vendorId = $request->vendorId;
+
+        // 🔹 If UPI → Verify Razorpay payment
+        if ($request->payment_method === "UPI" && empty($request->txnId)) {
+            if (!$request->razorpay_order_id || !$request->gateway_transaction_id || !$request->razorpay_signature) {
+                return response()->json([
+                    'status'  => false,
+                    'message' => 'Missing Razorpay payment details'
+                ], 422);
+            }
+
+            try {
+                $api = new Api(env('RAZORPAY_KEY'), env('RAZORPAY_SECRET'));
+
+                $attributes = [
+                    'razorpay_order_id'   => $request->razorpay_order_id,
+                    'razorpay_payment_id' => $request->gateway_transaction_id,
+                    'razorpay_signature'  => $request->razorpay_signature,
+                ];
+
+                $api->utility->verifyPaymentSignature($attributes);
+                $payment_status = "Payment Received"; // ✅ verified
+            } catch (\Exception $e) {
+                return response()->json([
+                    'status'  => false,
+                    'message' => 'Payment verification failed: '.$e->getMessage()
+                ], 400);
+            }
+        } else {
+            // COD / Online(Card without Razorpay integration here)
+            $payment_status = ($request->payment_method == 'Cash') ? 'Payment Received' : 'Payment Received'; //Awaiting Payment
+        }
+
+        // 🔹 If POS CARD (from POS machine)
+        if ($request->paymentMode === "CARD" && $request->txnId) {
+
+            // No verification required (POS machine already verifies)
+            $payment_status = "Payment Received";
+            $gateway_transaction_id = $request->txnId;
+            $request->payment_method = 'Card';
+
+        } 
+        if ($request->paymentMode === "UPI" && $request->txnId) {
+
+            // No verification required (POS machine already verifies)
+            $payment_status = "Payment Received";
+            $gateway_transaction_id = $request->txnId;
+            $request->payment_method = 'UPI';
+
+        } 
+
+        $order= Order::withoutGlobalScope('withoutDraft')->findOrFail($request->order_id);
         $order->order_number = generateOrderNumber();
         $order->price_subtotal = calculate_orderItems_total_by_orderId($order->id);
         $order->total_amount = calculate_orderItems_total_by_orderId($order->id);
@@ -910,7 +961,42 @@ class OrderAPI extends Controller
         $order->is_darft =0;
         $order->order_status = 'Order Confirmed';
         $order->status = 1;
+        $order->discount_amount = $request->discount_amount ?? calculate_order_item_discount_by_order_id($order->id);
+        $order->complimentary_amount = $request->complimentary_amount;
         $order->save();
+
+        if($request->is_gst_same){
+            $totalDiscount= $request->discount_amount + $request->complimentary_amount;
+        }else{
+            $totalDiscount=calculate_order_item_discount_by_order_id($order->id);
+        }
+        $discounted_price =  $order->discounted_price - $totalDiscount;
+        $order->discounted_price = $discounted_price;
+        $order->save();
+
+        $gst = calculate_gst_by_orderId($request->order_id);
+
+        $order->sgst_amount = $gst['sgst'] ?? 0.00;
+        $order->cgst_amount = $gst['cgst'] ?? 0.00;
+        $totalGst  = $order->sgst_amount + $order->cgst_amount;
+        
+        $order->gst_amount = $totalGst;
+        $order->total_amount = ($order->total_amount - $totalDiscount) + $totalGst;
+
+        $order->save();
+
+        Transaction::create([
+            'order_id'                => $order->id,
+            'user_id'                 => $request->user()->id,
+            'vendor_id'               => $vendorId,
+            'transaction_number'      => generateTransactionNumber(), // you can write a helper
+            'amount'                  => $order->total_amount,
+            'payment_method'          => $request->payment_method,
+            'payment_status'          => $payment_status ?? 'Awaiting Payment',
+            'gateway_transaction_id'  => $gateway_transaction_id ?? $request->gateway_transaction_id,
+            'currency'                => 'INR',
+            'paid_at'                 => $payment_status == 'Payment Received' ? now() : null,
+        ]);
 
         if ($request->has('seat_number') && is_array($request->seat_number)) {
             OrderSeat::where('order_id', $order->id)->delete();
@@ -975,9 +1061,11 @@ class OrderAPI extends Controller
         if ($orderItem) {
             if($request->type == 'increment'){
                 $orderItem->quantity += $request->quantity;
+                $orderItem->subtotal = ($orderItem->price * $orderItem->quantity) - $orderItem->app_discount;
             }
             if($request->type == 'decrement'){
                 $orderItem->quantity -= $request->quantity;
+                $orderItem->subtotal = ($orderItem->price * $orderItem->quantity) - $orderItem->app_discount;
                 
                 // If quantity becomes 0 or less, delete the item
                 if ($orderItem->quantity <= 0) {

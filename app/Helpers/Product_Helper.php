@@ -252,6 +252,21 @@
         }
     }
 
+    if(!function_exists('calculate_order_item_discount_by_order_id')){
+        function calculate_order_item_discount_by_order_id(int $orderId)
+        {
+            $total = 0;
+
+            $orderItems = OrderItems::where('order_id', $orderId)->get();
+
+            foreach ($orderItems as $orderItem) {
+                $total += $orderItem->app_discount;
+            }
+
+            return $total;
+        }
+    }
+
 
     if (!function_exists('total_vendors')) {
     function total_vendors()

@@ -317,7 +317,7 @@ class CartAPI extends Controller
             'sgst'          => $gst['sgst'],
             'cgst'          => $gst['cgst'],
             'total_gst'     => $gst['total_gst'],
-            'grand_total'   => round($sub_total + $gst['total_gst'], 2),
+            'grand_total' => number_format($sub_total + $gst['total_gst'], 2, '.', ''),
             'is_gst_same'   => $allSameGst ? 1 : 0,
             'data'          => $cart_items,
         ], 200);
