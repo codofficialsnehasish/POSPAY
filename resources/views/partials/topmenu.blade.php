@@ -85,7 +85,7 @@
                     </a>
                     <ul class="dropdown-menu shadow-lg border-0 rounded-3 p-2">
                         @canany(['Category View'])
-                            <li><a class="dropdown-item" href="{{ route('category.index') }}">Categories</a></li>
+                            <li><a class="dropdown-item" href="{{ route('category.index') }}">Category</a></li>
                         @endcanany
 
                         @canany(['Brand View'])

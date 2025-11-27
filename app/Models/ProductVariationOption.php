@@ -16,6 +16,7 @@ class ProductVariationOption extends Model
         'quantity',
         'color',
         'mrp',
+        'selling_price',
         'price',
         'discount_rate',
         'discount_amount',

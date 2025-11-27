@@ -279,7 +279,7 @@ class CartAPI extends Controller
             }
 
             // Subtotal
-            $cartItem->subtotal = $cartItem->price * $cartItem->quantity;
+            $cartItem->subtotal = round($cartItem->price * $cartItem->quantity,2);
 
             // Discount
             $total_discount += floatval($cartItem->discount ?? 0);

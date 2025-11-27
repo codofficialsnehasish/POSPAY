@@ -8,7 +8,7 @@
     <div class="dashboard-main-body">
 
         <div class="d-flex flex-wrap align-items-center justify-content-between gap-3 mb-24">
-            <h6 class="fw-semibold mb-0">Categorys</h6>
+            <h6 class="fw-semibold mb-0">Category</h6>
             <ul class="d-flex align-items-center gap-2">
                 <li class="fw-medium">
                     <a href="{{ route('dashboard') }}" class="d-flex align-items-center gap-1 hover-text-primary">
@@ -17,13 +17,13 @@
                     </a>
                 </li>
                 <li>-</li>
-                <li class="fw-medium">Categorys</li>
+                <li class="fw-medium">Category</li>
             </ul>
         </div>
 
         <div class="card basic-data-table">
             <div class="card-header border-bottom bg-base py-16 px-24 d-flex align-items-center flex-wrap gap-3 justify-content-between">
-                <h5 class="card-title mb-0">All Categorys</h5>
+                <h5 class="card-title mb-0">All Category</h5>
                 <a href="{{ route('category.create') }}" class="btn btn-primary text-sm btn-sm px-12 py-12 radius-8 d-flex align-items-center gap-2">
                     <iconify-icon icon="ic:baseline-plus" class="icon text-xl line-height-1"></iconify-icon>
                     Add New

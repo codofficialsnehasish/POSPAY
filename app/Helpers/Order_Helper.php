@@ -583,7 +583,22 @@
 
             foreach ($orders as $order) {
                 $dayName = \Carbon\Carbon::parse($order->created_at)->format('l'); // Monday, Tuesday...
-                $days[$dayName] += $order->total_amount;
+                $days[$dayName] += round($order->total_amount,2);
+            }
+
+            foreach ($orders as $order) {
+                $dayName = \Carbon\Carbon::parse($order->created_at)->format('l');
+
+                // Convert to paise (integer)
+                $amount = (int) round($order->total_amount * 100);
+
+                // Add to that day's total
+                $days[$dayName] += $amount;
+            }
+
+            // Convert back to numeric rupees
+            foreach ($days as $day => $value) {
+                $days[$day] = $value / 100;   // <-- gives numeric without float errors
             }
 
             return $days;
