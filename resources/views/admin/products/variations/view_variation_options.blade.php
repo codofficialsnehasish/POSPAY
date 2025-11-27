@@ -7,6 +7,7 @@
                 <th>Barcode</th>
                 <th>Quantity</th>
                 <th>Price</th>
+                <th>Selling Price</th>
        
                 {{-- @canany(['Permission Edit', 'Permission Delete']) --}}
                     <th>Action</th>
@@ -19,8 +20,9 @@
                     <td>{{ $loop->iteration }}</td>
                     <td>{{ $option->name }}</td>
                     <td>{{ $option->barcode }}</td>
-                    <td>{{ $option->quantity }}
+                    <td>{{ $option->quantity }}</td>
                     <td>{{ $option->price }}
+                    <td>{{ $option->selling_price }}
           
                   
                     {{-- @canany(['Permission Edit', 'Permission Delete']) --}}

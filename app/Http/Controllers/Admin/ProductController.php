@@ -422,6 +422,7 @@ class ProductController extends Controller implements HasMiddleware
                 'quantity'=>$request->quantity,
                 'barcode'=>$request->barcode,
                 'mrp'=>$request->mrp,
+                'selling_price' => $request->selling_price,
                 'price'=>$request->price,
                 'discount_rate'=>$request->discount_rate,
                 'discount_amount'=>$request->discount_amount,
@@ -483,6 +484,7 @@ class ProductController extends Controller implements HasMiddleware
            $option->quantity =$request->quantity;
             $option->barcode=$request->barcode;
            $option->mrp =$request->mrp;
+           $option->selling_price =$request->selling_price;
            $option->price =$request->price;
            $option->discount_rate =$request->discount_rate;
            $option->discount_amount =$request->discount_amount;

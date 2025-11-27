@@ -98,7 +98,7 @@
 
         <div class="row">
 
-            <div class="col-md-6 mb-20">
+            <div class="col-md-4 mb-20">
                 <label for="desc" class="form-label fw-semibold text-primary-light text-sm mb-8">
                     MRP</label>
                 <input type="text" name="mrp" id="mrp" class="form-control radius-8" placeholder="Enter MRP"
@@ -107,7 +107,16 @@
                     Please provide mrp.
                 </div>
             </div>
-            <div class="col-md-6 mb-20">
+            <div class="col-md-4 mb-20">
+                <label for="desc" class="form-label fw-semibold text-primary-light text-sm mb-8">
+                    Selling Price</label>
+                <input type="text" name="selling_price" id="selling_price" class="form-control radius-8" placeholder="Enter Selling Price"
+                    required>
+                <div class="invalid-feedback">
+                    Please provide selling price.
+                </div>
+            </div>
+            <div class="col-md-4 mb-20">
                 <div class="form-check style-check d-flex align-items-center">
                     <label for="desc" class="form-label fw-semibold text-primary-light text-sm mb-8">
                         No Discount</label>
