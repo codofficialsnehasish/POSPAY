@@ -581,10 +581,10 @@
 
             $orders = $query->get();
 
-            foreach ($orders as $order) {
-                $dayName = \Carbon\Carbon::parse($order->created_at)->format('l'); // Monday, Tuesday...
-                $days[$dayName] += round($order->total_amount,2);
-            }
+            // foreach ($orders as $order) {
+            //     $dayName = \Carbon\Carbon::parse($order->created_at)->format('l'); // Monday, Tuesday...
+            //     $days[$dayName] += round($order->total_amount,2);
+            // }
 
             foreach ($orders as $order) {
                 $dayName = \Carbon\Carbon::parse($order->created_at)->format('l');
@@ -937,7 +937,7 @@
 
                 $stats[] = [
                     'payment_method' => $method,
-                    'total_sales' => $methodSales,
+                    'total_sales' => number_format($methodSales,2),
                     'percentage' => $percentage
                 ];
             }
@@ -945,7 +945,7 @@
             // Add total row
             $stats[] = [
                 'payment_method' => 'All',
-                'total_sales' => $totalSales,
+                'total_sales' => number_format($totalSales,2),
                 'percentage' => 100
             ];
 

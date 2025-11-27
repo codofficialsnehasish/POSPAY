@@ -248,11 +248,61 @@
         }
     }
     
-        if (!function_exists('get_seat_numbers')) {
+    if (!function_exists('get_seat_numbers')) {
         function get_seat_numbers($coach_id){
             $seats = SeatNumber::where('coach_id', $coach_id)->get();
             return $seats;
         }
     }
+
+    function format_amount($amount)
+    {
+        // normalize input: remove commas/spaces, keep sign and dot
+        $s = trim((string)$amount);
+        $s = str_replace(',', '', $s);
+        $s = preg_replace('/\s+/', '', $s);
+
+        // handle empty or non-numeric input
+        if ($s === '' || !is_numeric($s)) {
+            return '0.00';
+        }
+
+        // keep sign
+        $sign = '';
+        if ($s[0] === '-' || $s[0] === '+') {
+            $sign = $s[0];
+            $s = substr($s, 1);
+        }
+
+        // Use sprintf with large precision to get a stable decimal string for the float value
+        // (F gives non-locale formatting)
+        $expanded = sprintf('%.14F', (float)$s); // 14 digits of fractional precision is usually enough
+
+        // remove trailing zeros right of the decimal (but keep at least one 0 if integer)
+        $expanded = rtrim($expanded, '0');
+        if (substr($expanded, -1) === '.') {
+            $expanded .= '0';
+        }
+
+        // split integer & decimal
+        $parts = explode('.', $expanded);
+        $integer = $parts[0];
+        $decimal = $parts[1] ?? '';
+
+        // Truncate decimal to 2 digits WITHOUT rounding
+        $decimal = substr($decimal, 0, 2);
+        $decimal = str_pad($decimal, 2, '0');
+
+        // Format integer part with commas (thousands grouping)
+        // handle possible leading zeros
+        $integer = ltrim($integer, '0');
+        if ($integer === '') {
+            $integer = '0';
+        }
+        $integerFormatted = preg_replace('/\B(?=(\d{3})+(?!\d))/', ',', $integer);
+
+        return $sign . $integerFormatted . '.' . $decimal;
+    }
+
 
 
