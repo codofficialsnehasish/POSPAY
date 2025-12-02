@@ -36,11 +36,31 @@ class SellReportExport implements FromCollection, WithHeadings
      */
     public function headings(): array
     {
+        // return [
+        //     'Date',
+        //     'User',
+        //     'Order #',
+        //     'Total Amount',
+        //     'Payment Status',
+        //     'Payment Mode',
+        //     'Order Status',
+        // ];
+        
         return [
             'Date',
             'User',
             'Order #',
-            'Total Amount',
+
+            'Subtotal',
+            'Discount',
+
+            'CGST',
+            'SGST',
+            'Total GST',
+
+            'Round Off',
+            'Grand Total',
+
             'Payment Status',
             'Payment Mode',
             'Order Status',

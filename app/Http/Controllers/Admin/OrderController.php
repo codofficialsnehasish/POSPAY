@@ -231,4 +231,23 @@ class OrderController extends Controller implements HasMiddleware
             return back()->with('error','Not Found');
         }
     }
+
+    public function get_order_details_pdf(Request $request){
+        $vendorId = $request->vendorId;
+        $orderId = $request->orderId;
+        if($vendorId && $orderId){
+            $branch = User::find($vendorId);
+            $order = Order::with('items.product.media','seats','transactions')->withoutGlobalScope('withoutDraft')->where('id', $orderId)->where('vendor_id',$vendorId)->first();
+            $pdf = \PDF::loadView('pdf.order-pos', compact('order', 'branch'))
+                        ->setPaper([0, 0, 226.77, 1000], 'portrait'); 
+            // 226.77 points = 58mm width. Height will auto-expand.
+            return $pdf->stream("order-{$order->order_number}.pdf");
+
+        }else{
+            return response()->json([
+                'status' => false,
+                'message' => 'Data not found'
+            ], 404);
+        }
+    }
 }

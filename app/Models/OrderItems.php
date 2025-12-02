@@ -19,6 +19,9 @@ class OrderItems extends Model
         'discount_rate',
         'discount_amount',
         'app_discount',
+        'hsn_code',
+        'gst_rate',
+        'gst_amount',
         'subtotal',
     ];
     public function product()

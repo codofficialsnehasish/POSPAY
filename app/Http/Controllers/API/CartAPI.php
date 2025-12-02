@@ -15,6 +15,7 @@ use App\Models\Category;
 
 use App\Models\ProductVariation;
 use App\Models\ProductVariationOption;
+use Illuminate\Support\Facades\Log;
 
 class CartAPI extends Controller
 {
@@ -279,7 +280,14 @@ class CartAPI extends Controller
             }
 
             // Subtotal
-            $cartItem->subtotal = round($cartItem->price * $cartItem->quantity,2);
+            // $cartItem->subtotal = round($cartItem->price * $cartItem->quantity,2);
+            $cartItem->subtotal = (float) number_format(
+                    $cartItem->price * $cartItem->quantity,
+                    2,
+                    '.',
+                    ''
+                );
+
 
             // Discount
             $total_discount += floatval($cartItem->discount ?? 0);
@@ -298,29 +306,39 @@ class CartAPI extends Controller
         }else{
             $discount = $total_discount;
         }
-
+        
         // Get GST
-        $gst = calculate_cart_gst_by_userId($userId, $vendorId);
+        
+        
+        $gst = calculate_cart_gst_by_userId($userId, $vendorId, $total_discount);
 
         // Item total BEFORE GST
         $item_total = calculate_cart_total_by_userId($userId, $vendorId);
 
         // Apply discount (always)
         $sub_total = $item_total - $total_discount;
-
+        
         return response()->json([
             'status'        => true,
             'item_total'    => round($item_total, 2),
             'discount'      => round($discount, 2) ?? 0.00,
-            'compelementary'=> $req_complementary ?? 0.00,
-            'discount_subtotal' => round($item_total - $total_discount, 2),
+            'compelementary'=> isset($req_complementary) ? (int)$req_complementary : '0.00',
+            // 'discount_subtotal' => round($item_total - $total_discount, 2),
+            'discount_subtotal' => (float) number_format(
+                    $item_total - $total_discount,
+                    2,
+                    '.',
+                    ''
+                ),
             'sgst'          => $gst['sgst'],
             'cgst'          => $gst['cgst'],
             'total_gst'     => $gst['total_gst'],
-            'grand_total' => number_format($sub_total + $gst['total_gst'], 2, '.', ''),
+            'grand_total' => round($sub_total + $gst['total_gst'], 2),
+            'rounded_grand_total' => round($sub_total + $gst['total_gst']).'.00',
             'is_gst_same'   => $allSameGst ? 1 : 0,
             'data'          => $cart_items,
         ], 200);
+
     }
 
 

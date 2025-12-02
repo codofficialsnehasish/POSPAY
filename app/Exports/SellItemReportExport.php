@@ -39,10 +39,16 @@ class SellItemReportExport implements FromCollection, WithHeadings
         return [
             'Order #',
             'Product',
+            'Category',
             'Variation',
+            'Selling Price',
             'Quantity',
             'Price',
+            'GST',
+            'Discount',
             'Subtotal',
+            'Round Diff',
+            'Grand Total'
         ];
     }
 }

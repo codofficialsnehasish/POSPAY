@@ -15,17 +15,28 @@
 
     if (!function_exists('generateOrderNumber')) {
         function generateOrderNumber() {
-            $dateTime = date('Ymd');
+            
+            
+            $date = date('Ymd');
+            $countToday = Order::withoutGlobalScope('withoutDraft')->whereDate('created_at', date('Y-m-d'))->count();
+            $nextNumber = $countToday + 1;
+            $nextNumberPadded = str_pad($nextNumber, 4, '0', STR_PAD_LEFT);
+            return "O" . $date . $nextNumberPadded;
+            
+            
+            // $dateTime = date('Ymd');
             // $orderNumber = 'ORD' . $dateTime;
-            $orderNumber = 'O' . $dateTime;
-            return $orderNumber;
+            // $orderNumber = 'O' . $dateTime;
+            // return $orderNumber;
         }
     }
     if (!function_exists('generateDraftOrderNumber')) {
         function generateDraftOrderNumber() {
-            $dateTime = date('Ymd');
-            $orderNumber = 'DRFT' . $dateTime;
-            return $orderNumber;
+            $date = date('Ymd');
+            $countToday = Order::withoutGlobalScope('withoutDraft')->whereDate('created_at', date('Y-m-d'))->count();
+            $nextNumber = $countToday + 1;
+            $nextNumberPadded = str_pad($nextNumber, 4, '0', STR_PAD_LEFT);
+            return "DRFT" . $date . $nextNumberPadded;
         }
     }
 
@@ -937,7 +948,7 @@
 
                 $stats[] = [
                     'payment_method' => $method,
-                    'total_sales' => number_format($methodSales,2),
+                    'total_sales' => round($methodSales,2), //number_format
                     'percentage' => $percentage
                 ];
             }
@@ -945,7 +956,7 @@
             // Add total row
             $stats[] = [
                 'payment_method' => 'All',
-                'total_sales' => number_format($totalSales,2),
+                'total_sales' => round($totalSales,2), //number_format
                 'percentage' => 100
             ];
 
@@ -1258,22 +1269,61 @@ if (!function_exists('top_categories')) {
             ->values();
     }*/
 
-    function top_categories(int $limit = 5, $user_id = null, $vendor_id = null, $from = null, $to = null)
+    function top_categories(int $limit = 5, $user_id = null, $vendor_id = null, $from = null, $to = null, $period = null)
     {
-        $vendorID = $vendor_id ?: auth()->id();
+         $today = now();
 
+        // --- PERIOD BASED DATE FILTERS ---
+        if ($period) {
+            switch ($period) {
+    
+                case 'today': // 1D
+                    $from = $today->copy()->startOfDay();
+                    $to   = $today->copy()->endOfDay();
+                    break;
+    
+                case 'week': // 1W
+                    $from = $today->copy()->startOfWeek();
+                    $to   = $today->copy()->endOfWeek();
+                    break;
+    
+                case 'month': // 1M
+                    $from = $today->copy()->startOfMonth();
+                    $to   = $today->copy()->endOfMonth();
+                    break;
+    
+                case '3month': // 3M
+                    $from = $today->copy()->subMonths(3)->startOfDay();
+                    $to   = $today->copy()->endOfDay();
+                    break;
+    
+                case '6month': // 6M
+                    $from = $today->copy()->subMonths(6)->startOfDay();
+                    $to   = $today->copy()->endOfDay();
+                    break;
+    
+                case 'year': // 1Y
+                    $from = $today->copy()->startOfYear();
+                    $to   = $today->copy()->endOfYear();
+                    break;
+    
+                default:
+                    $from = null;
+                    $to = null;
+            }
+        }
+    
+        $vendorID = $vendor_id ?: auth()->id();
+    
         return OrderItems::with('product.categories')
             ->whereHas('order', function ($q) use ($vendorID, $user_id, $from, $to) {
-
-                // Filter by vendor
+    
                 $q->where('vendor_id', $vendorID);
-
-                // Filter by user_id
+    
                 if (!empty($user_id)) {
                     $q->where('user_id', $user_id);
                 }
-
-                // Date filters
+    
                 if (!empty($from)) {
                     $q->whereDate('created_at', '>=', $from);
                 }
@@ -1284,8 +1334,7 @@ if (!function_exists('top_categories')) {
             ->select('product_id', DB::raw('SUM(quantity) as total_sold'))
             ->groupBy('product_id')
             ->get()
-
-            // Expand product → categories
+    
             ->flatMap(function ($item) {
                 return $item->product->categories->map(function ($cat) use ($item) {
                     return [
@@ -1294,21 +1343,18 @@ if (!function_exists('top_categories')) {
                     ];
                 });
             })
-
-            // Group by category name
+    
             ->groupBy('name')
             ->map(fn($g) => [
                 'name'  => $g->first()['name'],
                 'count' => $g->sum('count'),
-                'color' => sprintf('#%06X', mt_rand(0, 0xFFFFFF)), // random color
+                'color' => sprintf('#%06X', mt_rand(0, 0xFFFFFF)),
             ])
-
-            // Sorting
+    
             ->sortByDesc('count')
-
-            // Limit
             ->take($limit)
-            ->values();
+            ->values()
+            ->toArray();
     }
 
 }
@@ -1318,34 +1364,82 @@ if (!function_exists('top_categories')) {
  * HOURLY ORDER STATISTICS
  */
 if (!function_exists('order_heatmap_data')) {
-    function order_heatmap_data()
+    function order_heatmap_data($params = ['period' => 'today'])
     {
-        $startDate = now()->subDays(6)->startOfDay();
-        $endDate   = now()->endOfDay();
+        $period = $params['period'] ?? 'today';
 
+        // -------- PERIOD HANDLER --------  
+        if ($period === 'custom') {
+            try {
+                $startDate = Carbon::parse($params['from_date'])->startOfDay();
+                $endDate   = Carbon::parse($params['to_date'])->endOfDay();
+            } catch (\Throwable $e) {
+                // fallback if invalid format
+                $startDate = now()->startOfDay();
+                $endDate = now()->endOfDay();
+            }
+        } else {
+            switch ($period) {
+                case 'today':
+                    $startDate = now()->startOfDay();
+                    $endDate   = now()->endOfDay();
+                    break;
+
+                case 'week':
+                    $startDate = now()->startOfWeek()->startOfDay();
+                    $endDate   = now()->endOfWeek()->endOfDay();
+                    break;
+
+                case 'month':
+                    $startDate = now()->startOfMonth()->startOfDay();
+                    $endDate   = now()->endOfMonth()->endOfDay();
+                    break;
+
+                case '3month':
+                    $startDate = now()->subMonths(2)->startOfMonth();
+                    $endDate   = now()->endOfMonth();
+                    break;
+
+                case '6month':
+                    $startDate = now()->subMonths(5)->startOfMonth();
+                    $endDate   = now()->endOfMonth();
+                    break;
+
+                case 'year':
+                    $startDate = now()->startOfYear()->startOfDay();
+                    $endDate   = now()->endOfYear()->endOfDay();
+                    break;
+
+                default:
+                    $startDate = now()->startOfDay();
+                    $endDate   = now()->endOfDay();
+            }
+        }
+
+        // -------- QUERY --------  
         $raw = \App\Models\Order::where('vendor_id', auth()->id())
             ->whereBetween('created_at', [$startDate, $endDate])
             ->select(
-                DB::raw('DAYOFWEEK(created_at) as weekday'), // 1 = Sunday
+                DB::raw('DAYOFWEEK(created_at) as weekday'),
                 DB::raw('HOUR(created_at) as hour'),
                 DB::raw('COUNT(*) as total')
             )
             ->groupBy('weekday', 'hour')
             ->get();
 
-        // Normalize days → 0=Mon ... 6=Sun for chart
-        $dayMap = collect([2,3,4,5,6,7,1]); // reorder Sunday last
+        // reorder days → 0=Mon ... 6=Sun
+        $dayMap = collect([2,3,4,5,6,7,1]);  // Sunday last
 
-        $days = collect(range(0, 6)); // 0..6
-        $hours = collect(range(0, 23)); // 0..23
+        return collect(range(0, 6))->flatMap(function ($index) use ($raw, $dayMap) {
+            return collect(range(0, 23))->map(function ($hour) use ($raw, $dayMap, $index) {
+                $found = $raw->first(fn($r) =>
+                    $r->weekday == $dayMap[$index] &&
+                    $r->hour == $hour
+                );
 
-        return $days->flatMap(function ($index) use ($hours, $dayMap, $raw) {
-            $day = $dayMap[$index]; // map to MySQL DAYOFWEEK
-            return $hours->map(function ($hour) use ($day, $index, $raw) {
-                $found = $raw->firstWhere(fn($r) => $r->weekday == $day && $r->hour == $hour);
                 return [
-                    'x' => $index, // ✅ Day (0–6)
-                    'y' => $hour,  // ✅ Hour (0–23)
+                    'x' => $index,
+                    'y' => $hour,
                     'v' => $found?->total ?? 0,
                 ];
             });
@@ -1355,39 +1449,93 @@ if (!function_exists('order_heatmap_data')) {
 
 
 if (!function_exists('category_heatmap_data')) {
-    function category_heatmap_data()
+    function category_heatmap_data($params = ['period' => 'today'])
     {
         $vendorId = auth()->id();
+        $period = $params['period'] ?? 'today';
 
-        // Fetch total orders grouped by category & day of week
+        // -------- PERIOD HANDLER --------
+        if ($period === 'custom') {
+            try {
+                $startDate = Carbon::parse($params['from_date'])->startOfDay();
+                $endDate   = Carbon::parse($params['to_date'])->endOfDay();
+            } catch (\Throwable $e) {
+                $startDate = now()->startOfDay();
+                $endDate   = now()->endOfDay();
+            }
+        } else {
+            switch ($period) {
+                case 'today':
+                    $startDate = now()->startOfDay();
+                    $endDate   = now()->endOfDay();
+                    break;
+
+                case 'week':
+                    $startDate = now()->startOfWeek()->startOfDay();
+                    $endDate   = now()->endOfWeek()->endOfDay();
+                    break;
+
+                case 'month':
+                    $startDate = now()->startOfMonth()->startOfDay();
+                    $endDate   = now()->endOfMonth()->endOfDay();
+                    break;
+
+                case '3month':
+                    $startDate = now()->subMonths(2)->startOfMonth();
+                    $endDate   = now()->endOfMonth();
+                    break;
+
+                case '6month':
+                    $startDate = now()->subMonths(5)->startOfMonth();
+                    $endDate   = now()->endOfMonth();
+                    break;
+
+                case 'year':
+                    $startDate = now()->startOfYear();
+                    $endDate   = now()->endOfYear();
+                    break;
+
+                default:
+                    $startDate = now()->startOfDay();
+                    $endDate   = now()->endOfDay();
+            }
+        }
+
+        // -------- QUERY --------
         $data = \App\Models\OrderItems::select(
                 DB::raw('DAYOFWEEK(order_items.created_at) as weekday'),
                 'categories.name as category_name',
                 DB::raw('COUNT(order_items.id) as total')
             )
             ->join('products', 'order_items.product_id', '=', 'products.id')
-            ->join('product_categories', 'products.id', '=', 'product_categories.product_id') // ✅ correct pivot
+            ->join('product_categories', 'products.id', '=', 'product_categories.product_id')
             ->join('categories', 'product_categories.category_id', '=', 'categories.id')
             ->join('orders', 'order_items.order_id', '=', 'orders.id')
             ->where('orders.vendor_id', $vendorId)
+            ->whereBetween('order_items.created_at', [$startDate, $endDate])
             ->groupBy('weekday', 'categories.name')
             ->get();
 
-        // Collect all unique category names
         $categories = $data->pluck('category_name')->unique()->values();
-        $days = collect(range(1, 7)); // Sunday (1) → Saturday (7)
+        $days = collect([1,2,3,4,5,6,7]); // 1=Sun ... 7=Sat
 
-        // Build full grid (7 days × each category)
         return $categories->flatMap(function ($cat, $catIndex) use ($days, $data) {
+
             return $days->map(function ($day) use ($cat, $catIndex, $data) {
-                $found = $data->first(fn($r) => $r->weekday == $day && $r->category_name == $cat);
+
+                $found = $data->first(fn($r) =>
+                    $r->weekday == $day &&
+                    $r->category_name == $cat
+                );
+
                 return [
-                    'x' => $day - 1, // 0–6 for JS
+                    'x' => $day - 1,   // convert day to 0–6
                     'y' => $catIndex,
                     'v' => $found?->total ?? 0,
                     'category' => $cat,
                 ];
             });
+
         })->values();
     }
 }
@@ -1479,7 +1627,80 @@ if (!function_exists('get_purchase_range')) {
         return intval($query->whereBetween('purchase_date', [$start, $end])->sum('total_amount'));
     }
 }
+if (!function_exists('get_sales_filtered')) {
 
+    function get_sales_filtered($params = [])
+    {
+        $user = Auth::user();
+
+        $query = Order::query();
+
+        // Vendor filter
+        if ($user && $user->hasRole('Vendor')) {
+            $query->where('vendor_id', $user->id);
+        }
+
+        // Custom Date Range
+        if (!empty($params['from_date']) && !empty($params['to_date'])) {
+            $query->whereBetween('created_at', [
+                $params['from_date'] . " 00:00:00",
+                $params['to_date']   . " 23:59:59"
+            ]);
+        }
+        // Predefined Period Filter
+        elseif (!empty($params['period'])) {
+
+            switch ($params['period']) {
+
+                case 'today':
+                    $query->whereDate('created_at', today());
+                    break;
+
+                case 'week':
+                    $query->whereBetween('created_at', [
+                        now()->subDays(6)->startOfDay(),
+                        now()->endOfDay()
+                    ]);
+                    break;
+
+                case 'month':
+                    $query->whereMonth('created_at', now()->month)
+                          ->whereYear('created_at', now()->year);
+                    break;
+
+                case '3month':
+                    $query->whereBetween('created_at', [
+                        now()->subMonths(3)->startOfDay(),
+                        now()->endOfDay()
+                    ]);
+                    break;
+
+                case '6month':
+                    $query->whereBetween('created_at', [
+                        now()->subMonths(6)->startOfDay(),
+                        now()->endOfDay()
+                    ]);
+                    break;
+
+                case 'year':
+                    $query->whereYear('created_at', now()->year);
+                    break;
+            }
+        }
+
+        // Group by Date
+        $sales = $query->selectRaw('DATE(created_at) as date, SUM(total_amount) as total')
+                       ->groupBy('date')
+                       ->orderBy('date')
+                       ->get();
+
+        return [
+            'labels' => $sales->pluck('date'),
+            'values' => $sales->pluck('total'),
+            'total'  => $sales->sum('total'),
+        ];
+    }
+}
 if (!function_exists('get_sales_by_year')) {
     function get_sales_by_year($year)
     {
@@ -1513,39 +1734,103 @@ if (!function_exists('get_sales_purchase_range')) {
         $user = Auth::user();
         $today = now();
 
+        // FOR CUSTOM RANGE
+        if (is_array($range) && ($range['period'] ?? null) === 'custom') {
+            
+            
+
+            $start = Carbon::parse($range['from_date'])->startOfDay();
+            $end   = Carbon::parse($range['to_date'])->endOfDay();
+
+            // Total days difference
+            $totalDays = $start->diffInDays($end) + 1;
+
+            // Create date labels (dd/mm or dd MON)
+            $labels = [];
+            for ($i = 0; $i < $totalDays; $i++) {
+                $labels[] = $start->copy()->addDays($i)->format('d M');
+            }
+
+            // RESULT ARRAYS
+            $sales = [];
+            $purchase = [];
+
+            foreach ($labels as $i => $label) {
+
+                $date = $start->copy()->addDays($i);
+
+                $querySales = Order::query();
+                $queryPurchase = Purchase::query();
+
+                if ($user && $user->hasRole('Vendor')) {
+                    $querySales->where('vendor_id', $user->id);
+                    $queryPurchase->where('vendor_id', $user->id);
+                }
+
+                // Filter by selected date
+                $querySales->whereDate('created_at', $date);
+                $queryPurchase->whereDate('purchase_date', $date);
+
+                $sales[] = (int) $querySales->sum('total_amount');
+                $purchase[] = (int) $queryPurchase->sum('total_amount');
+            }
+
+            return [
+                'labels' => $labels,
+                'sales' => $sales,
+                'purchase' => $purchase,
+                'total_sales' => array_sum($sales),
+                'total_purchase' => array_sum($purchase),
+            ];
+        }
+
+        // ----------------------------------------------
+        // NORMAL PRESETS (today, week, month, 3M, 6M, 1Y)
+        // ----------------------------------------------
+
         switch ($range) {
-            case '1D':
+
+            case 'today':
                 $start = $today->copy()->startOfDay();
                 $end   = $today->copy()->endOfDay();
                 $labels = ['Today'];
                 break;
 
-            case '1W':
+            case 'week':
                 $start = $today->copy()->startOfWeek();
                 $end   = $today->copy()->endOfWeek();
-                $labels = ['Mon','Tue','Wed','Thu','Fri','Sat','Sun'];
+                $labels = [];
+                for ($i = 0; $i < 7; $i++) {
+                    $labels[] = $start->copy()->addDays($i)->format('D');
+                }
                 break;
 
-            case '1M':
+            case 'month':
                 $start = $today->copy()->startOfMonth();
                 $end   = $today->copy()->endOfMonth();
                 $days  = $today->daysInMonth;
                 $labels = range(1, $days);
                 break;
 
-            case '3M':
-                $start = $today->copy()->subMonths(3)->startOfMonth();
+            case '3month':
+                $start = $today->copy()->subMonths(2)->startOfMonth();
                 $end   = $today->copy()->endOfMonth();
-                $labels = ['Jan','Feb','Mar'];
+                $labels = [];
+                for ($i = 0; $i < 3; $i++) {
+                    $labels[] = $start->copy()->addMonths($i)->format('M');
+                }
                 break;
 
-            case '6M':
-                $start = $today->copy()->subMonths(6)->startOfMonth();
+            case '6month':
+                $start = $today->copy()->subMonths(5)->startOfMonth();
                 $end   = $today->copy()->endOfMonth();
-                $labels = ['Jan','Feb','Mar','Apr','May','Jun'];
+                $labels = [];
+                for ($i = 0; $i < 6; $i++) {
+                    $labels[] = $start->copy()->addMonths($i)->format('M');
+                }
                 break;
 
-            case '1Y':
+            case 'year':
             default:
                 $start = $today->copy()->startOfYear();
                 $end   = $today->copy()->endOfYear();
@@ -1553,8 +1838,7 @@ if (!function_exists('get_sales_purchase_range')) {
                 break;
         }
 
-
-        // Generate sales & purchase arrays for labels
+        // RESULT ARRAYS
         $sales = [];
         $purchase = [];
 
@@ -1563,33 +1847,44 @@ if (!function_exists('get_sales_purchase_range')) {
             $querySales = Order::query();
             $queryPurchase = Purchase::query();
 
-            // Vendor filter
             if ($user && $user->hasRole('Vendor')) {
                 $querySales->where('vendor_id', $user->id);
                 $queryPurchase->where('vendor_id', $user->id);
             }
 
-            // Range-based filtering
-            if ($range === '1D') {
+            // Apply filters based on range type
+            if ($range === 'today') {
+
                 $querySales->whereBetween('created_at', [$start, $end]);
                 $queryPurchase->whereBetween('purchase_date', [$start, $end]);
-            }
-            elseif ($range === '1W') {
-                $day = $index + 1;
-                $querySales->whereDay('created_at', '=', $start->copy()->addDays($index)->day);
-                $queryPurchase->whereDay('purchase_date', '=', $start->copy()->addDays($index)->day);
-            }
-            elseif ($range === '1M') {
-                $day = $index + 1;
-                $querySales->whereDay('created_at', $day);
-                $queryPurchase->whereDay('purchase_date', $day);
-            }
-            else {
-                // 3M, 6M, 1Y → monthly data
-                $month = $index + 1;
 
-                $querySales->whereMonth('created_at', $month);
-                $queryPurchase->whereMonth('purchase_date', $month);
+            } elseif ($range === 'week') {
+
+                $dayDate = $start->copy()->addDays($index);
+                $querySales->whereDate('created_at', $dayDate);
+                $queryPurchase->whereDate('purchase_date', $dayDate);
+
+            } elseif ($range === 'month') {
+
+                $day = $index + 1;
+
+                $querySales->whereDay('created_at', $day)
+                    ->whereMonth('created_at', $today->month)
+                    ->whereYear('created_at', $today->year);
+
+                $queryPurchase->whereDay('purchase_date', $day)
+                    ->whereMonth('purchase_date', $today->month)
+                    ->whereYear('purchase_date', $today->year);
+
+            } else {
+
+                $monthDate = $start->copy()->addMonths($index);
+
+                $querySales->whereMonth('created_at', $monthDate->month)
+                    ->whereYear('created_at', $monthDate->year);
+
+                $queryPurchase->whereMonth('purchase_date', $monthDate->month)
+                    ->whereYear('purchase_date', $monthDate->year);
             }
 
             $sales[] = (int) $querySales->sum('total_amount');

@@ -20,6 +20,8 @@ use App\Models\Transaction;
 use App\Models\StockTransaction;
 use Razorpay\Api\Api;
 use App\Services\SMSService;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\DB;
 
 class OrderAPI extends Controller
 {
@@ -89,6 +91,10 @@ class OrderAPI extends Controller
     }
 
     public function place_order(Request $request){
+        
+        // Log::info("place_order", [
+        //         'data' => $request->all(),
+        //     ]);
         
         $validator = Validator::make($request->all(), [
             'contact_number' => 'nullable',
@@ -207,6 +213,18 @@ class OrderAPI extends Controller
                 
                 if ($cart_item->option_id) {
                     $price = get_product_price($cart_item->product_id, $cart_item->option_id);
+                    $product = Product::find($cart_item->product_id);
+                    $hsn_data = $product->hsncode;
+                    
+                    $subtotal = $cart_item->options->price * $cart_item->quantity;
+                    $gst_rate = $hsn_data->gst_rate ?? 0;
+                    $gst_amount = ($subtotal * $gst_rate) / 100;  // GST exclusive
+                    
+                    if($product->is_gst_included){
+                        $subtotal = $cart_item->options->price * $cart_item->quantity;
+                    }else{
+                        $subtotal = ($cart_item->options->price * $cart_item->quantity) + $gst_amount;
+                    }
                     
                     OrderItems::create([
                         'order_id'=>$order->id,
@@ -220,7 +238,10 @@ class OrderAPI extends Controller
                         'discount_rate'=>$cart_item->options->discount_rate,
                         'discount_amount'=>$cart_item->options->discount_amount,
                         'app_discount' => $cart_item->discount,
-                        'subtotal'=>($cart_item->options->price * $cart_item->quantity),
+                        'hsn_code' => $hsn_data->hsncode,
+                        'gst_rate' => $gst_rate,
+                        'gst_amount' => $gst_amount,
+                        'subtotal'=>$subtotal,
                     ]);
 
                     // if avaliable purchase module
@@ -285,7 +306,7 @@ class OrderAPI extends Controller
                 }
                 
                 // $totalGst += $cart_item->product->gst_amount ;
-                $gst = calculate_cart_gst_by_userId($request->user()->id, $vendorId);
+                $gst = calculate_cart_gst_by_userId($request->user()->id, $vendorId, $totalDiscount);
 
                 
             }
@@ -433,33 +454,65 @@ class OrderAPI extends Controller
 
         $cart_items = Cart::where('user_id', $request->user()->id)->get();
         if($cart_items){
-
+            
+            // Log::info("COMPARE VALUES", [
+            //     'discount_amount' => $request->discount_amount,
+            //     'complimentary_amount' => $request->complimentary_amount,
+            // ]);
+            
+            
             $cart_sub_total = calculate_cart_sub_total_by_userId($request->user()->id);
             $cart_total = calculate_cart_total_by_userId($request->user()->id, $vendorId);
-            // $coupone_discount = !empty($request->coupone_code) ? get_coupone_discount($request->coupone_code,$cart_total) : 0.00;
+            
+            if (!empty($request->order_number)) {
+                
+                $orderNumber = trim($request->order_number);
+                $order = Order::withoutGlobalScope('withoutDraft')->where('order_number', $orderNumber)->first();
+                
+                if ($order) {
+                    $order->update([
+                        'price_subtotal' => calculate_items_sub_total_by_userId($request->user()->id, $order->id),
+                        'price_gst' => 0.00,
+                        'total_amount' => calculate_items_total_by_userId($request->user()->id, $vendorId, $order->id),
+                        'discounted_price' => calculate_items_total_by_userId($request->user()->id, $vendorId, $order->id),
+                        'payment_method' => $request->payment_method,
+                        'payment_status' => in_array($request->payment_method, ['Online','UPI','Card']) ? 'Payment Received' : 'Awaiting Payment',
+                        'contact_number' => $request->contact_number,
+                        'discount_amount' => $request->discount_amount ?? calculate_items_discount_by_userId($request->user()->id, $vendorId, $order->id),
+                        'complimentary_amount' => $request->complimentary_amount,
+                    ]);
+                }
+            
+            } else {
 
-    
-           $order= Order::create([
-                'order_number'=>generateDraftOrderNumber(),
-                'user_id'=>$request->user()->id,
-                'vendor_id'=>$vendorId, //$request->user()->vendor_id,
-                'order_type'=>"attendee",
-                'order_status'=>"Order Pending",
-                'price_subtotal'=>$cart_sub_total,
-                'price_gst'=>0.00,
-                'total_amount'=>calculate_cart_total_by_userId($request->user()->id, $vendorId),
-                'discounted_price'=>calculate_cart_total_by_userId($request->user()->id, $vendorId),
-                'payment_method'=>$request->payment_method,
-                'payment_status'=>$request->payment_method == 'Online' || $request->payment_method == 'UPI'|| $request->payment_method == 'Card' ? 'Payment Received':'Awaiting Payment',
-                'is_darft'=>1,
-                'contact_number'=>$request->contact_number,
-                'discount_amount'=>$request->discount_amount ?? calculate_cart_discount_by_userId($request->user()->id, $vendorId),
-                'complimentary_amount'=>$request->complimentary_amount,
-            ]);
+               $order= Order::create([
+                    'order_number'=>generateDraftOrderNumber(),
+                    'user_id'=>$request->user()->id,
+                    'vendor_id'=>$vendorId, //$request->user()->vendor_id,
+                    'order_type'=>"attendee",
+                    'order_status'=>"Order Pending",
+                    'price_subtotal'=>$cart_sub_total,
+                    'price_gst'=>0.00,
+                    'total_amount'=>calculate_cart_total_by_userId($request->user()->id, $vendorId),
+                    'discounted_price'=>calculate_cart_total_by_userId($request->user()->id, $vendorId),
+                    'payment_method'=>$request->payment_method,
+                    'payment_status'=>$request->payment_method == 'Online' || $request->payment_method == 'UPI'|| $request->payment_method == 'Card' ? 'Payment Received':'Awaiting Payment',
+                    'is_darft'=>1,
+                    'contact_number'=>$request->contact_number,
+                    'discount_amount'=>$request->discount_amount ?? calculate_cart_discount_by_userId($request->user()->id, $vendorId),
+                    'complimentary_amount'=>$request->complimentary_amount,
+                ]);
+            }
+            
+            
             if($request->is_gst_same){
                 $totalDiscount= $request->discount_amount + $request->complimentary_amount;
             }else{
-                $totalDiscount=calculate_cart_discount_by_userId($request->user()->id, $vendorId);
+                if (!empty($request->order_number)) {
+                     $totalDiscount=calculate_items_discount_by_userId($request->user()->id, $vendorId, $order->id);
+                }else{
+                    $totalDiscount=calculate_cart_discount_by_userId($request->user()->id, $vendorId);
+                }
             }
             $discounted_price =  $order->discounted_price - $totalDiscount;
             $order->discounted_price = $discounted_price;
@@ -502,8 +555,13 @@ class OrderAPI extends Controller
                     ]);
                 }
                 // $totalGst += $cart_item->product->gst_amount ;
-                $gst = calculate_cart_gst_by_userId($request->user()->id, $vendorId);
                 
+            }
+            
+            if (!empty($request->order_number)) {
+                $gst = calculate_items_gst_by_userId($request->user()->id, $vendorId, $order->id, $totalDiscount);
+            }else{
+                $gst = calculate_cart_gst_by_userId($request->user()->id, $vendorId, $totalDiscount);
             }
             
             $order->sgst_amount = $gst['sgst'] ?? 0.00;
@@ -641,12 +699,19 @@ class OrderAPI extends Controller
 
     public function order_details(Request $request, $id = null)
     {
+        $vendorId = $request->vendorId;
+
         $user = $request->user(); 
         
         if ($id != null) {
 
             $order = Order::with('items.product.media','seats','transactions')->withoutGlobalScope('withoutDraft')->where('id', $id)->where('user_id',$request->user()->id)->first();
+            $orderItems = $order->items;
 
+            $orderItems->each(function ($orderItem) {
+                // $orderItem->subtotal = $orderItem->subtotal - $orderItem->gst_amount; //(int)
+                $orderItem->subtotal = (float) number_format(floor(($orderItem->subtotal - $orderItem->gst_amount) * 100) / 100, 2, '.', '');
+            });
             if (!$order) {
                 return response()->json([
                     'status' => false,
@@ -654,12 +719,13 @@ class OrderAPI extends Controller
                 ], 404);
             }
             $user->load(['vendor.branch.coach']);
+            $url =  route('get-order-details-pdf') . '?vendorId='. $vendorId.'&orderId='.$id;
 
             return response()->json([
                 'status' => true,
                 'order' => $order,
                 'user' => $user,
-        
+                'pdf_url' => $url,
             ], 200);
         } else {
             return response()->json([
@@ -730,6 +796,7 @@ class OrderAPI extends Controller
                 if ($orderItem) {
                     $orderItem->quantity += $item['quantity'];
                     $orderItem->subtotal = $orderItem->quantity * $price;
+                    $orderItem->discount_amount = $option->discount_amount ?? $product->discount_price;
                     $orderItem->save();
                 } else {
                     $orderItem = OrderItems::create([
@@ -741,6 +808,8 @@ class OrderAPI extends Controller
                         'product_name' => $product_title,
                         'price' => $price,
                         'subtotal' => $price * $item['quantity'],
+                        'mrp' => $option->mrp ?? $price,
+                        'discount_amount' => $option->discount_amount ?? $product->discount_price,
                     ]);
                 }
     
@@ -760,6 +829,7 @@ class OrderAPI extends Controller
             if ($orderItem) {
                 $orderItem->quantity += $qty;
                 $orderItem->subtotal = $orderItem->quantity * $price;
+                $orderItem->discount_amount = $product->discount_price;
                 $orderItem->save();
             } else {
                 $orderItem = OrderItems::create([
@@ -769,6 +839,8 @@ class OrderAPI extends Controller
                     'product_name' => $product_title,
                     'price' => $price,
                     'subtotal' => $price * $qty,
+                    'mrp' => $price,
+                    'discount_amount' => $product->discount_price,
                 ]);
             }
             $orderItem->subtotal = $orderItem->quantity * $price;
@@ -782,7 +854,7 @@ class OrderAPI extends Controller
         }
 
         // ✅ Recalculate totals after updating all items
-        $order = Order::findOrFail($request->order_id);
+        $order = Order::withoutGlobalScope('withoutDraft')->where('id',$request->order_id)->first();
         $order->price_subtotal = calculate_orderItems_total_by_orderId($order->id);
         $order->total_amount = calculate_orderItems_total_by_orderId($order->id);
         $order->save();
@@ -795,7 +867,9 @@ class OrderAPI extends Controller
     }
     
     
-    public function order_items(Request $request){
+    public function order_items(Request $request)
+    {
+        // Log::info('ok');
         
         // $order = Order::find($request->order_id)->withoutGlobalScope('withoutDraft');
         $order = Order::withoutGlobalScope('withoutDraft')
@@ -836,10 +910,11 @@ class OrderAPI extends Controller
             $discount = $total_app_discount;
         }
 
-        $gst = calculate_gst_by_orderId($order->id);
+        $gst = calculate_gst_by_orderId($order->id, $total_app_discount);
 
         $item_total = calculate_orderItems_total_by_orderId($order->id);
         $sub_total = $item_total - $total_app_discount;
+        $grand_total = round($sub_total + $gst['total_gst'], 2);
         return response()->json([
             'status' => true,
             'item_total' => round($item_total,2), //(int)
@@ -851,7 +926,8 @@ class OrderAPI extends Controller
             'total_gst'     => round($gst['total_gst'],2) ?? 0.00, //(int)
             // 'order_total' => calculate_orderItems_total_by_orderId($order->id),
             // 'grand_total' => (int) calculate_orderItems_total_by_orderId($order->id) + ($gst['total_gst'] ?? 0.00),
-            'grand_total' => round($sub_total + $gst['total_gst'], 2), //(int)
+            'grand_total' => $grand_total, //(int)
+            'rounded_grand_total' => round($sub_total + $gst['total_gst']).'.00',
             'is_gst_same'   => $allSameGst ? 1 : 0,
             'data' => $orderItems,
         ], 200);
@@ -890,6 +966,10 @@ class OrderAPI extends Controller
     }
     
     public function complete_order(Request $request){
+        
+        // Log::info("complete_order", [
+        //         'data' => $request->all(),
+        //     ]);
         $validator = Validator::make($request->all(), [
             'contact_number' => 'nullable',
             'contact_purson' => 'nullable',
@@ -957,7 +1037,7 @@ class OrderAPI extends Controller
         $order->price_subtotal = calculate_orderItems_total_by_orderId($order->id);
         $order->total_amount = calculate_orderItems_total_by_orderId($order->id);
         $order->payment_method = $request->payment_method ;
-        $order->payment_status = $request->payment_method == 'Online' || $request->payment_method == 'UPI'|| $request->payment_method == 'Card' ? 'Payment Received':'Awaiting Payment' ;
+        $order->payment_status = $request->payment_method == 'Online' || $request->payment_method == 'UPI'|| $request->payment_method == 'Card' ? 'Payment Received':'Payment Received' ; //Awaiting Payment
         $order->is_darft =0;
         $order->order_status = 'Order Confirmed';
         $order->status = 1;
@@ -974,7 +1054,7 @@ class OrderAPI extends Controller
         $order->discounted_price = $discounted_price;
         $order->save();
 
-        $gst = calculate_gst_by_orderId($request->order_id);
+        $gst = calculate_gst_by_orderId($request->order_id, $totalDiscount);
 
         $order->sgst_amount = $gst['sgst'] ?? 0.00;
         $order->cgst_amount = $gst['cgst'] ?? 0.00;
@@ -1104,6 +1184,7 @@ class OrderAPI extends Controller
     
     
     public function delete_order_item(Request $request){
+
         $validator = Validator::make($request->all(), [
             'product_id' => 'required|integer|exists:order_items,product_id',
             'order_id' => 'required|integer|exists:orders,id',

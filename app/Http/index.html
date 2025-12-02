@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Run Curl from HTML</title>
+</head>
+<body>
+  <h1>Get Report</h1>
+  <button id="runCurl">Run Request</button>
+  <pre id="output"></pre>
+
+  <script>
+    document.getElementById('runCurl').addEventListener('click', function () {
+      fetch('http://127.0.0.1:8000/api/get-report?id=1&filter=today&start_date=2025-09-20&end_date=2025-09-24', {
+        method: 'GET',
+        headers: {
+          'Authorization': 'Bearer 376|EOZY4Fx85XHr5Ui0TycwtDnvcvvsvhMqn9uTBLNY503ffcfe',
+          // Cookies can’t be set manually in fetch for security reasons,
+          // but fetch automatically sends cookies already stored for the domain.
+          // If you need CSRF token, send it explicitly:
+          'X-XSRF-TOKEN': 'eyJpdiI6IjZ1N3I1UlVReUUzOXorQ1lOakVvT3c9PSIsInZhbHVlIjoiSzdrYzFybzlHVDl3blhJeGttTGEzdlNsWWluZmVKU0dEcktqeEZid2N4TFJoQm9EQ1VKT3pFMlk0YTlPRThTUkJKY3B4Z05iNzVVbjNxS2d1MENiNlc0b3kyVStadDNKR0tFRzJ4S0o4UGhKem5oelFGcWc4eWhjMW1RYWhaRzciLCJtYWMiOiJkYTI4NjA5MTVkODBjZjY5N2RhOTQ3YzBjZjY3YzQ1YzRkNDAyNWRjM2VjNzc2MWZmZDRmYjgyNjE0YjE2Zjk0IiwidGFnIjoiIn0='
+        },
+        credentials: 'include' // ensures browser sends cookies for this domain
+      })
+      .then(response => response.json())
+      .then(data => {
+        document.getElementById('output').textContent = JSON.stringify(data, null, 2);
+      })
+      .catch(error => {
+        document.getElementById('output').textContent = 'Error: ' + error;
+      });
+    });
+  </script>
+</body>
+</html>

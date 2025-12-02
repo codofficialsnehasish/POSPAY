@@ -43,17 +43,49 @@ Route::get('/dashboard', function () {
 })->middleware(['auth', 'verified'])->name('dashboard');
 
 // Get monthly sales by year
-Route::get('/chart/sales/{year}', function ($year) {
-    return response()->json([
-        'months' => get_sales_by_year($year),    // return 12 values
-        'total'  => array_sum(get_sales_by_year($year)),
-    ]);
+// Route::get('/chart/sales/{year}', function ($year) {
+//     return response()->json([
+//         'months' => get_sales_by_year($year),    // return 12 values
+//         'total'  => array_sum(get_sales_by_year($year)),
+//     ]);
+// });
+
+// Get sales vs purchase by range
+// Route::get('/chart/sales-purchase/{range}', function ($range) {
+//     return response()->json(get_sales_purchase_range($range));
+// });
+
+// Get monthly sales by year
+Route::get('/chart/sales', function (Illuminate\Http\Request $r) {
+    return response()->json(get_sales_filtered($r->all()));
 });
 
 // Get sales vs purchase by range
-Route::get('/chart/sales-purchase/{range}', function ($range) {
-    return response()->json(get_sales_purchase_range($range));
+Route::get('/chart/sales-purchase', function (Illuminate\Http\Request $r) {
+    return response()->json(get_sales_purchase_range($r->all()));
 });
+
+Route::get('/chart/top-categories', function (Illuminate\Http\Request $request) {
+    return response()->json(
+        top_categories(
+            limit: 10,
+            user_id: null,
+            vendor_id: null,
+            from: $request->from_date ?? null,
+            to: $request->to_date ?? null,
+            period: $request->period ?? 'today',
+        )
+    );
+});
+
+Route::get('/chart/order-heatmap', function (Illuminate\Http\Request $r) {
+    return response()->json(order_heatmap_data($r->all()));
+});
+
+Route::get('/chart/category-heatmap',function (Illuminate\Http\Request $r) {
+    return response()->json(category_heatmap_data($r->all()));
+});
+
 
 
 Route::middleware('auth')->group(function () {
@@ -300,6 +332,9 @@ Route::middleware(['auth', 'verified'])->group(function(){
 
 Route::get('/transaction-details/excel', [TransactionApi::class, 'downloadTransactionExcel'])
      ->name('transaction.details.excel');
+
+Route::get('/get-order-details-pdf', [OrderController::class, 'get_order_details_pdf'])
+     ->name('get-order-details-pdf');
 
 Route::controller(ReportApiController::class)->group( function() {
     Route::prefix('reports')->group(function () {

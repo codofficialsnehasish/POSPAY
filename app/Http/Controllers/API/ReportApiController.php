@@ -61,17 +61,58 @@ class ReportApiController extends Controller
                 ->get();
 
 
+        // $exportData = $orders->map(function ($order) {
+        //                 return [
+        //                     'Date' => format_datetime_excel($order->created_at),
+        //                     'User' => $order->user->name,
+        //                     'Order #' => $order->order_number,
+        //                     'Total Amount' => number_format($order->total_amount,2),
+        //                     'Payment Status' => $order->payment_status,
+        //                     'Payment Mode' => $order->payment_method,
+        //                     'Order Status' => $order->order_status,
+        //                 ];
+        //             });
+                    
         $exportData = $orders->map(function ($order) {
-                        return [
-                            'Date' => format_datetime_excel($order->created_at),
-                            'User' => $order->user->name,
-                            'Order #' => $order->order_number,
-                            'Total Amount' => number_format($order->total_amount,2),
-                            'Payment Status' => $order->payment_status,
-                            'Payment Mode' => $order->payment_method,
-                            'Order Status' => $order->order_status,
-                        ];
-                    });
+
+            $subtotal  = (float) $order->price_subtotal;
+            $discount  = (float) ($order->discount_amount + $order->complimentary_amount ?? 0);
+            $cgst      = (float) $order->cgst_amount;
+            $sgst      = (float) $order->sgst_amount;
+            $gstTotal  = $cgst + $sgst;
+        
+            // Raw total
+            $rawTotal = $subtotal - $discount + $gstTotal;
+        
+            // Final total as per GST rounding rules
+            $roundedTotal = round($rawTotal);
+        
+            // Round-off calculation
+            $roundOff = round($roundedTotal - $rawTotal, 2);
+        
+            return [
+                'Date'          => format_datetime_excel($order->created_at),
+                'User'          => $order->user->name,
+                'Order #'       => $order->order_number,
+        
+                'Subtotal'      => number_format($subtotal, 2, '.', ''),
+                'Discount'      => number_format($discount, 2, '.', ''),
+        
+                'CGST'          => number_format($cgst, 2, '.', ''),
+                'SGST'          => number_format($sgst, 2, '.', ''),
+                'Total GST'     => number_format($gstTotal, 2, '.', ''),
+        
+                'Round Off'     => number_format($roundOff, 2, '.', ''),
+        
+                'Grand Total'   => number_format($roundedTotal, 2, '.', ''),
+        
+                'Payment Status'=> $order->payment_status,
+                'Payment Mode'  => $order->payment_method,
+                'Order Status'  => $order->order_status,
+            ];
+        });
+
+
 
         return Excel::download(new SellReportExport($exportData), 'sell_report.xlsx');
     }
@@ -80,15 +121,8 @@ class ReportApiController extends Controller
     public function sale_item(Request $request)
     {
         $vendorId = $request->vendor_id;
-
-        // $orderItems = OrderItems::with(['order.user', 'product', 'option'])
-        //     ->whereHas('order', function($query) use ($vendorId) {
-        //         $query->where('vendor_id', $vendorId);
-        //     })
-        //     ->latest()
-        //     ->get();
-
-        $orderItems = OrderItems::with(['order.user', 'product', 'option'])
+        
+        $orderItems = OrderItems::with(['order.user', 'product', 'product.categories', 'option'])
                     ->whereHas('order', function($query) use ($vendorId, $request) {
                         $query->where('vendor_id', $vendorId)
                             ->when($request->filter, function ($query) use ($request) {
@@ -120,16 +154,33 @@ class ReportApiController extends Controller
                     })
                     ->latest()
                     ->get();
-
+                    
+                    
+        // dd($orderItems );
 
         $exportData = $orderItems->map(function ($item) {
+            
+                        $totalOrderDiscount = ($item->order->discount_amount ?? 0) + ($item->order->complimentary_amount ?? 0);
+                        $totalItemsInOrder = $item->order->items->count();
+                        $perItemDiscount = $totalItemsInOrder > 0 ? $totalOrderDiscount / $totalItemsInOrder : 0;
+                        
+                        $grandTotal   = $item->subtotal - $perItemDiscount;
+                        $roundedTotal = round($grandTotal);
+                        $roundDiff    = $roundedTotal - $grandTotal;
+            
                         return [
                             'Order #' => $item->order->order_number,
                             'Product' => $item->product->name ?? $item->product_name,
+                            'Category' =>  $item->product->categories->pluck('name')->implode(', ') ?? $item->product_name,
                             'Variation' => $item->option->name,
+                            'Selling Price' => $item->mrp,
                             'Quantity' => $item->quantity,
                             'Price' => number_format($item->price,2),
-                            'Subtotal' => number_format($item->subtotal,2),
+                            'GST' =>$item->gst_rate,
+                            'Discount' => number_format($perItemDiscount, 2),
+                            'Subtotal' => round($item->subtotal,2),
+                            'Round Diff'  => ($roundDiff >= 0 ? '+' : '') . number_format($roundDiff, 2),
+                            'Grand Total' => number_format($roundedTotal, 2),
                         ];
                     });
 
@@ -321,13 +372,6 @@ class ReportApiController extends Controller
     {
         $vendorId = $request->vendor_id;
 
-        // $expiryItems = StockTransaction::with(['product','variationOption'])
-        //     ->where('vendor_id', $vendorId)
-        //     ->whereNotNull('expiry_date')
-        //     ->where('expiry_date', '<=', now()->addDays(30))
-        //     ->latest('expiry_date')
-        //     ->get();
-
         $expiryItems = StockTransaction::with(['product','variationOption'])
                     ->whereHas('product', function ($query) use ($vendorId) {
                         $query->where('vendor_id', $vendorId);
@@ -421,7 +465,8 @@ class ReportApiController extends Controller
 
     public function get_report_excel_link(Request $request){
 
-        $vendorId = $request->user()->vendor->id;
+        // $vendorId = $request->user()->vendor->id;
+        $vendorId = $request->vendorId;
 
         $id = $request->id;
         $excelLink = null;

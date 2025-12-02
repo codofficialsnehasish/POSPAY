@@ -10,6 +10,8 @@
     use App\Models\Hsncode;
     
       use App\Models\OrderItems;
+      
+use Illuminate\Support\Facades\Log;
     
     if(!function_exists('getProductMainImage')){
         function getProductMainImage($productId){
@@ -143,9 +145,10 @@
         }
     }*/
 
-    if (!function_exists('calculate_cart_gst_by_userId')) {
-        function calculate_cart_gst_by_userId(int $userId, int $vendorId)
+    if (!function_exists('calculate_cart_gst_by_userId_old')) {
+        function calculate_cart_gst_by_userId_old(int $userId, int $vendorId, $total_discount)
         {
+            Log::info('Sub Total Value: ' . $total_discount);
             $cgst = 0;
             $sgst = 0;
 
@@ -188,9 +191,50 @@
             ];
         }
     }
+    
+    if (!function_exists('calculate_cart_gst_by_userId')) {
+        function calculate_cart_gst_by_userId(int $userId, int $vendorId, $total_discount)
+        {
+            // Log::info('Sub Total Value: ' . $total_discount);
+            $cartItems = Cart::with(['product'])
+                    ->where('user_id', $userId)
+                    ->where('vendor_id', $vendorId)
+                    ->get();
 
-    if (!function_exists('calculate_gst_by_orderId')) {
-        function calculate_gst_by_orderId(int $orderId)
+            $totalItemPrice = 0;
+            
+            foreach ($cartItems as $cartItem) {
+        
+                $price = get_product_price(
+                    $cartItem->product_id,
+                    $cartItem->option_id
+                );
+        
+                $qty = $cartItem->quantity;
+        
+                $totalItemPrice += ($price * $qty);
+            }
+            
+            $subTotal = $totalItemPrice - $total_discount;
+        
+            // Log::info('SUB TOTAL (item price - discount): ' . $subTotal);
+            
+            $gstTotal = ($subTotal * 5) / 100;
+            
+            $cgst = $gstTotal / 2;
+            $sgst = $gstTotal / 2;
+        
+            return [
+                'sub_total' => round($subTotal, 2),
+                'cgst'      => round($cgst, 2),
+                'sgst'      => round($sgst, 2),
+                'total_gst' => round($gstTotal, 2),
+            ];
+        }
+    }
+
+    if (!function_exists('calculate_gst_by_orderId_old')) {
+        function calculate_gst_by_orderId_old(int $orderId)
         {
             $cgst = 0;
             $sgst = 0;
@@ -228,6 +272,48 @@
                 'cgst' => round($cgst, 2),
                 'sgst' => round($sgst, 2),
                 'total_gst' => round($cgst + $sgst, 2),
+            ];
+        }
+    }
+    
+    if (!function_exists('calculate_gst_by_orderId')) {
+        function calculate_gst_by_orderId(int $orderId, $total_app_discount)
+        {
+            $cgst = 0;
+            $sgst = 0;
+        
+            $orderItems = OrderItems::with(['product'])
+                            ->where('order_id', $orderId)
+                            ->get();
+        
+            $totalItemPrice = 0;
+            
+            foreach ($orderItems as $item) {
+        
+                $price = get_product_price(
+                    $item->product_id,
+                    $item->option_id
+                );
+        
+                $qty = $item->quantity;
+        
+                $totalItemPrice += ($price * $qty);
+            }
+            $subTotal = $totalItemPrice - $total_app_discount;
+        
+            // Log::info('Order SUB TOTAL (items - discount): ' . $subTotal);
+            if ($subTotal < 0) {
+                $subTotal = 0;
+            }
+            $gstTotal = ($subTotal * 5) / 100;
+            $cgst = $gstTotal / 2;
+            $sgst = $gstTotal / 2;
+        
+            return [
+                'sub_total' => round($subTotal, 2),
+                'cgst'      => round($cgst, 2),
+                'sgst'      => round($sgst, 2),
+                'total_gst' => round($gstTotal, 2),
             ];
         }
     }
@@ -319,3 +405,152 @@ if (!function_exists('get_product_price')) {
         return number_format($product->product_price, 2, '.', '');
     }
 }
+
+
+ if(!function_exists('calculate_items_sub_total_by_userId')){
+    function calculate_items_sub_total_by_userId(int $userId, $order_id)
+    {
+        $total = 0;
+
+        $cartItems = OrderItems::where('order_id', $order_id)->get();
+
+        foreach ($cartItems as $cartItem) {
+            if ($cartItem->option_id) {
+                $price = get_product_price($cartItem->product_id, $cartItem->option_id);
+            }else{
+                $price = get_product_price($cartItem->product_id);
+            }
+            $total += $cartItem->quantity * $price;
+        }
+
+        return $total;
+    }
+}
+
+if(!function_exists('calculate_items_total_by_userId')){
+    function calculate_items_total_by_userId(int $userId, int $vendorId, $order_id)
+    {
+        $total = 0;
+
+        $cartItems = OrderItems::where('order_id', $order_id)->get();
+
+        foreach ($cartItems as $cartItem) {
+            
+            if ($cartItem->option_id) {
+                $price = get_product_price($cartItem->product_id, $cartItem->option_id);
+            }else{
+                $price = get_product_price($cartItem->product_id);
+            }
+            
+            $total += $cartItem->quantity * $price;
+        }
+
+        return $total;
+        // return number_format($total, 2, '.', '');
+    }
+}
+
+if(!function_exists('calculate_items_discount_by_userId')){
+    function calculate_items_discount_by_userId(int $userId, int $vendorId, $order_id)
+    {
+        $total = 0;
+
+        $cartItems = OrderItems::where('order_id', $order_id)->get();
+
+        foreach ($cartItems as $cartItem) {
+            $total += $cartItem->discount_amount;
+        }
+
+        return $total;
+        // return number_format($total, 2, '.', '');
+    }
+}
+
+
+if (!function_exists('calculate_items_gst_by_userId_old')) {
+        function calculate_items_gst_by_userId_old(int $userId, int $vendorId, $order_id, $total_discount)
+        {
+            Log::info('Sub Total Value: ' . $total_discount);
+            $cgst = 0;
+            $sgst = 0;
+
+            $cartItems = OrderItems::with(['product.hsncode'])->where('order_id', $order_id)->get(); 
+            
+            // Log::info("COMPARE VALUES", [
+            //     'cartItems' => $cartItems,
+            // ]);
+
+            foreach ($cartItems as $cartItem) {
+
+                $price = get_product_price(
+                    $cartItem->product_id,
+                    $cartItem->option_id
+                );
+
+                $product = $cartItem->product;
+                if (!$product) continue;
+
+                $gstRate = $product->hsncode->gst_rate ?? 0;
+                $qty = $cartItem->quantity;
+                $lineTotal = $price * $qty;
+
+                if ($product->is_gst_included == 1) {
+                    // Extract GST
+                    $base = ($lineTotal * 100) / (100 + $gstRate);
+                    $taxAmount = $lineTotal - $base;
+                } else {
+                    // Add GST
+                    $taxAmount = ($lineTotal * $gstRate) / 100;
+                }
+
+                $cgst += $taxAmount / 2;
+                $sgst += $taxAmount / 2;
+            }
+
+            return [
+                'cgst' => round($cgst, 2),
+                'sgst' => round($sgst, 2),
+                'total_gst' => round($cgst + $sgst, 2),
+            ];
+        }
+    }
+    
+    if (!function_exists('calculate_items_gst_by_userId')) {
+        function calculate_items_gst_by_userId(int $userId, int $vendorId, $order_id, $total_discount)
+        {
+            $cgst = 0;
+            $sgst = 0;
+        
+            $orderItems = OrderItems::with(['product'])->where('order_id', $order_id)->get();
+        
+            $totalItemPrice = 0;
+
+            foreach ($orderItems as $item) {
+        
+                $price = get_product_price(
+                    $item->product_id,
+                    $item->option_id
+                );
+        
+                $qty = $item->quantity;
+                $totalItemPrice += ($price * $qty);
+            }
+            $subTotal = $totalItemPrice - $total_discount;
+            
+            if ($subTotal < 0) {
+                $subTotal = 0;
+            }
+        
+            $gstTotal = ($subTotal * 5) / 100;
+        
+            $cgst = $gstTotal / 2;
+            $sgst = $gstTotal / 2;
+        
+            return [
+                'sub_total' => round($subTotal, 2),
+                'cgst'      => round($cgst, 2),
+                'sgst'      => round($sgst, 2),
+                'total_gst' => round($gstTotal, 2),
+            ];
+        }
+    }

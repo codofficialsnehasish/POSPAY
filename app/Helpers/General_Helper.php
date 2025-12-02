@@ -303,6 +303,11 @@
 
         return $sign . $integerFormatted . '.' . $decimal;
     }
+    
+    function format2($num) {
+        return number_format(floor($num * 100) / 100, 2, '.', '');
+    }
+
 
 
 
