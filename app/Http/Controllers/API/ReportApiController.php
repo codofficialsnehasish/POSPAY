@@ -164,21 +164,30 @@ class ReportApiController extends Controller
                         $totalItemsInOrder = $item->order->items->count();
                         $perItemDiscount = $totalItemsInOrder > 0 ? $totalOrderDiscount / $totalItemsInOrder : 0;
                         
-                        $grandTotal   = $item->subtotal - $perItemDiscount;
+                        $a = ($item->price * $item->quantity) - $perItemDiscount;
+                        $subtotal = $a * $item->gst_rate / 100;
+                        
+                        
+                        $a = ($item->price * $item->quantity) - $perItemDiscount;
+                        $gstAmount = $a * $item->gst_rate / 100;
+                        $subtotal = $a - $gstAmount;
+                        $grandTotal = $a + $gstAmount;
+                        
+                        $grandTotal   = $subtotal;
                         $roundedTotal = round($grandTotal);
                         $roundDiff    = $roundedTotal - $grandTotal;
             
                         return [
                             'Order #' => $item->order->order_number,
-                            'Product' => $item->product->name ?? $item->product_name,
                             'Category' =>  $item->product->categories->pluck('name')->implode(', ') ?? $item->product_name,
+                            'Product' => $item->product->name ?? $item->product_name,
                             'Variation' => $item->option->name,
                             'Selling Price' => $item->mrp,
                             'Quantity' => $item->quantity,
                             'Price' => number_format($item->price,2),
-                            'GST' =>$item->gst_rate,
+                            'GST' =>round($gstAmount,2),
                             'Discount' => number_format($perItemDiscount, 2),
-                            'Subtotal' => round($item->subtotal,2),
+                            'Subtotal' => round($subtotal,2),
                             'Round Diff'  => ($roundDiff >= 0 ? '+' : '') . number_format($roundDiff, 2),
                             'Grand Total' => number_format($roundedTotal, 2),
                         ];
@@ -354,13 +363,13 @@ class ReportApiController extends Controller
 
         $exportData = $payments->map(function ($payment) {
                         return [
-                            'Transaction #' => $payment->transaction_number,
+                            'Date' => $payment->paid_at ? format_datetime($payment->paid_at) : 'Pending',
                             'User' => $payment->user->name,
                             'Order #' => $payment->order->order_number,
                             'Amount' => number_format($payment->amount,2),
                             'Payment Method' => $payment->payment_method,
+                            'Transaction #' => $payment->transaction_number,
                             'Status' => $payment->payment_status,
-                            'Paid At' => $payment->paid_at ? format_datetime($payment->paid_at) : 'Pending',
                         ];
                     });
 

@@ -38,8 +38,8 @@ class SellItemReportExport implements FromCollection, WithHeadings
     {
         return [
             'Order #',
-            'Product',
             'Category',
+            'Product',
             'Variation',
             'Selling Price',
             'Quantity',

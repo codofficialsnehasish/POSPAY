@@ -37,13 +37,13 @@ class PaymentReportExport implements FromCollection, WithHeadings
     public function headings(): array
     {
         return [
-            'Transaction #',
+            'Date',
             'User',
             'Order #',
             'Amount',
             'Payment Method',
+            'Transaction #',
             'Status',
-            'Paid At',
         ];
     }
 }

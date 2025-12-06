@@ -55,20 +55,7 @@
 
 <div class="dashboard-main-body">
 
-    {{-- <div class="d-flex flex-wrap align-items-center justify-content-between gap-3 mb-24">
-        <h6 class="fw-semibold mb-0">POS & Inventory</h6>
-        <ul class="d-flex align-items-center gap-2">
-            <li class="fw-medium">
-                <a href="index.php" class="d-flex align-items-center gap-1 hover-text-primary">
-                    <iconify-icon icon="solar:home-smile-angle-outline" class="icon text-lg"></iconify-icon>
-                    Dashboard
-                </a>
-            </li>
-            <li>-</li>
-            <li class="fw-medium">POS & Inventory</li>
-        </ul>
-    </div> --}}
-
+    @if(auth()->user()->hasRole('Vendor') || auth()->user()->hasRole('Admin'))
     <div class="row gy-4">
 
         <div class="col-12">
@@ -92,6 +79,7 @@
 
                             </div>
                         </div>
+                        @if(auth()->user()->hasRole('Vendor'))
                         <div class="col-xxl-2 col-xl-3 col-sm-4">
                             <div
                                 class="px-20 py-16 shadow-none radius-8 h-100 gradient-deep-1 left-line line-bg-primary position-relative overflow-hidden">
@@ -109,6 +97,25 @@
 
                             </div>
                         </div>
+                        @endif
+                        @if(auth()->user()->hasRole('Admin'))
+                        <div class="col-xxl-2 col-xl-3 col-sm-4">
+                            <div
+                                class="px-20 py-16 shadow-none radius-8 h-100 gradient-deep-1 left-line line-bg-primary position-relative overflow-hidden">
+                                <div class="d-flex flex-wrap align-items-center justify-content-between gap-1 mb-8">
+                                    <div>
+                                        <span class="mb-2 fw-medium text-secondary-light text-md">Total Branch</span>
+                                        <h6 class="fw-semibold mb-1">{{ total_vendor() }}</h6>
+                                    </div>
+                                    <span
+                                        class="w-44-px h-44-px radius-8 d-inline-flex justify-content-center align-items-center text-2xl mb-12 bg-primary-100 text-primary-600">
+                                        <i class="ri-arrow-go-back-fill"></i>
+                                    </span>
+                                </div>
+
+                            </div>
+                        </div>
+                        @endif
                         <div class="col-xxl-2 col-xl-3 col-sm-4">
                             <div
                                 class="px-20 py-16 shadow-none radius-8 h-100 gradient-deep-3 left-line line-bg-success position-relative overflow-hidden">
@@ -474,41 +481,6 @@
             </div>
         </div>
 
-        {{-- === Top Customers === --}}
-        {{-- <div class="col-xl-4 col-md-6 col-12">
-            <div class="card shadow radius-12 h-100">
-                <div class="card-body p-20">
-                    <div class="d-flex align-items-center justify-content-between mb-3">
-                        <h6 class="fw-bold text-lg mb-0">👑 Top Customers</h6>
-                    </div>
-                    <div class="table-responsive" style="max-height: 280px; overflow-y: auto;">
-                        <table class="table table-borderless align-middle mb-0">
-                            <tbody>
-                                @foreach(top_customers() as $cust)
-                                <tr>
-                                    <td>
-                                        <div>
-                                            <h6 class="mb-0">{{ $cust['name'] }}</h6>
-                                            <small class="text-muted">{{ $cust['email'] }}</small>
-                                        </div>
-                                    </td>
-                                    <td class="text-end">
-                                        <span class="fw-semibold text-success">
-                                            ₹{{ number_format($cust['total_spent'], 2) }}
-                                        </span>
-                                        <small class="d-block text-muted">
-                                            {{ $cust['total_orders'] }} orders
-                                        </small>
-                                    </td>
-                                </tr>
-                                @endforeach
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
-        </div> --}}
-
         {{-- === Top Categories (Doughnut Chart + List) === --}}
         <div class="col-xl-4 col-md-6 col-12">
             <div class="card shadow radius-12 h-100">
@@ -562,6 +534,7 @@
         </div>
 
     </div>
+    @endif
 
 </div>
 
